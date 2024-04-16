@@ -1,0 +1,34 @@
+version: "3"
+
+services: 
+  nodeserver:
+    build: .
+    ports:
+      - "9000:9000"
+    networks:
+      - private
+      
+  nginx:
+    restart: always
+    build: ./docker/nginx
+    ports:
+      - "80:80"
+  
+  db:
+    image: mariadb:10.11
+    container_name: db
+    restart: always
+    environment:
+      - MYSQL_USER=test
+      - MYSQL_ROOT_PASSWORD=clintdinstephen
+      - MYSQL_PASSWORD=clintdinstephen
+      - MYSQL_NAME=mariadb
+    volumes: 
+      - db:/var/lib/mysql
+    networks:
+      - private
+
+networks:
+  private:
+volumes:
+  db:
