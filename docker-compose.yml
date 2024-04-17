@@ -1,0 +1,36 @@
+version: "3.8"
+
+services: 
+  nodeserver:
+    build: .
+    ports:
+      - "9000:9000"
+    networks:
+      - private
+    depends_on:
+      - db
+      - nginx
+      
+  nginx:
+    restart: always
+    build: ./docker/nginx
+    ports:
+      - "80:80"
+  
+  db:
+    image: mariadb:10.11
+    container_name: db
+    restart: always
+    environment:
+      - MYSQL_USER=admin
+      - MYSQL_ROOT_PASSWORD=secretadmin
+      - MYSQL_PASSWORD=secretadmin
+    volumes: 
+      - db:/var/lib/mysql
+    networks:
+      - private
+
+networks:
+  private:
+volumes:
+  db:
