@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services: 
   nodeserver:
@@ -22,10 +22,9 @@ services:
     container_name: db
     restart: always
     environment:
-      - MYSQL_USER=test
-      - MYSQL_ROOT_PASSWORD=clintdinstephen
-      - MYSQL_PASSWORD=clintdinstephen
-      - MYSQL_NAME=mariadb
+      - MYSQL_USER=admin
+      - MYSQL_ROOT_PASSWORD=secretadmin
+      - MYSQL_PASSWORD=secretadmin
     volumes: 
       - db:/var/lib/mysql
     networks:
