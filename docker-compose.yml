@@ -15,26 +15,34 @@ services:
     build: ./docker/nginx
     ports:
       - "80:80"
+    networks: 
+      - private
+    depends_on:
+      - phpmyadmin
+      - mariadb
 
-  # phpmyadmin:
-  #   image: phpmyadmin/phpmyadmin:latest
-  #   restart: always
-  #   environment:
-  #     - PMA_HOST: mariadb
-  #     - PMA_USER: admin
-  #     - PMA_PASSWORD: secret
-  #   ports:
-  #     - "5050:50"
-  #   depends_on:
-  #     - mariadb
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_USER=admin
+      - PMA_PASSWORD=secret
+    ports:
+      - "8080:80"
+    depends_on:
+      - mariadb
+    networks:
+      - private
+
   mariadb:
     image: mariadb:10.11
     container_name: mariadb
     restart: always
     environment:
-      - MARIADB_USER=admin
-      - MARIADB_ROOT_PASSWORD=secret
-      - MARIADB_PASSWORD=secret
+      - MYSQL_USER=admin
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_PASSWORD=secret
     ports:
       - "3306:3306"
     volumes: 

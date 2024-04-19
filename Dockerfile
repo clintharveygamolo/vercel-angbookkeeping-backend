@@ -10,6 +10,6 @@ COPY . .
 
 EXPOSE 9000
 
-CMD ["node", "index.js"]
+CMD ["node", "/backend/models/user.model.js"]
 
 
