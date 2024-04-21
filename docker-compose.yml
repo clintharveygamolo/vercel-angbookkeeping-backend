@@ -1,21 +1,39 @@
 version: "3.8"
 
 services: 
-  nodeserver:
-    build: .
-    ports:
-      - "9000:9000"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
     networks:
+      - public
+      - private
+    ports:
+    - "5173:5173"
+  
+  backend:
+    build: ./backend
+    environment:
+      - DATABASE_DB=cds_db
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=cds#1
+      - DATABASE_HOST=mariadb
+    ports:
+      - "1000"
+    networks:
+      - public
       - private
     depends_on:
       - mariadb
-      
+
   nginx:
     restart: always
     build: ./docker/nginx
     ports:
       - "80:80"
     networks: 
+      - public
       - private
     depends_on:
       - phpmyadmin
@@ -26,13 +44,14 @@ services:
     restart: always
     environment:
       - PMA_HOST=mariadb
-      - PMA_USER=admin
-      - PMA_PASSWORD=secret
+      - PMA_USER=root
+      - PMA_PASSWORD=cds#1
     ports:
       - "8080:80"
     depends_on:
       - mariadb
     networks:
+      - public
       - private
 
   mariadb:
@@ -40,17 +59,19 @@ services:
     container_name: mariadb
     restart: always
     environment:
-      - MYSQL_USER=admin
-      - MYSQL_ROOT_PASSWORD=secret
-      - MYSQL_PASSWORD=secret
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=cds#1
+      - MYSQL_PASSWORD=cds#1
     ports:
       - "3306:3306"
     volumes: 
       - db:/var/lib/mysql
     networks:
+      - public
       - private
 
 networks:
+  public:
   private:
 volumes:
   db:
