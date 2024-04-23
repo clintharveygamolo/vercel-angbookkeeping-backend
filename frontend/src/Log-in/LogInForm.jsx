@@ -3,6 +3,7 @@ import './LogInForm.css'
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import Anglogo from '/src/image/AngBookkeeping.png'
+import '../App.css'
 
 const LogInForm = () => {
     return (
