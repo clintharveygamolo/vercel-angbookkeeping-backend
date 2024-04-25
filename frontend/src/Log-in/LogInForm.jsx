@@ -4,6 +4,7 @@ import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import Anglogo from '../image/AngBookkeeping.png';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
 const LogInForm = () => {
     const [userId, setUserId] = useState('');
@@ -17,14 +18,16 @@ const LogInForm = () => {
                 user_id: userId,
                 password: password
             });
-            setIsLoggedIn(true);
+            if (response.status === 200) {
+                setIsLoggedIn(true);
+            }
         } catch (error) {
             console.error("Error: ", error);
         }
     };
 
     if (isLoggedIn) {
-        return <Redirect to="/dashboard" />
+        return <Navigate to="/dashboard" />
     }
 
     return (
