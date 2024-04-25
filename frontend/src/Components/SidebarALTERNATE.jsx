@@ -3,9 +3,9 @@ import { BiHome, BiBookAlt, BiMessage, BiSolidReport, BiHelpCircle, BiMoneyWithd
 import { MdAccountBalance } from "react-icons/md";
 import { TbReportMoney } from "react-icons/tb";
 
-import './Sidebar.css';
+import '../Styles/SidebarALTERNATE.css';
 
-const Sidebar = () => {
+const SidebarALT = () => {
     return <div className="menu">
         <div className="logo">
             <BiBookAlt className="logo-icon" />
@@ -49,4 +49,4 @@ const Sidebar = () => {
     </div>
 }
 
-export default Sidebar
+export default SidebarALT

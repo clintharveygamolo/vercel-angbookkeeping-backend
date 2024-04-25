@@ -20,7 +20,7 @@ services:
       - DATABASE_PASSWORD=cds#1
       - DATABASE_HOST=mariadb
     ports:
-      - "1000"
+      - "9000:9000"
     networks:
       - public
       - private

@@ -1,19 +1,16 @@
 import { useState } from 'react'
 import './App.css'
-import LogInForm from './Log-in/LogInForm'
-import Sidebar from './Components/Sidebar'
+import LogInForm from '/src/Log-in/LogInForm'
+import { Routes , Route } from 'react-router-dom';
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    //<div>
-    //<LogInForm />
-    //</div>
-    <div>
-      <Sidebar />
-    </div>
-  )
+    <Routes>
+      <Route path='/' element={<LogInForm />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

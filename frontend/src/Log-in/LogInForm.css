@@ -1,4 +1,9 @@
 .wrapper {
+    display: block;
+    margin: 0 auto 20px;
+    width: 350px;
+    height: auto;
+
     width: 420px;
     background: #1F2937;
     color: #fff;
@@ -8,6 +13,7 @@
 }
 
 .wrapper h1 {
+    font-weight: 700;
     font-size: 36px;
     text-align: center;
 }

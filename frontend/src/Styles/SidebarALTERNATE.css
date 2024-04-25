@@ -1,7 +1,9 @@
 .menu {
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     gap: 2.3rem;
+    width: fit-content;
     height: 94vh;
     background-color: #1F2937;
     color: #F5F5F5;

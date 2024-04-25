@@ -1,46 +1,36 @@
-
 import express from "express";
-import mysql from "mysql";
-import { Sequelize } from 'sequelize';
+import sequelize from './util/database.js';
+import User from './models/userModel.js';
+import authRoutes from './routes/authRoute.js'
+import bcrypt from 'bcrypt';
+import cors from 'cors';
 
 const app = express();
-const port = 9000;
-app.listen(port, () => {
-    console.log(`${port} is running`);
-});
-
-const connection = mysql.createConnection({
-    host: 'mariadb',
-    user: 'admin',
-    password: 'secret',
-});
-
-connection.connect()
-connection.query('SELECT 1 + 1 AS solution', (err, rows, fields) => {
-    if(err) throw err
-
-    console.log("The solution is: ", rows[0].solution)
-});
-connection.end()
-
-const sequelize = new Sequelize(process.env.DATABASE_DB,
-    process.env.DATABASE_USER,
-    process.ENV.DATABASE_PASSWORD, 
-    {
-        host: process.env.DATABASE_HOST,
-        dialect: 'mariadb'
-    }
-);
-
-try {
-    await sequelize.authenticate();
-    console.log("Connection established!");
-} catch (error) {
-    console.error("Unable to connect to database ", error);
-}
-
-
-
 app.get("/", (req, res) => {
     res.send("Hello, world");
 });
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use('/api/auth', authRoutes);
+
+// Routes
+const port = 9000;
+
+try {
+    await sequelize.sync({ force: true });
+    
+    const adminPass = await bcrypt.hash("adminpass", 12);
+    await User.create({
+        user_id: 56686,
+        name: "Clint",
+        password: adminPass,
+        role: "Admin"
+    });
+
+    app.listen(port);
+    console.log("Listening on port ", port);
+} catch (error) {
+    console.error(error);
+}
