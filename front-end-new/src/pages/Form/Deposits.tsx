@@ -8,6 +8,9 @@ import ProductTwo from '../../images/product/product-02.png';
 import ProductThree from '../../images/product/product-03.png';
 import ProductFour from '../../images/product/product-04.png';
 
+import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo';
+import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
+
 const productData: Product[] = [
   {
     image: ProductOne,
@@ -46,7 +49,7 @@ const productData: Product[] = [
 const Deposits = () => {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Add" />
+      <Breadcrumb pageName="Add Deposits" />
 
       <div className="grid grid-cols-1 gap-9 sm:grid-cols-1">
         <div className="flex flex-col gap-9">
@@ -72,26 +75,27 @@ const Deposits = () => {
                   </div>
                 </div>
 
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Bank <span className="text-meta-1">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="Enter your email address"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  />
-                </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Account Number
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter Account #"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  />
+                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                  <div className="w-full xl:w-1/3">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Bank
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter Bank"
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    />
+                  </div>
+                  <div className="w-full xl:w-2/3">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Account Number
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter Account #"
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    />
+                  </div>
                 </div>
 
                 <SelectGroupOne />
@@ -105,64 +109,64 @@ const Deposits = () => {
         </div>
       </div>
 
-      <div className="my-6 py-6 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      <div className="my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="py-6 px-4 md:px-6 xl:px-7.5">
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Add Deposit
           </h4>
         </div>
 
-        <div className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-          <div className="col-span-3 flex items-center">
-            <p className="font-medium">Product Name</p>
+        <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+          <div className="col-span-2 flex items-center">
+            <p className="font-medium">Date</p>
           </div>
-          <div className="col-span-2 hidden items-center sm:flex">
-            <p className="font-medium">Category</p>
+          <div className="col-span-2 flex items-center">
+            <p className="font-medium">Particular</p>
           </div>
-          <div className="col-span-1 flex items-center">
-            <p className="font-medium">Price</p>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <p className="font-medium">Sold</p>
+          <div className="col-span-2 flex items-center sm:flex">
+            <p className="font-medium">Remarks</p>
           </div>
           <div className="col-span-1 flex items-center">
-            <p className="font-medium">Profit</p>
+            <p className="font-medium">Amount</p>
           </div>
         </div>
 
-        {productData.map((product, key) => (
-          <div
-            className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
-            key={key}
-          >
-            <div className="col-span-3 flex items-center">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <div className="h-12.5 w-15 rounded-md">
-                  <img src={product.image} alt="Product" />
-                </div>
-                <p className="text-sm text-black dark:text-white">
-                  {product.name}
-                </p>
-              </div>
-            </div>
-            <div className="col-span-2 hidden items-center sm:flex">
-              <p className="text-sm text-black dark:text-white">
-                {product.category}
-              </p>
-            </div>
-            <div className="col-span-1 flex items-center">
-              <p className="text-sm text-black dark:text-white">
-                ${product.price}
-              </p>
-            </div>
-            <div className="col-span-1 flex items-center">
-              <p className="text-sm text-black dark:text-white">{product.sold}</p>
-            </div>
-            <div className="col-span-1 flex items-center">
-              <p className="text-sm text-meta-3">${product.profit}</p>
+        <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5" >
+          <div className="col-span-2 flex items-center">
+            <div className=" ">
+              <DatePickerOne />
             </div>
           </div>
-        ))}
+          <div className="col-span-2 hidden items-center sm:flex">
+            <div>
+              <input
+                type="text"
+                placeholder="Particular"
+                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+              />
+            </div>
+          </div>
+          <div className="col-span-2 flex items-center">
+            <div>
+              <input
+                type="text"
+                placeholder="Remarks"
+                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+              />
+            </div>
+          </div>
+          <div className="col-span-2 flex items-center">
+            <div>
+              <input
+                type="text"
+                placeholder="Amount"
+                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+              />
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </DefaultLayout>
   );

@@ -323,7 +323,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 (isActive && '!text-white')
                               }
                             >
-                              Form Layout
+                              Accounts
                             </NavLink>
                           </li>
                           <li>
