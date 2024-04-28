@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import '../Log-in/LogInForm.css';
+
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
-import Anglogo from '../image/AngBookkeeping.png';
+
 //import axios from 'axios';
 import { Navigate } from 'react-router-dom';
 
@@ -31,22 +31,24 @@ const LogInForm = () => {
     //}
 
     return (
-        <div className='outsidewrapper'>
-            <img src={Anglogo} alt="Logo" className="AngBookkeepingLogo" />
-            <div className='wrapper'>
-                <form action="">
-                    <h1>
+        <div className='flex justify-center'>
+            <img src={Anglogo} alt="Logo" className="block mx-auto w-88 h-auto mb-5" />
+            <div className='w-105 bg-gray-800 text-white rounded-lg p-5 shadow-lg'>
+                <form>
+                    <h1 className='text-4xl font-bold text-center'>
                         Login
                     </h1>
-                    <div className="input-box">
-                        <input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} placeholder='User ID' required />
-                        <FaUser className='icon' />
+                    <div className="relative w-full h-12 my-7">
+                        <input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} placeholder='User ID' required className='w-full h-full bg-transparent border-none outline-none border-gray-200 rounded-full text-white px-11 py-5 placeholder-white' />
+                        <FaUser className='absolute right-5 top-1/2 transform -translate-y-1/2 text-white text-lg' />
                     </div>
-                    <div className="input-box">
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' required />
-                        <FaLock className='icon' />
+                    <div className="relative w-full h-12 my-7">
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' required className='w-full h-full bg-transparent border-none outline-none border-gray-200 rounded-full text-white px-11 py-5 placeholder-white' />
+                        <FaLock className='absolute right-5 top-1/2 transform -translate-y-1/2 text-white text-lg' />
                     </div>
-                    //<button onClick={handleLogin} type="submit">Login</button>
+                    <button type="submit" className='w-full h-11 bg-white border-none outline-none rounded-full shadow-md cursor-pointer text-lg text-gray-800 font-bold my-5'>
+                        Login
+                    </button>
                 </form>
             </div>
         </div>
