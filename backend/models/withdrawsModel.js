@@ -6,7 +6,11 @@ const Withdraws = sequelize.define("Withdraws", {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: true
-    }, 
+    },
+    date: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
     payee: {
         type: DataTypes.STRING,
         allowNull: true
