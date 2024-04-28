@@ -3,7 +3,7 @@ import '../Log-in/LogInForm.css';
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import Anglogo from '../image/AngBookkeeping.png';
-import axios from 'axios';
+//import axios from 'axios';
 import { Navigate } from 'react-router-dom';
 
 const LogInForm = () => {
@@ -11,24 +11,24 @@ const LogInForm = () => {
     const [password, setPassword] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post('http://localhost:9000/api/auth/login', {
-                user_id: userId,
-                password: password
-            });
-            if (response.status === 200) {
-                setIsLoggedIn(true);
-            }
-        } catch (error) {
-            console.error("Error: ", error);
-        }
-    };
+    //const handleLogin = async (e) => {
+    //e.preventDefault();
+    //try {
+    //   const response = await axios.post('http://localhost:9000/api/auth/login', {
+    //     user_id: userId,
+    //    password: password
+    //});
+    //if (response.status === 200) {
+    //  setIsLoggedIn(true);
+    // }
+    //} catch (error) {
+    //  console.error("Error: ", error);
+    //}
+    //};
 
-    if (isLoggedIn) {
-        return <Navigate to="/dashboard" />
-    }
+    //if (isLoggedIn) {
+    //  return <Navigate to="/dashboard" />
+    //}
 
     return (
         <div className='outsidewrapper'>
@@ -46,7 +46,7 @@ const LogInForm = () => {
                         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' required />
                         <FaLock className='icon' />
                     </div>
-                    <button onClick={handleLogin} type="submit">Login</button>
+                    //<button onClick={handleLogin} type="submit">Login</button>
                 </form>
             </div>
         </div>
