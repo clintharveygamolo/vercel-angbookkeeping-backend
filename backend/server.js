@@ -25,7 +25,6 @@ try {
     
     const adminPass = await bcrypt.hash("adminpass", 12);
     await User.create({
-        user_id: 56686,
         name: "Clint",
         password: adminPass,
         role: "Admin"
@@ -36,3 +35,5 @@ try {
 } catch (error) {
     console.error(error);
 }
+
+export default app;

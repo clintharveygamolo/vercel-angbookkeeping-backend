@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "mocha __tests__/**/*.test.js"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +19,10 @@
     "mysql": "^2.18.1",
     "sequelize": "^6.37.3"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "chai": "^5.1.0",
+    "mocha": "^10.4.0",
+    "supertest": "^7.0.0"
+  }
 }
