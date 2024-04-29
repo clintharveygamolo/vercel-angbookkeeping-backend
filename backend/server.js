@@ -2,7 +2,6 @@ import express from "express";
 import sequelize from './util/database.js';
 import User from './models/userModel.js';
 import authRoutes from './routes/authRoute.js'
-import createUserRoute from './routes/createUserRoute.js';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
 
@@ -15,7 +14,6 @@ app.get("/", (req, res) => {
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
-app.use('/api/auth', createUserRoute);
 
 // Routes
 const port = 9000;
