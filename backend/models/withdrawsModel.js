@@ -5,27 +5,27 @@ const Withdraws = sequelize.define("Withdraws", {
     withdraw_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: true
+        allowNull: false
     },
     date: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: false
     },
     payee: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
     },
     check_no: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: false
     },
     invoice_no: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: false
     },
     amount: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: false
     },
     remarks: {
         type: DataTypes.STRING,

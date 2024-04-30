@@ -5,7 +5,7 @@ const Deposits = sequelize.define("Withdraws", {
     deposit_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: true
+        allowNull: false
     }, 
     particular: {
         type: DataTypes.STRING,
@@ -13,11 +13,11 @@ const Deposits = sequelize.define("Withdraws", {
     },
     date: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: false
     },
     amount: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: false
     },
     remarks: {
         type: DataTypes.STRING,
