@@ -9,7 +9,7 @@ const Deposits = sequelize.define("Withdraws", {
     }, 
     particular: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
     },
     date: {
         type: DataTypes.DATE,
