@@ -1,26 +1,18 @@
 import sequelize from '../util/database.js';
 import { DataTypes } from 'sequelize';
 
-const Withdraws = sequelize.define("Withdraws", {
-    withdraw_id: {
+const Deposits = sequelize.define("Withdraws", {
+    deposit_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        allowNull: false
+    }, 
+    particular: {
+        type: DataTypes.STRING,
         allowNull: false
     },
     date: {
         type: DataTypes.DATE,
-        allowNull: false
-    },
-    payee: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    check_no: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    invoice_no: {
-        type: DataTypes.INTEGER,
         allowNull: false
     },
     amount: {
@@ -33,4 +25,4 @@ const Withdraws = sequelize.define("Withdraws", {
     }
 });
 
-export default Withdraws;
+export default Deposits;

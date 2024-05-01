@@ -2,18 +2,23 @@ import express from "express";
 import sequelize from './util/database.js';
 import User from './models/userModel.js';
 import authRoutes from './routes/authRoute.js'
+import createUserRoute from './routes/createUserRoute.js';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
 
 const app = express();
 app.get("/", (req, res) => {
-    res.send("Hello, world");
+    res.send("Enter valid gateway");
 });
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', createUserRoute);
+// app.use((error, req, res) => {
+//     res.status(error.statusCode).json({ message: error.message })
+// });
 
 // Routes
 const port = 9000;
@@ -23,7 +28,6 @@ try {
     
     const adminPass = await bcrypt.hash("adminpass", 12);
     await User.create({
-        user_id: 56686,
         name: "Clint",
         password: adminPass,
         role: "Admin"
@@ -34,3 +38,5 @@ try {
 } catch (error) {
     console.error(error);
 }
+
+export default app;
