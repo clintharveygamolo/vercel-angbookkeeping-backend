@@ -5,6 +5,7 @@ import authRoutes from './routes/authRoute.js'
 import createUserRoute from './routes/createUserRoute.js';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
+import createWithdraws from "./routes/createWithdrawsRoute.js";
 
 const app = express();
 app.get("/", (req, res) => {
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', createUserRoute);
+app.use('/api/auth', createWithdraws);
 
 // Routes
 const port = 9000;
