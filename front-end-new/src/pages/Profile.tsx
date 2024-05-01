@@ -23,7 +23,7 @@ const UserAcc: UserAccount[] = [
 
 const Profile = () => {
 
-  const [openModal, setOpenModal] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
   const userInputRefInputRef = useRef<HTMLInputElement>(null);
 
   return (
