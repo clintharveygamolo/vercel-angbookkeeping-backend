@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
 import { useRef } from "react";
+import SelectGroupTwo from '../components/Forms/SelectGroup/SelectGroupTwo';
 
 const UserAcc: UserAccount[] = [
   {
@@ -23,7 +24,7 @@ const UserAcc: UserAccount[] = [
 const Profile = () => {
 
   const [openModal, setOpenModal] = useState(true);
-  const emailInputRef = useRef<HTMLInputElement>(null);
+  const userInputRefInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <DefaultLayout>
@@ -133,45 +134,60 @@ const Profile = () => {
           </h4>
 
           <>
-            <Button onClick={() => setOpenModal(true)}>Toggle modal</Button>
-            <Modal show={openModal} size="md" popup onClose={() => setOpenModal(false)} initialFocus={emailInputRef}>
-              <Modal.Header />
-              <Modal.Body>
-                <div className="space-y-6">
-                  <h3 className="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="email" value="Your email" />
+            <Button className="bg-primary text-white rounded-lg px-4 py-2 hover:bg-primary-dark hover:bg-opacity-90" onClick={() => setOpenModal(true)}>Create Account</Button>
+            <Modal
+              show={openModal}
+              size="md"
+              popup
+              onClose={() => setOpenModal(false)}
+              initialFocus={userInputRefInputRef}
+            >
+              <div className="fixed inset-0 flex items-center justify-center p-4">
+                <div className="w-full max-w-md mx-auto bg-white rounded-lg border shadow-md sm:p-2 dark:bg-gray-800 dark:border-gray-700">
+                  <Modal.Header />
+                  <Modal.Body>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-medium text-gray-900 dark:text-white">Create/Edit Account</h3>
+                      <div>
+                        <div className="mb-2 block">
+                          <Label htmlFor="username" value="Username" />
+                        </div>
+                        <TextInput id="username" ref={userInputRefInputRef} placeholder="Username" required />
+                      </div>
+                      <div>
+                        <div className="mb-2 block">
+                          <Label htmlFor="password" value="Password" />
+                        </div>
+                        <TextInput id="password" type="password" required />
+                      </div>
+                      <div>
+                        <div className="w-full">
+                          <div className="mb-2 block">
+                            <Label htmlFor="role" value="Select Role" />
+                          </div>
+                          <SelectGroupTwo />
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <Button>Log in to your account</Button>
+                      </div>
+                      <div className="flex justify-end gap-3">
+                        <button className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90">
+                          Delete Account
+                        </button>
+                        <button className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90">
+                          Edit Account
+                        </button>
+                        <button className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90">
+                          Create Account
+                        </button>
+                      </div>
                     </div>
-                    <TextInput id="email" ref={emailInputRef} placeholder="name@company.com" required />
-                  </div>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="password" value="Your password" />
-                    </div>
-                    <TextInput id="password" type="password" required />
-                  </div>
-                  <div className="flex justify-between">
-                    <div className="flex items-center gap-2">
-                      <Checkbox id="remember" />
-                      <Label htmlFor="remember">Remember me</Label>
-                    </div>
-                    <a href="#" className="text-sm text-cyan-700 hover:underline dark:text-cyan-500">
-                      Lost Password?
-                    </a>
-                  </div>
-                  <div className="w-full">
-                    <Button>Log in to your account</Button>
-                  </div>
-                  <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-300">
-                    Not registered?&nbsp;
-                    <a href="#" className="text-cyan-700 hover:underline dark:text-cyan-500">
-                      Create account
-                    </a>
-                  </div>
+                  </Modal.Body>
                 </div>
-              </Modal.Body>
+              </div>
             </Modal>
+
           </>
 
         </div>

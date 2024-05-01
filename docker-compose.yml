@@ -1,17 +1,17 @@
 version: "3.8"
 
-services: 
+services:
 
   frontend:
-    build: ./frontend
+    build: ./front-end-new
     depends_on:
       - backend
     networks:
       - public
       - private
     ports:
-    - "5173:5173"
-  
+      - "5173:5173"
+
   backend:
     build: ./backend
     environment:
@@ -32,7 +32,7 @@ services:
     build: ./docker/nginx
     ports:
       - "80:80"
-    networks: 
+    networks:
       - public
       - private
     depends_on:
@@ -64,7 +64,7 @@ services:
       - MYSQL_PASSWORD=cds#1
     ports:
       - "3306:3306"
-    volumes: 
+    volumes:
       - db:/var/lib/mysql
     networks:
       - public
