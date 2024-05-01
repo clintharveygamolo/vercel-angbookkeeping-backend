@@ -8,7 +8,7 @@ import cors from 'cors';
 
 const app = express();
 app.get("/", (req, res) => {
-    res.send("Hello, world");
+    res.send("Enter valid gateway");
 });
 
 // Middleware
@@ -16,6 +16,9 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', createUserRoute);
+// app.use((error, req, res) => {
+//     res.status(error.statusCode).json({ message: error.message })
+// });
 
 // Routes
 const port = 9000;
