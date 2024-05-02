@@ -14,7 +14,7 @@ export async function editWithdraws(req, res) {
         }
 
         if(!withdraws) {
-            return res.status(401).json({ message: "Updated failed, withdrawal entry not found."})
+            return res.status(401).json({ message: "Updated failed, withdrawal entry not found."});
         }
 
         const editWithdraws = await Withdraws.update({
