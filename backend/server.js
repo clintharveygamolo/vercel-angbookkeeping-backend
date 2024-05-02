@@ -7,7 +7,9 @@ import bcrypt from 'bcrypt';
 import cors from 'cors';
 import createWithdraws from "./routes/createWithdrawsRoute.js";
 import editWithdraws from "./routes/editWithdrawsRoute.js";
-import createDeposits from "./routes/createDepositsRoute.js"
+import createDeposits from "./routes/createDepositsRoute.js";
+import editDeposits from "./routes/editDepositsRoute.js";
+
 
 const app = express();
 app.get("/", (req, res) => {
@@ -22,6 +24,7 @@ app.use('/api/auth', createUserRoute);
 app.use('/api/auth', createWithdraws);
 app.use('/api/auth', editWithdraws);
 app.use('/api/auth', createDeposits);
+app.use('/api/auth', editDeposits);
 
 // Routes
 const port = 9000;
