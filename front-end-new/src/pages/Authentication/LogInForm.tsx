@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { FaUser, FaLock } from "react-icons/fa";
 import Anglogo from '../../images/AngBookkeeping.png';
 import axios from 'axios';
-import { Link, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, ToastContentProps, toast } from 'react-toastify';
 
 const LogInForm: React.FC = () => {
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
 
     const handleError = (err: String | Error | any) => {
         toast.error(err, {
             position: "bottom-right"
         });
     }
-    
+
     const handleSuccess = (msg: String) => {
         toast.success(msg, {
             position: "bottom-right"
@@ -33,15 +34,12 @@ const LogInForm: React.FC = () => {
             );
             if (response.status === 200) {
                 setIsLoggedIn(true);
+                navigate("/dashboard");
             }
         } catch (error) {
             console.error("Error: ", error);
         }
     };
-
-    if (isLoggedIn) {
-        return <Navigate to="/dashboard" />
-    }
 
     return ( 
         <div className='flex flex-col justify-center items-center h-screen bg-gray-800'>

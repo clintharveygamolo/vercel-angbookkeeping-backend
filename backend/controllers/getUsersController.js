@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
-export async function login(req, res, next) {
+export async function getUsers(req, res, next) {
     try {
         const { user_id, password } = req.body;
 
