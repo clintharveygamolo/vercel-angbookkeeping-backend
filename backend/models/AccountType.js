@@ -10,7 +10,7 @@ const AccountType = sequelize.define("AccountType", {
     account_type: {
         type: DataTypes.STRING,
         allowNull: false
-    }
+    },
 });
 
 export default AccountType;
