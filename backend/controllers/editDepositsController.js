@@ -5,8 +5,16 @@ export async function editDeposits(req, res) {
     try {
         const currentUser = await User.findByPk(req.body.user_id);
 
+        const { deposit_id } = req.body;
+
+        const deposits = await Deposits.findOne({ where: {deposit_id: deposit_id} });
+
         if(currentUser.role !== 'Admin') {
             return res.status(403).json({ error: "Forbidden: Only admin users can edit deposit entries." });
+        }
+
+        if(!deposits) {
+            return res.status(401).json({ message: "Updated failed, withdrawal entry not found."});
         }
 
         const editDeposits = await Deposits.update({
