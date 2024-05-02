@@ -25,6 +25,7 @@ export async function login(req, res, next) {
             token: token, 
             userId: user.user_id.toString(),
         });
+        next();
     } catch (error) {
         next(error);
     }

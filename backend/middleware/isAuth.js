@@ -17,10 +17,9 @@ export default function(req, res, next) {
             error.statusCode = 401;
             throw error;
         }
+        req.user_id = decodedToken.user_id;
     } catch (error) {
         error.statusCode = 500;
-        throw error;
+        next(error);
     }
-    req.user_id = decodedToken.user_id;
-    next();
 }
