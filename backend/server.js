@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt';
 import cors from 'cors';
 import createWithdraws from "./routes/createWithdrawsRoute.js";
 import editWithdraws from "./routes/editWithdrawsRoute.js";
+import createDeposits from "./routes/createDepositsRoute.js"
 
 const app = express();
 app.get("/", (req, res) => {
@@ -20,13 +21,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/auth', createUserRoute);
 app.use('/api/auth', createWithdraws);
 app.use('/api/auth', editWithdraws);
+app.use('/api/auth', createDeposits);
 
 // Routes
 const port = 9000;
 
 try {
     await sequelize.sync({ force: true });
-    
+
     const adminPass = await bcrypt.hash("adminpass", 12);
     await User.create({
         name: "Clint",
