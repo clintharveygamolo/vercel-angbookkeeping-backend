@@ -4,6 +4,6 @@ import { editDeposits } from '../controllers/editDepositsController.js';
 
 const router = express.Router();
 
-router.post('/editWithdraw', isAuth, editDeposits);
+router.post('/editDeposit', isAuth, editDeposits);
 
 export default router;
