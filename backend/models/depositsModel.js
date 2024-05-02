@@ -1,12 +1,12 @@
 import sequelize from '../util/database.js';
 import { DataTypes } from 'sequelize';
 
-const Deposits = sequelize.define("Withdraws", {
+const Deposits = sequelize.define("Deposits", {
     deposit_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false
-    }, 
+    },
     particular: {
         type: DataTypes.STRING,
         allowNull: false
