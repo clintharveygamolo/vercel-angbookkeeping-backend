@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
 export async function login(req, res, next) {
+    const MAX_AGE = 60 * 60 * 1000;
     try {
         const { user_id, password } = req.body;
 
@@ -22,9 +23,10 @@ export async function login(req, res, next) {
             return res.status(401).json({ message: "Incorrect User ID or password!"});
         }
 
-        const token = jwt.sign({ userId: user.user_id.toString()}, "secret", { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user.user_id.toString()}, "secret", { expiresIn: '1hr' });
         res.cookie("token", token, {
-            httpOnly: true
+            httpOnly: false,
+            maxAge: MAX_AGE
         });
 
         res.status(200).json({ 

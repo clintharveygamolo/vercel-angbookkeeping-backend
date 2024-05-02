@@ -1,14 +1,16 @@
 import jwt from 'jsonwebtoken';
 
 export default function (req, res, next) {
-    const token = req.cookies.token;
-    try {
-        const user = jwt.verify(token, 'secret');
-        req.user = user;
-        next();
-    } catch (err) {
-        res.clearCookie("token");
-        err.statusCode = 500;
-        next(err);
+    let token;
+    token = req.cookies.token;
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, 'secret');
+            req.user =  decoded;
+            next();
+        } catch (err) {
+            res.clearCookie("token");
+            res.status(401).json({ message: "Not authorized, token failed!"});
+        }
     }
-} 
+};

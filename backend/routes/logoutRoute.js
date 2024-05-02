@@ -4,7 +4,7 @@ import isAuthCookie from '../middleware/isAuthCookie.js';
 
 const router = express.Router();
 
-router.post('/logout', isAuthCookie, logOut);
+router.delete('/logout', isAuthCookie, logOut);
 
 export default router;
 

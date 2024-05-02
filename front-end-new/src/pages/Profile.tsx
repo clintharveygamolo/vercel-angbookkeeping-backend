@@ -202,7 +202,7 @@ const Profile = () => {
                   AccountID
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Account
+                  Name
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                   Privileges

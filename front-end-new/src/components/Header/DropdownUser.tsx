@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import reactCookie from 'react-cookie';
 
 import UserOne from '../../images/user/user-01.png';
 
@@ -10,11 +11,11 @@ const DropdownUser = () => {
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
-
+  
   const logOut = async () => {
     try {
-      const response = await axios.post('http://localhost:9000/api/auth/logout', {
-
+      const response = await axios.delete('http://localhost:9000/api/auth/logout', {
+        withCredentials: true
       });
 
       if (response.status === 200) {
