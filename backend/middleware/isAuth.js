@@ -18,6 +18,7 @@ export default function(req, res, next) {
             throw error;
         }
         req.user_id = decodedToken.user_id;
+        next();
     } catch (error) {
         error.statusCode = 500;
         next(error);

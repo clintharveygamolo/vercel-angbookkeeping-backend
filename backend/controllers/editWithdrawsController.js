@@ -1,4 +1,5 @@
 import Withdraws from '../models/withdrawsModel.js';
+import User from '../models/userModel.js';
 
 export async function editWithdraws(req, res) {
     try {
@@ -9,6 +10,7 @@ export async function editWithdraws(req, res) {
         }
 
         const editWithdraws = await Withdraws.update({
+            withdraw_id: req.body.withdraw_id,
             date: req.body.date,
             payee: req.body.payee,
             check_no: req.body.check_no,

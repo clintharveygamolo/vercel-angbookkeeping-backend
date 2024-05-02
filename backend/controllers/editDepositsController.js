@@ -1,4 +1,5 @@
 import Deposits from '../models/depositsModel.js';
+import User from '../models/userModel.js';
 
 export async function editDeposits(req, res) {
     try {
