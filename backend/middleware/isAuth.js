@@ -7,7 +7,7 @@ export default function(req, res, next) {
         error.statusCode = 401;
         throw error;
     }
-    const token = authHeader.split(" ")[1];
+    const token = authHeader && authHeader.split(" ")[1];
 
     try {
         const decodedToken = jwt.verify(token, "secret");
@@ -18,6 +18,7 @@ export default function(req, res, next) {
             throw error;
         }
         req.user_id = decodedToken.user_id;
+        next();
     } catch (error) {
         error.statusCode = 500;
         next(error);
