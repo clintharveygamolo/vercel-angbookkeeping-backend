@@ -14,7 +14,7 @@ export async function editDeposits(req, res) {
         }
 
         if(!deposits) {
-            return res.status(401).json({ message: "Updated failed, withdrawal entry not found."});
+            return res.status(401).json({ message: "Updated failed, deposit entry not found."});
         }
 
         const editDeposits = await Deposits.update({
