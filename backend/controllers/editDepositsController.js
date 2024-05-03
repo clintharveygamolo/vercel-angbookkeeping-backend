@@ -17,7 +17,7 @@ export async function editDeposits(req, res) {
             return res.status(401).json({ message: "Updated failed, deposit entry not found."});
         }
 
-        const editDeposits = await Deposits.update({
+        await Deposits.update({
             particular: req.body.particular,
             date: req.body.date,
             amount: req.body.amount,
@@ -30,7 +30,7 @@ export async function editDeposits(req, res) {
         }
     );
 
-        res.status(201).json(editDeposits);
+        res.status(201).json("Edit success, deposit entry has been edited.");
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "An error occured while updating the entry."});
