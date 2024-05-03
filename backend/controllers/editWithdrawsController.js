@@ -17,7 +17,7 @@ export async function editWithdraws(req, res) {
             return res.status(401).json({ message: "Updated failed, withdrawal entry not found." });
         }
 
-        const editWithdraws = await Withdraws.update({
+        await Withdraws.update({
             withdraw_id: req.body.withdraw_id,
             date: req.body.date,
             payee: req.body.payee,
@@ -33,7 +33,7 @@ export async function editWithdraws(req, res) {
             }
         );
 
-        res.status(201).json(editWithdraws);
+        res.status(201).json("Edit sucess, withdrawal entry has been edited.");
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "An error occured while updating the entry." });
