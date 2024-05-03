@@ -10,6 +10,7 @@ import editWithdraws from "./routes/editWithdrawsRoute.js";
 import deleteWithdraws from "./routes/deleteWithdrawsRoute.js";
 import createDeposits from "./routes/createDepositsRoute.js";
 import editDeposits from "./routes/editDepositsRoute.js";
+import deleteDeposits from "./routes/deleteDepositsRoute.js";
 
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/auth', editWithdraws);
 app.use('/api/auth', deleteWithdraws);
 app.use('/api/auth', createDeposits);
 app.use('/api/auth', editDeposits);
+app.use('/api/auth', deleteDeposits);
 
 // Routes
 const port = 9000;
