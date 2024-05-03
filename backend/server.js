@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt';
 import cors from 'cors';
 import createWithdraws from "./routes/createWithdrawsRoute.js";
 import editWithdraws from "./routes/editWithdrawsRoute.js";
+import deleteWithdraws from "./routes/deleteWithdrawsRoute.js";
 import createDeposits from "./routes/createDepositsRoute.js";
 import editDeposits from "./routes/editDepositsRoute.js";
 
@@ -23,6 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/auth', createUserRoute);
 app.use('/api/auth', createWithdraws);
 app.use('/api/auth', editWithdraws);
+app.use('/api/auth', deleteWithdraws);
 app.use('/api/auth', createDeposits);
 app.use('/api/auth', editDeposits);
 
