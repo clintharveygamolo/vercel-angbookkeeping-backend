@@ -18,6 +18,7 @@ import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import Deposits from './pages/Form/Deposits';
 import Withdraws from './pages/Form/Withdraws';
+import Company from './pages/Company';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -105,6 +106,15 @@ function App() {
             <>
               <PageTitle title="Tables | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <Tables />
+            </>
+          }
+        />
+        <Route
+          path="/company"
+          element={
+            <>
+              <PageTitle title="Form Layout | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Company />
             </>
           }
         />
