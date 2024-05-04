@@ -2,16 +2,17 @@ import User from '../models/userModel.js';
 
 export async function createUser(req, res) {
     try {
-        const currentUser = await User.findByPk(req.body.user_id);
+        const { user_id, name, password, role } = req.body;
+        const currentUser = await User.findByPk(user_id);
 
         if(currentUser.role !== 'Admin') {
             return res.status(403).json({ error: "Forbidden: Only admin users can create new users." });
         }
 
         const newUser = await User.create({
-            name: req.body.name,
-            password: req.body.password,
-            role: req.body.role
+            name: name,
+            password: password,
+            role: role
         });
 
         res.status(201).json(newUser);

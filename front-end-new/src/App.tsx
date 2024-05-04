@@ -38,7 +38,7 @@ function App() {
     <>
       <Routes>
         <Route
-          index
+          path="/dashboard"
           element={
             <>
               <PageTitle title="eCommerce Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
@@ -155,11 +155,11 @@ function App() {
           }
         />
         <Route
-          path="/auth/signin"
+          index
           element={
             <>
-              <PageTitle title="Signin | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <SignIn />
+              <PageTitle title="Sign In | Ang Book Keeping" />
+              <Login />
             </>
           }
         />
