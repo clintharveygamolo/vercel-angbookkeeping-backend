@@ -1,5 +1,5 @@
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import BankTables from '../components/Tables/BanksTable';
+import AccountsTable from '../components/Tables/AccountsTable';
 import DefaultLayout from '../layout/DefaultLayout';
 
 const Tables = () => {
@@ -8,7 +8,7 @@ const Tables = () => {
       <Breadcrumb pageName="Tables" />
 
       <div className="flex flex-col gap-10">
-        <BankTables />
+        <AccountsTable />
       </div>
 
     </DefaultLayout>
