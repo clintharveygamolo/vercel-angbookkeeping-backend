@@ -9,6 +9,9 @@ import cookieParser from 'cookie-parser'
 import logoutRoute from './routes/logoutRoute.js';
 import createWithdraws from "./routes/createWithdrawsRoute.js";
 import editWithdraws from "./routes/editWithdrawsRoute.js";
+import createDeposits from "./routes/createDepositsRoute.js";
+import editDeposits from "./routes/editDepositsRoute.js";
+
 
 const app = express();
 app.get("/", (req, res) => {
@@ -30,6 +33,7 @@ app.use('/api/auth', logoutRoute);
 // app.use('/api/auth', createWithdraws);
 // app.use('/api/auth', editWithdraws);
 
+
 // Routes
 const port = 9000;
 
@@ -42,6 +46,13 @@ try {
         password: adminPass,
         role: "Admin"
     });
+    const userPass = await bcrypt.hash("userpass", 12);
+    await User.create({
+        name: "Stephen",
+        password: userPass,
+        role: "User"
+    })
+
 
     const employeePass = await bcrypt.hash("employeepass", 12);
     await User.create({
