@@ -1,0 +1,4 @@
+.absolute.left-0.top-0.-z-10 {
+    display: none;
+    /* or you can use visibility: hidden; if you just want to hide it */
+}
