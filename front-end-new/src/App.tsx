@@ -7,10 +7,10 @@ import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Login from './pages/Authentication/LogInForm';
 import Calendar from './pages/Calendar';
-import Chart from './pages/Chart';
+import Reports from './pages/Reports';
 import ECommerce from './pages/Dashboard/ECommerce';
 import FormElements from './pages/Form/Accountss';
-import FormLayout from './pages/Form/Accounts';
+import Accounts from './pages/Form/Accounts';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Tables from './pages/Tables';
@@ -18,7 +18,7 @@ import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import Deposits from './pages/Form/Deposits';
 import Withdraws from './pages/Form/Withdraws';
-import Company from './pages/Company';
+import BankAndCompany from './pages/Form/BankAndCompany';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -74,11 +74,11 @@ function App() {
           }
         />
         <Route
-          path="/forms/form-layout"
+          path="/forms/accounts"
           element={
             <>
               <PageTitle title="Form Layout | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <FormLayout />
+              <Accounts />
             </>
           }
         />
@@ -110,11 +110,11 @@ function App() {
           }
         />
         <Route
-          path="/company"
+          path="/forms/bankandcompany"
           element={
             <>
               <PageTitle title="Form Layout | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Company />
+              <BankAndCompany />
             </>
           }
         />
@@ -128,11 +128,11 @@ function App() {
           }
         />
         <Route
-          path="/chart"
+          path="/report"
           element={
             <>
               <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Chart />
+              <Reports />
             </>
           }
         />
