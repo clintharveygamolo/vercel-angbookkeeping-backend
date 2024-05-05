@@ -1,9 +1,9 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import BanksTable from '../components/Tables/BanksTable';
-import CompaniesTable from '../components/Tables/CompanyTable';
-import DefaultLayout from '../layout/DefaultLayout';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
+import BanksTable from '../../components/Tables/BanksTable';
+import CompaniesTable from '../../components/Tables/CompanyTable';
+import DefaultLayout from '../../layout/DefaultLayout';
 
-const Company = () => {
+const BankandCompany = () => {
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Tables" />
@@ -20,4 +20,4 @@ const Company = () => {
     );
 };
 
-export default Company;
+export default BankandCompany;
