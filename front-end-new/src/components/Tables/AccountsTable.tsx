@@ -1,4 +1,5 @@
 import { BankAccount } from '../../types/Accounts';
+import MultiSelect from '../Forms/MultiSelect';
 
 
 const bankaccount: BankAccount[] = [
@@ -14,9 +15,19 @@ const bankaccount: BankAccount[] = [
 const AccountsTable = () => {
     return (
         <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-            <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-                Accounts
-            </h4>
+            <div className="flex items-center justify-between mb-6">
+                <h4 className="text-xl font-semibold text-black dark:text-white">Accounts</h4>
+                <div className="flex flex-grow items-center space-x-4 ml-8">  {/* Added margin-left here */}
+                    <MultiSelect id="BankType" />
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        className="flex-grow rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    />
+                </div>
+            </div>
+
+
 
             <div className="flex flex-col">
                 <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
