@@ -6,6 +6,7 @@ import DefaultLayout from '../layout/DefaultLayout';
 import SelectGroupOne from '../components/Forms/SelectGroup/SelectGroupOne';
 
 import { Checkbox, Table, Tabs } from "flowbite-react";
+import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 
 const Reports: React.FC = () => {
   return (
@@ -14,7 +15,9 @@ const Reports: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-9 sm:grid-cols-1">
         <div className="flex flex-col gap-9">
-          {/* <!-- Contact Form --> */}
+
+          {/* <!-- Find Account --> */}
+
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
               <h3 className="font-medium text-black dark:text-white">
@@ -87,7 +90,19 @@ const Reports: React.FC = () => {
       </div>
 
       <div className="p-6.5 my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+        <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark flex flex-wrap items-center gap-4">
+          <div className="flex items-center">
+            <label className="mb-0 mr-2 block text-black dark:text-white">
+              From
+            </label>
+            <DatePickerOne />
+          </div>
+          <div className="flex items-center">
+            <label className="mb-0 mr-2 block text-black dark:text-white">
+              To
+            </label>
+            <DatePickerOne />
+          </div>
           <input
             type="text"
             placeholder="Search"
@@ -96,6 +111,9 @@ const Reports: React.FC = () => {
         </div>
         <div className="p-6.5 my-6 py-1">
           <Tabs aria-label="Pills" style="pills" className="bg-gray-100 rounded-lg">
+
+            {/* <!-- Deposits Report --> */}
+
             <Tabs.Item
               active
               title="Deposits"
@@ -167,6 +185,7 @@ const Reports: React.FC = () => {
               </div>
             </Tabs.Item>
 
+            {/* <!-- Withdraws Report --> */}
 
             <Tabs.Item
               title="Withdraws"
@@ -178,10 +197,12 @@ const Reports: React.FC = () => {
                     <Table.HeadCell className="p-4">
                       <Checkbox />
                     </Table.HeadCell>
-                    <Table.HeadCell>Product name</Table.HeadCell>
-                    <Table.HeadCell>Color</Table.HeadCell>
-                    <Table.HeadCell>Category</Table.HeadCell>
-                    <Table.HeadCell>Price</Table.HeadCell>
+                    <Table.HeadCell>Date</Table.HeadCell>
+                    <Table.HeadCell>Check #</Table.HeadCell>
+                    <Table.HeadCell>Invoice #</Table.HeadCell>
+                    <Table.HeadCell>Payee</Table.HeadCell>
+                    <Table.HeadCell>Remarks</Table.HeadCell>
+                    <Table.HeadCell>Amount</Table.HeadCell>
                     <Table.HeadCell>
                       <span className="sr-only">Edit</span>
                     </Table.HeadCell>
@@ -237,12 +258,65 @@ const Reports: React.FC = () => {
                 </Table>
               </div>
             </Tabs.Item>
+
+            {/* <!-- Deposits and Withdraws Report --> */}
+
             <Tabs.Item
               title="Deposits & Withdraws"
               className="text-gray-700 px-4 py-2 rounded-lg focus:outline-none focus:ring focus:ring-primary-500"
             >
-              <p className="text-sm text-gray-500 dark:text-gray-400">Both</p>
+              <div className="flex justify-between gap-4">
+                {/* Deposits Table */}
+                <div className="w-1/2">
+                  <div className="mb-2">
+                    <h4 className="font-semibold text-gray-900 dark:text-white">Deposits</h4>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <Table hoverable>
+                      <Table.Head>
+                        <Table.HeadCell>Date</Table.HeadCell>
+                        <Table.HeadCell>Amount</Table.HeadCell>
+                      </Table.Head>
+                      <Table.Body className="divide-y">
+                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                            {'Apple MacBook Pro 17"'}
+                          </Table.Cell>
+                          <Table.Cell>$2999</Table.Cell>
+                        </Table.Row>
+                        {/* Add additional rows as necessary */}
+                      </Table.Body>
+                    </Table>
+                  </div>
+                </div>
+
+                {/* Withdraws Table */}
+                <div className="w-1/2">
+                  <div className="mb-2">
+                    <h4 className="font-semibold text-gray-900 dark:text-white">Withdraws</h4>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <Table hoverable>
+                      <Table.Head>
+                        <Table.HeadCell>Date</Table.HeadCell>
+                        <Table.HeadCell>Amount</Table.HeadCell>
+                      </Table.Head>
+                      <Table.Body className="divide-y">
+                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                            Microsoft Surface Pro
+                          </Table.Cell>
+                          <Table.Cell>$1999</Table.Cell>
+                        </Table.Row>
+                        {/* Add additional rows as necessary */}
+                      </Table.Body>
+                    </Table>
+                  </div>
+                </div>
+              </div>
             </Tabs.Item>
+
+
           </Tabs>
 
         </div>

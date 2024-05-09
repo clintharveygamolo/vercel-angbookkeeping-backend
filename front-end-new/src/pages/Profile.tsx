@@ -26,6 +26,9 @@ const Profile = () => {
   const [openModal, setOpenModal] = useState(false);
   const userInputRefInputRef = useRef<HTMLInputElement>(null);
 
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Profile" />
@@ -119,8 +122,6 @@ const Profile = () => {
                 Role
               </h4>
             </div>
-
-
           </div>
         </div>
       </div>
@@ -128,7 +129,7 @@ const Profile = () => {
       {/* <!-- Add/Edit Account --> */}
 
       <div className="py-6 px-4 md:px-6 xl:px-7.5">
-        <div className="flex items-center justify-between"> {/* Flex container to align items on the same line */}
+        <div className="flex items-center justify-between">
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Add/Edit Accounts
           </h4>
@@ -173,12 +174,6 @@ const Profile = () => {
                       </div>
                       <div className="flex justify-end gap-3">
                         <button className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90">
-                          Delete Account
-                        </button>
-                        <button className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90">
-                          Edit Account
-                        </button>
-                        <button className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90">
                           Create Account
                         </button>
                       </div>
@@ -187,9 +182,7 @@ const Profile = () => {
                 </div>
               </div>
             </Modal>
-
           </>
-
         </div>
       </div>
 
@@ -239,7 +232,9 @@ const Profile = () => {
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
-                      <button className="hover:text-primary">
+
+                      {/* <!-- View Icon --> */}
+                      <button className="hover:text-primary" onClick={() => setOpenEditModal(true)}>
                         <svg
                           className="fill-current"
                           width="18"
@@ -258,7 +253,52 @@ const Profile = () => {
                           />
                         </svg>
                       </button>
-                      <button className="hover:text-primary">
+                      <Modal
+                        show={openEditModal}
+                        size="md"
+                        popup
+                        onClose={() => setOpenEditModal(false)}
+                        initialFocus={userInputRefInputRef}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <Modal.Header />
+                        <Modal.Body>
+                          <div className="space-y-2">
+                            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Edit Account</h3>
+                            <div>
+                              <div className="mb-2 block">
+                                <Label htmlFor="username" value="Username" />
+                              </div>
+                              <TextInput id="username" ref={userInputRefInputRef} placeholder="Username" required />
+                            </div>
+                            <div>
+                              <div className="mb-2 block">
+                                <Label htmlFor="password" value="Password" />
+                              </div>
+                              <TextInput id="password" type="password" required />
+                            </div>
+                            <div>
+                              <div className="w-full">
+                                <div className="mb-2 block">
+                                  <Label htmlFor="role" value="Select Role" />
+                                </div>
+                                <SelectGroupTwo />
+                              </div>
+                            </div>
+                            <div className="flex justify-end gap-3">
+                              <button className="flex justify-center rounded bg-red-700 p-3 font-small text-gray hover:bg-opacity-90">
+                                Delete Account
+                              </button>
+                              <button className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90">
+                                Edit Account
+                              </button>
+                            </div>
+                          </div>
+                        </Modal.Body>
+                      </Modal>
+
+                      {/* <!-- Delete Icon --> */}
+                      <button className="hover:text-primary" onClick={() => setOpenDeleteModal(true)}>
                         <svg
                           className="fill-current"
                           width="18"
@@ -285,6 +325,22 @@ const Profile = () => {
                           />
                         </svg>
                       </button>
+                      <Modal
+                        show={openDeleteModal}
+                        size="md"
+                        popup
+                        onClose={() => setOpenDeleteModal(false)}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <Modal.Header />
+                        <Modal.Body>
+                          <div>
+                            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Delete Account</h3>
+                            <p>Are you sure you want to delete this account?</p>
+                            <Button className="bg-red-700  text-white rounded-lg px-1 py-1 hover:bg-primary-dark hover:bg-opacity-90" onClick={() => setOpenDeleteModal(false)}>Confirm Delete</Button>
+                          </div>
+                        </Modal.Body>
+                      </Modal>
 
                     </div>
                   </td>
