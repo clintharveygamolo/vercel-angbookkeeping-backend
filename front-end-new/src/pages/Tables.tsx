@@ -5,7 +5,8 @@ import DefaultLayout from '../layout/DefaultLayout';
 const Tables = () => {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Accounts Table" />
+      <Breadcrumb pageName="Tables" />
+
       <div className="flex flex-col gap-10">
         <AccountsTable />
       </div>

@@ -59,7 +59,7 @@ export function BanksTable() {
             </div>
             <Table hoverable>
                 <Table.Head>
-                    <Table.HeadCell>Bank List</Table.HeadCell>
+                    <Table.HeadCell>Product name</Table.HeadCell>
                     <Table.HeadCell>
                         <span className="sr-only">Edit</span>
                     </Table.HeadCell>
