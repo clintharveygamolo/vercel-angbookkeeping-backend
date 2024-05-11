@@ -5,7 +5,7 @@ import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../layout/DefaultLayout';
 import SelectGroupOne from '../components/Forms/SelectGroup/SelectGroupOne';
 
-import { Checkbox, Table, Tabs } from "flowbite-react";
+import { Button, Checkbox, Table, Tabs } from "flowbite-react";
 import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 
 const Reports: React.FC = () => {
@@ -150,38 +150,25 @@ const Reports: React.FC = () => {
                         </a>
                       </Table.Cell>
                     </Table.Row>
-                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <Table.Cell className="p-4">
-                        <Checkbox />
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        Microsoft Surface Pro
-                      </Table.Cell>
-                      <Table.Cell>White</Table.Cell>
-                      <Table.Cell>Laptop PC</Table.Cell>
-                      <Table.Cell>$1999</Table.Cell>
-                      <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                          Edit
-                        </a>
-                      </Table.Cell>
-                    </Table.Row>
-                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <Table.Cell className="p-4">
-                        <Checkbox />
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">Magic Mouse 2</Table.Cell>
-                      <Table.Cell>Black</Table.Cell>
-                      <Table.Cell>Accessories</Table.Cell>
-                      <Table.Cell>$99</Table.Cell>
-                      <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                          Edit
-                        </a>
-                      </Table.Cell>
+
+                    {/* <!-- Deposits Total --> */}
+
+                    <Table.Row className="font-bold">
+                      <Table.Cell></Table.Cell>
+                      <Table.Cell></Table.Cell>
+                      <Table.Cell></Table.Cell>
+                      <Table.Cell>Total</Table.Cell>
+                      <Table.Cell>Pesos</Table.Cell>
+                      <Table.Cell></Table.Cell>
                     </Table.Row>
                   </Table.Body>
                 </Table>
+              </div>
+
+              <div className="p-4 flex justify-end">
+                <Button className="bg-primary text-white rounded-lg px-2px py-2px hover:bg-primary-dark hover:bg-opacity-90">
+                  Generate Report
+                </Button>
               </div>
             </Tabs.Item>
 
@@ -217,6 +204,8 @@ const Reports: React.FC = () => {
                       </Table.Cell>
                       <Table.Cell>Sliver</Table.Cell>
                       <Table.Cell>Laptop</Table.Cell>
+                      <Table.Cell>Laptop</Table.Cell>
+                      <Table.Cell>Laptop</Table.Cell>
                       <Table.Cell>$2999</Table.Cell>
                       <Table.Cell>
                         <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
@@ -224,38 +213,29 @@ const Reports: React.FC = () => {
                         </a>
                       </Table.Cell>
                     </Table.Row>
-                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <Table.Cell className="p-4">
-                        <Checkbox />
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        Microsoft Surface Pro
-                      </Table.Cell>
-                      <Table.Cell>White</Table.Cell>
-                      <Table.Cell>Laptop PC</Table.Cell>
-                      <Table.Cell>$1999</Table.Cell>
-                      <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                          Edit
-                        </a>
-                      </Table.Cell>
+
+                    {/* <!-- Withdraws Total --> */}
+
+                    <Table.Row className="font-bold">
+                      <Table.Cell></Table.Cell>
+                      <Table.Cell></Table.Cell>
+                      <Table.Cell></Table.Cell>
+                      <Table.Cell></Table.Cell>
+                      <Table.Cell></Table.Cell>
+                      <Table.Cell>Total</Table.Cell>
+                      <Table.Cell>Pesos</Table.Cell>
+                      <Table.Cell></Table.Cell>
                     </Table.Row>
-                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <Table.Cell className="p-4">
-                        <Checkbox />
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">Magic Mouse 2</Table.Cell>
-                      <Table.Cell>Black</Table.Cell>
-                      <Table.Cell>Accessories</Table.Cell>
-                      <Table.Cell>$99</Table.Cell>
-                      <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                          Edit
-                        </a>
-                      </Table.Cell>
-                    </Table.Row>
+
+
                   </Table.Body>
                 </Table>
+              </div>
+
+              <div className="p-4 flex justify-end">
+                <Button className="bg-primary text-white rounded-lg px-2px py-2px hover:bg-primary-dark hover:bg-opacity-90">
+                  Generate Report
+                </Button>
               </div>
             </Tabs.Item>
 
@@ -308,11 +288,16 @@ const Reports: React.FC = () => {
                           </Table.Cell>
                           <Table.Cell>$1999</Table.Cell>
                         </Table.Row>
-                        {/* Add additional rows as necessary */}
                       </Table.Body>
                     </Table>
                   </div>
                 </div>
+              </div>
+
+              <div className="p-4 flex justify-end">
+                <Button className="bg-primary text-white rounded-lg px-2px py-2px hover:bg-primary-dark hover:bg-opacity-90">
+                  Generate Report
+                </Button>
               </div>
             </Tabs.Item>
 
