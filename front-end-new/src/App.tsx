@@ -67,6 +67,33 @@ function App() {
             }
           />
           <Route
+            path="/reports"
+            element={
+              <>
+                <PageTitle title="Reports" />
+                <Reports />
+              </>
+            }
+          />
+          <Route
+            path="/accounts"
+            element={
+              <>
+                <PageTitle title="Reports" />
+                <Accounts />
+              </>
+            }
+          />
+          <Route
+            path="/bank&company"
+            element={
+              <>
+                <PageTitle title="Bank and Company" />
+                <BankAndCompany />
+              </>
+            }
+          />
+          <Route
             path="/calendar"
             element={
               <>
