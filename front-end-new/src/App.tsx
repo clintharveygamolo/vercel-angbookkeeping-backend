@@ -26,8 +26,8 @@ function App() {
   const { pathname } = useLocation();
 
   const store = createStore({
-    authName:'_auth',
-    authType:'cookie',
+    authName: '_auth',
+    authType: 'cookie',
     cookieDomain: window.location.hostname,
     cookieSecure: window.location.protocol === 'http:',
     // refresh: refresh,
