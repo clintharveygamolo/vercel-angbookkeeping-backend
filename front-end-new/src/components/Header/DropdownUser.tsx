@@ -1,26 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import reactCookie from 'react-cookie';
+import { Link, useNavigate } from 'react-router-dom';
+import useSignOut from 'react-auth-kit/hooks/useSignOut';
 
 import UserOne from '../../images/user/user-01.png';
+
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
-
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
+  const signOut = useSignOut();
+  const auth: any = useAuthUser();
   
   const logOut = async () => {
     try {
-      const response = await axios.delete('http://localhost:9000/api/auth/logout', {
-        withCredentials: true
-      });
-
-      if (response.status === 200) {
-        navigate('/');
-      }
+      signOut()
+      navigate('/login');
     } catch (err) {
       console.error("Error: ", err);
     }
@@ -62,9 +59,9 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {auth.name}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{auth.role}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
