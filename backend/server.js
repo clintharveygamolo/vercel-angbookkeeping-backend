@@ -34,6 +34,7 @@ app.use('/api', createUserRoute);
 // app.use('/api/auth', createWithdraws);
 // app.use('/api/auth', editWithdraws);
 
+
 // Routes
 const port = 9000;
 
@@ -47,6 +48,13 @@ try {
         password: adminPass,
         role: "Admin"
     });
+    const userPass = await bcrypt.hash("userpass", 12);
+    await User.create({
+        name: "Stephen",
+        password: userPass,
+        role: "User"
+    })
+
 
     const employeePass = await bcrypt.hash("employeepass", 12);
     await User.create({
