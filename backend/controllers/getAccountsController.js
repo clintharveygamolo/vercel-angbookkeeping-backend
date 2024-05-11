@@ -1,6 +1,6 @@
 import User from '../models/userModel.js';
 
-export async function getUsers(req, res) {
+export async function getAccounts(req, res) {
     try {
         const userQuery = await User.findAll({
             attributes: ["user_id", "name", "role"]
