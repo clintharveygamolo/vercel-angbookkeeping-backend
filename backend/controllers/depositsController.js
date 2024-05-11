@@ -3,7 +3,7 @@ import User from '../models/userModel.js';
 //this is the deposit creation function.
 export async function createDeposits(req, res) {
     try {
-        const newDeposits = await Deposits.create({
+        await Deposits.create({
             deposit_id: req.body.deposit_id,
             particular: req.body.particular,
             date: req.body.date,
@@ -34,7 +34,7 @@ export async function editDeposits(req, res) {
             return res.status(401).json({ message: "Updated failed, deposit entry not found."});
         }
 
-        const editDeposits = await Deposits.update({
+        await Deposits.update({
             particular: req.body.particular,
             date: req.body.date,
             amount: req.body.amount,
