@@ -8,9 +8,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser'
 import getUserRoute from './routes/getUserRoute.js';
 import refreshTokenRoute from './routes/refreshTokenRoute.js'
-import createWithdraws from "./routes/createWithdrawsRoute.js";
-import editWithdraws from "./routes/editWithdrawsRoute.js";
 import Deposit from "./models/depositsModel.js";
+import { createDeposits, editDeposits, deleteDeposits } from "./controllers/depositsController.js";
 
 const app = express();
 app.get("/", (req, res) => {
@@ -28,10 +27,9 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/get', getUserRoute);
 app.use('/api', createUserRoute);
-// app.use('/api/auth', createUserRoute);
-// app.use('/api/auth', createWithdraws);
-// app.use('/api/auth', editWithdraws);
-
+app.use('/api/auth/create', createDeposits);
+app.use('/api/auth/edit', editDeposits);
+app.use('/api/auth/delete', deleteDeposits);
 
 // Routes
 const port = 9000;
