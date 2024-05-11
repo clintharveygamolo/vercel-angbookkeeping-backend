@@ -76,16 +76,16 @@ function App() {
             }
           />
           <Route
-            path="/accounts"
+            path="/forms/accounts"
             element={
               <>
-                <PageTitle title="Reports" />
+                <PageTitle title="Accounts" />
                 <Accounts />
               </>
             }
           />
           <Route
-            path="/bank&company"
+            path="/forms/bank&company"
             element={
               <>
                 <PageTitle title="Bank and Company" />
