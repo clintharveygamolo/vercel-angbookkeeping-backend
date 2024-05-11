@@ -67,7 +67,7 @@ function App() {
             }
           />
           <Route
-            path="/reports"
+            path="/report"
             element={
               <>
                 <PageTitle title="Reports" />
@@ -76,16 +76,16 @@ function App() {
             }
           />
           <Route
-            path="/accounts"
+            path="/forms/accounts"
             element={
               <>
-                <PageTitle title="Reports" />
+                <PageTitle title="Accounts" />
                 <Accounts />
               </>
             }
           />
           <Route
-            path="/bank&company"
+            path="/forms/bankandcompany"
             element={
               <>
                 <PageTitle title="Bank and Company" />
@@ -124,7 +124,7 @@ function App() {
             path="/forms/form-deposit"
             element={
               <>
-                <PageTitle title="Form Layout" />
+                <PageTitle title="Deposits" />
                 <Deposits />
               </>
             }
@@ -133,7 +133,7 @@ function App() {
             path="/forms/form-withdraws"
             element={
               <>
-                <PageTitle title="Form Layout" />
+                <PageTitle title="Withdraws" />
                 <Withdraws />
               </>
             }
