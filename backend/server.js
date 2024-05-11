@@ -6,7 +6,6 @@ import createUserRoute from './routes/createUserRoute.js';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
 import cookieParser from 'cookie-parser'
-import logoutRoute from './routes/logoutRoute.js';
 import getUserRoute from './routes/getUserRoute.js';
 import refreshTokenRoute from './routes/refreshTokenRoute.js'
 import createWithdraws from "./routes/createWithdrawsRoute.js";
@@ -28,7 +27,6 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/get', getUserRoute);
-app.use('/api/auth', logoutRoute);
 app.use('/api', createUserRoute);
 // app.use('/api/auth', createUserRoute);
 // app.use('/api/auth', createWithdraws);
@@ -39,7 +37,7 @@ app.use('/api', createUserRoute);
 const port = 9000;
 
 try {
-    // await sequelize.sync({ force: true });
+    await sequelize.sync({ force: true });
 
     // USERS
     const adminPass = await bcrypt.hash("adminpass", 12);

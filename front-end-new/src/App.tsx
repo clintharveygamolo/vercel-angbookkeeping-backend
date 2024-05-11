@@ -94,15 +94,6 @@ function App() {
             }
           />
           <Route
-            path="/forms/form-layout"
-            element={
-              <>
-                <PageTitle title="Form Layout" />
-                <FormLayout />
-              </>
-            }
-          />
-          <Route
             path="/forms/form-deposit"
             element={
               <>
@@ -135,15 +126,6 @@ function App() {
               <>
                 <PageTitle title="Settings" />
                 <Settings />
-              </>
-            }
-          />
-          <Route
-            path="/chart"
-            element={
-              <>
-                <PageTitle title="Basic Chart" />
-                <Chart />
               </>
             }
           />
