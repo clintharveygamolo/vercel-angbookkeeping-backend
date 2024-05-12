@@ -6,12 +6,15 @@ import CoverOne from '../images/cover/cover-01.png';
 import userSix from '../images/user/user-06.png';
 import { SetStateAction, useEffect, useState } from 'react';
 import axiosConfig from '.././api/axiosconfig.js';
-import axios from 'axios';
+import { AxiosError } from 'axios';
 
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
-import { Button, Checkbox, Label, Modal, TextInput } from 'flowbite-react';
+import { Button, Label, Modal, TextInput } from 'flowbite-react';
 import { useRef } from 'react';
 import SelectGroupTwo from '../components/Forms/SelectGroup/SelectGroupTwo';
+
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 export type User = {
   user_id: number;
@@ -38,23 +41,29 @@ const Profile = () => {
   }
 
   const createUserAccount = async (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    try {
-      const response = await axiosConfig.post('/api/createUser', {
-        user_id: auth.user_id,
-        name: userNameFormValue,
-        password: userPasswordFormValue,
-        role: selectedRole
-      },
-        { withCredentials: true }
-      );
-      if (response.status === 200) {
-        console.log("Created a user!");
-      }
-    } catch (error) {
-      console.error("Error: ", error);
-    }
-  };
+        e.preventDefault();
+        try {
+            const response = await axiosConfig.post('/api/createUser', {
+                user_id: auth.user_id,
+                name: userNameFormValue,
+                password: userPasswordFormValue,
+                role: selectedRole
+            },
+            { withCredentials: true }
+            );
+
+            if (response.status === 201) {
+              setOpenModal(false);
+              toast.success("Created a user!");
+            }
+        } catch (err) {
+            if (err && err instanceof AxiosError) {
+                toast.error(err.response?.data.message);
+            } else if (err && err instanceof Error) {
+                console.log("Error: ", err);
+            }
+        }
+    };
 
   useEffect(() => {
     axiosConfig({
@@ -404,7 +413,7 @@ const Profile = () => {
           </table>
         </div>
       </div>
-      {/* <!-- Add/Edit Account --> */}
+      <ToastContainer />
     </DefaultLayout>
   );
 };

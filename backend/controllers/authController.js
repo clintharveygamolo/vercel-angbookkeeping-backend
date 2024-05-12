@@ -14,7 +14,7 @@ export async function login(req, res) {
         }
         
         if (!/^\d+$/.test(user_id)) {
-            return res.status(400).json({ message: "User ID must contain only numbers." });
+            return res.status(401).json({ message: "User ID must contain only numbers." });
         }
 
         const user = await User.findOne({ where: { user_id: user_id } });

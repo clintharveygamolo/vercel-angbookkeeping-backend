@@ -7,9 +7,6 @@ import bcrypt from 'bcrypt';
 import cors from 'cors';
 import cookieParser from 'cookie-parser'
 import getUserRoute from './routes/getUserRoute.js';
-import refreshTokenRoute from './routes/refreshTokenRoute.js'
-import createWithdraws from "./routes/createWithdrawsRoute.js";
-import editWithdraws from "./routes/editWithdrawsRoute.js";
 import Deposit from "./models/depositsModel.js";
 
 const app = express();
@@ -28,9 +25,6 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/get', getUserRoute);
 app.use('/api', createUserRoute);
-// app.use('/api/auth', createUserRoute);
-// app.use('/api/auth', createWithdraws);
-// app.use('/api/auth', editWithdraws);
 
 
 // Routes

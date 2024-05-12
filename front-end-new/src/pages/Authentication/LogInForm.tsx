@@ -15,6 +15,9 @@ const LogInForm: React.FC = () => {
     const navigate = useNavigate();
     const signIn = useSignIn();
 
+<<<<<<< HEAD
+    const onSubmit = async (e: { preventDefault: () => void}) => {
+=======
     const notify = () => {
         toast.success("Success!", {
             position: "top-center"
@@ -27,6 +30,7 @@ const LogInForm: React.FC = () => {
     }
 
     const onSubmit = async (e: { preventDefault: () => void }) => {
+>>>>>>> development
         e.preventDefault();
         console.log("Values", e);
         setError("");
@@ -48,12 +52,11 @@ const LogInForm: React.FC = () => {
                         user_id: userId,
                         name: response.data.name,
                         role: response.data.role
+<<<<<<< HEAD
+=======
 
+>>>>>>> development
                     },
-                    // token: response.data.accessToken,
-                    // expiresIn: 60000,
-                    // tokenType: "Bearer",
-                    // authState: { user_id: values.user_id},
                 });
                 navigate('/');
             }
