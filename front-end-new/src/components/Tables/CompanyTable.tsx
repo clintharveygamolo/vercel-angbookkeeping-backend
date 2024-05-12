@@ -59,7 +59,7 @@ export function CompaniesTable() {
             </div>
             <Table hoverable>
                 <Table.Head>
-                    <Table.HeadCell>Product name</Table.HeadCell>
+                    <Table.HeadCell>Company List</Table.HeadCell>
                     <Table.HeadCell>
                         <span className="sr-only">Edit</span>
                     </Table.HeadCell>
