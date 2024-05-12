@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Dashboard = () =>{
-    return(
+const Dashboard = () => {
+    return (
         <>
-            <h1>You have logged in!</h1>
+            <h1>You have logged in!!!</h1>
         </>
 
     );

@@ -7,6 +7,7 @@ import ProductOne from '../../images/product/product-01.png';
 import ProductTwo from '../../images/product/product-02.png';
 import ProductThree from '../../images/product/product-03.png';
 import ProductFour from '../../images/product/product-04.png';
+import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 
 
 const productData: Product[] = [
@@ -96,7 +97,21 @@ const Withdraws = () => {
                   </div>
                 </div>
 
-                <SelectGroupOne />
+                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                  <div className="w-full xl:w-2/3">
+                    <SelectGroupOne />
+                  </div>
+                  <div className="w-full xl:w-1/3">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Bank Code
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter Bank Code"
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    />
+                  </div>
+                </div>
 
                 <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
                   Find Account
@@ -107,65 +122,99 @@ const Withdraws = () => {
         </div>
       </div>
 
-      <div className="my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="py-6 px-4 md:px-6 xl:px-7.5">
-          <h4 className="text-xl font-semibold text-black dark:text-white">
-            Add Withdraws
-          </h4>
-        </div>
 
-        <div className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-          <div className="col-span-3 flex items-center">
-            <p className="font-medium">Product Name</p>
+      <form action="#">
+        <div className="my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+          <div className="py-6 px-4 md:px-6 xl:px-7.5 flex items-center justify-between">
+            <h4 className="text-xl font-semibold text-black dark:text-white">
+              Add Withdraws
+            </h4>
+            <button className="bg-primary text-white rounded-lg px-4 py-2 hover:bg-primary-dark">
+              Add
+            </button>
           </div>
-          <div className="col-span-2 hidden items-center sm:flex">
-            <p className="font-medium">Category</p>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <p className="font-medium">Price</p>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <p className="font-medium">Sold</p>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <p className="font-medium">Profit</p>
-          </div>
-        </div>
 
-        {productData.map((product, key) => (
-          <div
-            className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
-            key={key}
-          >
+          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+            <div className="col-span-2 flex items-center">
+              <p className="font-medium">Date</p>
+            </div>
+            <div className="px-2 col-span-3 hidden items-center sm:flex">
+              <p className="font-medium">Invoice Number</p>
+            </div>
             <div className="col-span-3 flex items-center">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <div className="h-12.5 w-15 rounded-md">
-                  <img src={product.image} alt="Product" />
-                </div>
-                <p className="text-sm text-black dark:text-white">
-                  {product.name}
-                </p>
+              <p className="font-medium">Check Number</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5" >
+            <div className="col-span-2 flex items-center">
+              <div className=" ">
+                <DatePickerOne />
               </div>
             </div>
-            <div className="col-span-2 hidden items-center sm:flex">
-              <p className="text-sm text-black dark:text-white">
-                {product.category}
-              </p>
+            <div className="col-span-3 hidden items-center sm:flex">
+              <div className="w-full px-2">
+                <input
+                  type="text"
+                  placeholder="Invoice #"
+                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                />
+              </div>
             </div>
-            <div className="col-span-1 flex items-center">
-              <p className="text-sm text-black dark:text-white">
-                ${product.price}
-              </p>
-            </div>
-            <div className="col-span-1 flex items-center">
-              <p className="text-sm text-black dark:text-white">{product.sold}</p>
-            </div>
-            <div className="col-span-1 flex items-center">
-              <p className="text-sm text-meta-3">${product.profit}</p>
+            <div className="col-span-3 flex items-center">
+              <div className='w-full'>
+                <input
+                  type="text"
+                  placeholder="Check #"
+                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                />
+              </div>
             </div>
           </div>
-        ))}
-      </div>
+
+          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+            <div className="col-span-3 flex items-center">
+              <p className="font-medium">Payee</p>
+            </div>
+            <div className="col-span-3 flex items-center px-2">
+              <p className="font-medium">Remarks</p>
+            </div>
+            <div className="col-span-2 flex items-center">
+              <p className="font-medium">Amount</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5" >
+            <div className="col-span-3 hidden items-center sm:flex">
+              <div className="w-full">
+                <input
+                  type="text"
+                  placeholder="Payee"
+                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                />
+              </div>
+            </div>
+            <div className="col-span-3 hidden items-center sm:flex">
+              <div className="px-2 w-full">
+                <input
+                  type="text"
+                  placeholder="Remarks"
+                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                />
+              </div>
+            </div>
+            <div className="col-span-2 flex items-center">
+              <div className='w-full'>
+                <input
+                  type="text"
+                  placeholder="Amount"
+                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </DefaultLayout>
   );
 };
