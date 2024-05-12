@@ -15,7 +15,22 @@ const LogInForm: React.FC = () => {
     const navigate = useNavigate();
     const signIn = useSignIn();
 
+<<<<<<< HEAD
     const onSubmit = async (e: { preventDefault: () => void}) => {
+=======
+    const notify = () => {
+        toast.success("Success!", {
+            position: "top-center"
+        });
+
+
+        toast.error("Error!", {
+            position: "top-center"
+        });
+    }
+
+    const onSubmit = async (e: { preventDefault: () => void }) => {
+>>>>>>> development
         e.preventDefault();
         console.log("Values", e);
         setError("");
@@ -24,7 +39,7 @@ const LogInForm: React.FC = () => {
                 user_id: userId,
                 password: password
             },
-            { withCredentials: true}
+                { withCredentials: true }
             );
             if (response.status === 200) {
                 signIn({
@@ -37,22 +52,26 @@ const LogInForm: React.FC = () => {
                         user_id: userId,
                         name: response.data.name,
                         role: response.data.role
+<<<<<<< HEAD
+=======
+
+>>>>>>> development
                     },
                 });
                 navigate('/');
             }
         } catch (err) {
-            if (err && err instanceof AxiosError){
+            if (err && err instanceof AxiosError) {
                 setError(err.response?.data.message);
                 toast.error(err.response?.data.message, {
                     position: 'top-right'
                 });
             } else if (err && err instanceof Error) setError(err.message);
-                console.log("Error: ", err);
+            console.log("Error: ", err);
         }
     };
 
-    return ( 
+    return (
         <>
             <div className='flex flex-col justify-center items-center h-screen bg-gray-800'>
                 <img src={Anglogo} alt="Logo" className="mb-12 w-80" />
