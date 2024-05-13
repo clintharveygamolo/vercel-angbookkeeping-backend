@@ -1,8 +1,8 @@
 import sequelize from '../util/database.js';
 import { DataTypes } from 'sequelize';
 
-const AccountType = sequelize.define("AccountType", {
-    acccount_type_id: {
+const Account = sequelize.define("AccountType", {
+    acccount_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false

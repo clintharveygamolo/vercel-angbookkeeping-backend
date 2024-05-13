@@ -1,7 +1,8 @@
 import sequelize from '../util/database.js';
 import { DataTypes } from 'sequelize';
+import Bank from '../models/BankModel.js';
 
-const Withdraws = sequelize.define("Withdraws", {
+const Withdraw = sequelize.define("Withdraw", {
     withdraw_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -33,4 +34,4 @@ const Withdraws = sequelize.define("Withdraws", {
     }
 });
 
-export default Withdraws;
+export default Withdraw;
