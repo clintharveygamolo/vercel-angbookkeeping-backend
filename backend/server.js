@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser'
 import getUserRoute from './routes/getUserRoute.js';
 import refreshTokenRoute from './routes/refreshTokenRoute.js';
 import Deposit from "./models/depositsModel.js";
+import accountsRoute from "./routes/accountsRoute.js";
 import depositsRoute from "./routes/depositsRoute.js";
 import withdrawsRoute from "./routes/withdrawsRoute.js";
 
@@ -28,6 +29,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/get', getUserRoute);
 app.use('/api', createUserRoute);
+app.use('/api/auth/Accounts', accountsRoute);
 app.use('/api/auth/Deposits', depositsRoute);
 app.use('/api/auth/Withdrawals', withdrawsRoute);
 

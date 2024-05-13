@@ -1,16 +1,18 @@
-import AccountNumber from "../models/accountNumberModel";
+import sequelize from "../util/database";
+import { DataTypes } from 'sequelize';
 import AccountType from "../models/accountTypeModel";
+import AccountNumber from "../models/accountNumberModel";
 import BankCode from "../models/bankCodeModel";
 import Bank from "../models/BankModel";
 import Company from "../models/CompanyModel";
 import Deposit from "./depositsModel";
 import Withdraws from "./withdrawsModel";
-import sequelize from "../util/database";
 
 const Account = sequelize.define("Account", {
     account_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
         allowNull: false
     },
     company_name: {
@@ -55,4 +57,4 @@ AccountType.belongsTo(BankCode, {foreignKey: "account_type_id"});
 Deposit.belongsTo(BankCode, {foreignKey: "deposit_id"});
 Withdraws.belongsTo(BankCode, {foreignKey: "withdraw_id"});
 
-export default Account
+export default Account;
