@@ -23,7 +23,7 @@ export async function login(req, res) {
             return res.status(401).json({ message: "Incorrect User ID or password!"});
         }
 
-        const accessToken = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
+        const accessToken = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1hr' });
         const refreshToken = jwt.sign({ user_id: user_id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1hr" });
 
         res.status(200).json({ 

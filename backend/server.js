@@ -7,7 +7,9 @@ import bcrypt from 'bcrypt';
 import cors from 'cors';
 import cookieParser from 'cookie-parser'
 import getUserRoute from './routes/getUserRoute.js';
-import Deposit from "./models/depositsModel.js";
+// import createCompanyRoute from './routes/createCompanyRoute.js';
+import deleteUserRoute from './routes/deleteUserRoute.js';
+import setAssociations from './util/dbAssociations.js';
 
 const app = express();
 app.get("/", (req, res) => {
@@ -22,10 +24,12 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+setAssociations();
+
 app.use('/api/auth', authRoutes);
 app.use('/api/get', getUserRoute);
 app.use('/api', createUserRoute);
-
+app.use('/api/user', deleteUserRoute);
 
 // Routes
 const port = 9000;
@@ -42,7 +46,7 @@ try {
     });
     const userPass = await bcrypt.hash("userpass", 12);
     await User.create({
-        name: "Stephen",
+        name: "Troy Red Demafeliz",
         password: userPass,
         role: "User"
     })
@@ -50,14 +54,14 @@ try {
 
     const employeePass = await bcrypt.hash("employeepass", 12);
     await User.create({
-        name: "Stephen Ang",
+        name: "Stephen Dave Ang",
         password: employeePass,
         role: "Employee"
     });
 
     const viewerPass = await bcrypt.hash("viewerpass", 12);
     await User.create({
-        name: "Din Shane",
+        name: "Din Shane Magallanes",
         password: viewerPass,
         role: "Viewer"
     });
@@ -67,42 +71,6 @@ try {
         name: "Adriane Troy Roa",
         password: troyPass,
         role: "Employee"
-    });
-
-    // DEPOSITS
-    await Deposit.create({
-        particular: "Troy Demafeliz",
-        date: "2024-03-01",
-        amount: 1562,
-        remarks: "Yeah"
-    });
-
-    await Deposit.create({
-        particular: "Carlos Moritcho",
-        date: "2024-03-02",
-        amount: 8000,
-        remarks: "Fok yea"
-    });
-
-    await Deposit.create({
-        particular: "Chuchang Arbole",
-        date: "2024-03-03",
-        amount: 16345,
-        remarks: "Expensive"
-    });
-
-    await Deposit.create({
-        particular: "David Romanillos",
-        date: "2024-03-04",
-        amount: 704,
-        remarks: "LOL"
-    });
-
-    await Deposit.create({
-        particular: "Randell Cordova",
-        date: "2024-03-01",
-        amount: 1000,
-        remarks: "NAUR"
     });
 
     app.listen(port);

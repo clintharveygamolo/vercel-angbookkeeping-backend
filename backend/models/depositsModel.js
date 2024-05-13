@@ -1,5 +1,6 @@
 import sequelize from '../util/database.js';
 import { DataTypes } from 'sequelize';
+import Bank from '../models/BankModel.js';
 
 const Deposit = sequelize.define("Deposit", {
     deposit_id: {
