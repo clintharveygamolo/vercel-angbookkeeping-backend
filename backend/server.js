@@ -12,7 +12,7 @@ import deleteUserRoute from './routes/deleteUserRoute.js';
 import setAssociations from './util/dbAssociations.js';
 import refreshTokenRoute from './routes/refreshTokenRoute.js';
 import Deposit from "./models/depositsModel.js";
-import accountsRoute from "./routes/accountsRoute.js";
+
 import depositsRoute from "./routes/depositsRoute.js";
 import withdrawsRoute from "./routes/withdrawsRoute.js";
 
@@ -35,7 +35,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/get', getUserRoute);
 app.use('/api', createUserRoute);
 app.use('/api/user', deleteUserRoute);
-app.use('/api/auth/Accounts', accountsRoute);
+
 app.use('/api/auth/Deposits', depositsRoute);
 app.use('/api/auth/Withdrawals', withdrawsRoute);
 

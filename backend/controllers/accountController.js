@@ -1,4 +1,4 @@
-import Account from "../models/accountModel.js";
+/*import Account from "../models/accountModel.js";
 import User from "../models/userModel.js";
 
 export async function createAccount(req, res) {
@@ -17,4 +17,4 @@ export async function createAccount(req, res) {
         console.error(error);
         res.status(500).json({ error: "An error occured while creating the entry."});
     }
-}
+};*/

@@ -1,4 +1,4 @@
-import sequelize from "../util/database";
+/*import sequelize from "../util/database";
 import { DataTypes } from 'sequelize';
 import AccountType from "../models/accountTypeModel";
 import AccountNumber from "../models/accountNumberModel";
@@ -57,4 +57,4 @@ AccountType.belongsTo(BankCode, {foreignKey: "account_type_id"});
 Deposit.belongsTo(BankCode, {foreignKey: "deposit_id"});
 Withdraws.belongsTo(BankCode, {foreignKey: "withdraw_id"});
 
-export default Account;
+export default Account;*/
