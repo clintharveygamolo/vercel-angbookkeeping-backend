@@ -15,22 +15,7 @@ const LogInForm: React.FC = () => {
     const navigate = useNavigate();
     const signIn = useSignIn();
 
-<<<<<<< HEAD
     const onSubmit = async (e: { preventDefault: () => void}) => {
-=======
-    const notify = () => {
-        toast.success("Success!", {
-            position: "top-center"
-        });
-
-
-        toast.error("Error!", {
-            position: "top-center"
-        });
-    }
-
-    const onSubmit = async (e: { preventDefault: () => void }) => {
->>>>>>> development
         e.preventDefault();
         console.log("Values", e);
         setError("");
@@ -52,10 +37,6 @@ const LogInForm: React.FC = () => {
                         user_id: userId,
                         name: response.data.name,
                         role: response.data.role
-<<<<<<< HEAD
-=======
-
->>>>>>> development
                     },
                 });
                 navigate('/');
