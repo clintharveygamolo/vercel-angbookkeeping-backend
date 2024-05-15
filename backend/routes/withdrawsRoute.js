@@ -4,7 +4,7 @@ import { createWithdraws, editWithdraws, deleteWithdraws } from '../controllers/
 const router = express.Router();
 
 router.post('/Create', createWithdraws);
-router.post('/Edit/:withdraw_id', editWithdraws);
+router.post('/Edit', editWithdraws);
 router.post('/Delete', deleteWithdraws);
 
 export default router;
