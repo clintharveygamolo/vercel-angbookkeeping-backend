@@ -38,11 +38,6 @@ const Deposit = sequelize.define("Deposit", {
                 if (parseFloat(value) <= 0) {
                     throw new Error('Amount must be a positive number');
                 }
-            },
-            isGreaterThan100(value) {
-                if (parseFloat(value) < 100) {
-                    throw new Error('Amount must be greater than or equal to 100');
-                }
             }
         }
     },
