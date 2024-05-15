@@ -1,14 +1,17 @@
 import Deposits from '../models/depositsModel.js';
 import User from '../models/userModel.js';
+import { parse } from 'date-fns';
 //this is the deposit creation function.
 export async function createDeposits(req, res) {
     try {
+        const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
         await Deposits.create({
             deposit_id: req.body.deposit_id,
-            particular: req.body.particular,
-            date: req.body.date,
-            amount: req.body.amount,
-            remarks: req.body.remarks
+            date: parsedDate,
+            check_no: req.body.check_no,
+            particulars: req.body.particulars,
+            remarks: req.body.remarks,
+            amount: req.body.amount
         });
 
         res.status(201).json("Deposit Entry Successfully Created.");
@@ -20,6 +23,7 @@ export async function createDeposits(req, res) {
 //this is the deposit entry editing fucntion.
 export async function editDeposits(req, res) {
     try {
+        const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
         const currentUser = await User.findByPk(req.body.user_id);
 
         const { deposit_id } = req.body;
@@ -35,10 +39,11 @@ export async function editDeposits(req, res) {
         }
 
         await Deposits.update({
-            particular: req.body.particular,
-            date: req.body.date,
-            amount: req.body.amount,
-            remarks: req.body.remarks
+            date: parsedDate,
+            check_no: req.body.check_no,
+            particulars: req.body.particulars,
+            remarks: req.body.remarks,
+            amount: req.body.amount
         },
         {
             where: {
