@@ -1,8 +1,7 @@
 import sequelize from '../util/database.js';
 import { DataTypes } from 'sequelize';
-import Company from '../models/CompanyModel.js';
-import Deposit from '../models/depositsModel.js';
-import Withdraw from '../models/withdrawsModel.js';
+import BankCode from './bankCodeModel.js';
+import Account from './accountModel.js';
 
 const Bank = sequelize.define("Bank", {
     bank_id: {
@@ -11,10 +10,13 @@ const Bank = sequelize.define("Bank", {
         autoIncrement: true,
         allowNull: false
     },
-    bank_name: {
+    bankName: {
         type: DataTypes.STRING,
         allowNull: false
-    },
+    }
 });
+
+Bank.hasMany(BankCode, { foreignKey: 'bank_id' });
+Bank.hasMany(Account, { foreignKey: 'bank_id' });
 
 export default Bank;
