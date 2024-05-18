@@ -1,16 +1,18 @@
 import Withdraws from '../models/withdrawsModel.js';
 import User from '../models/userModel.js';
+import { parse } from 'date-fns';
 
 export async function createWithdraws(req, res) {
     try {
+        const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
         await Withdraws.create({
             withdraw_id: req.body.withdraw_id,
-            date: req.body.date,
-            payee: req.body.payee,
+            date: parsedDate,
             check_no: req.body.check_no,
-            invoice_no: req.body.invoice_no,
-            amount: req.body.amount,
-            remarks: req.body.remarks
+            voucher_no: req.body.voucher_no,
+            payee: req.body.payee,
+            remarks: req.body.remarks,
+            amount: req.body.amount
         });
 
         res.status(201).json("Withdrawal Entry Successfully Created.");
@@ -22,6 +24,7 @@ export async function createWithdraws(req, res) {
 
 export async function editWithdraws(req, res) {
     try {
+        const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
         const currentUser = await User.findByPk(req.body.user_id);
 
         const { withdraw_id } = req.body;
@@ -37,13 +40,12 @@ export async function editWithdraws(req, res) {
         }
 
         await Withdraws.update({
-            withdraw_id: req.body.withdraw_id,
-            date: req.body.date,
-            payee: req.body.payee,
+            date: parsedDate,
             check_no: req.body.check_no,
-            invoice_no: req.body.invoice_no,
-            amount: req.body.amount,
-            remarks: req.body.remarks
+            voucher_no: req.body.voucher_no,
+            payee: req.body.payee,
+            remarks: req.body.remarks,
+            amount: req.body.amount
         },
             {
                 where: {
