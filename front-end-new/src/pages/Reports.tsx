@@ -1,15 +1,17 @@
 //"use client";
 
-import React, { SetStateAction, useEffect, useState } from 'react';
+import React, { SetStateAction, useEffect, useRef, useState } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../layout/DefaultLayout';
 import SelectGroupOne from '../components/Forms/SelectGroup/SelectGroupOne';
 
-import { Button, Checkbox, Table, Tabs } from "flowbite-react";
+import { Button, Checkbox, Table, Tabs, Modal, TextInput, Label } from "flowbite-react";
 import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 
 import axios from '../api/axiosconfig';
+import axiosConfig from '.././api/axiosconfig.js';
 import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 
 export type Deposits = {
   date: Date;
@@ -31,6 +33,54 @@ export type Withdraws = {
 const Reports: React.FC = () => {
 
   const [DepositReport, setDeposits] = useState<Deposits[] | null>();
+  const userInputRefInputRef = useRef<HTMLInputElement>(null);
+
+  //values for deposit
+  const [DepositDateForm, setDepositDateForm] = useState('');
+  const [DepositCheckNo, setDepositCheckNo] = useState(Number);
+  const [DepositDateParticulars, setDepositParticulars] = useState('');
+  const [DepositRemarks, setDepositRemarks] = useState('');
+  const [DepositAmount, setDepositAmount] = useState(Number);
+
+  //edit Modal for Deposit
+  const [openModalEditDeposit, setModalEditDeposit] = useState(false);
+
+  const [editModalDepositDate, setEditModalDepositUserDate] = useState<string>(''); //Date please
+  const [editModalDepositCheckNo, setEditModalDepositCheckNo] = useState<number>();
+  const [editModalDepositParticulars, setEditModalDepositParticulars] = useState<string>('');
+  const [editModalDepositRemarks, setEditModalDepositRemarks] = useState<string>('');
+  const [editModalDepositAmount, setEditModalDepositAmount] = useState<number>();
+
+  //edit Modal for Withdraws
+
+  const editDeposit = async (deposit_id: number) => {
+    e.preventDefault();
+    try {
+      const response = await axiosConfig.post(
+        '/api/auth/Deposits/Edit',
+        {
+          date: editModalDepositDate,
+          check_no: editModalDepositCheckNo,
+          particulars: editModalDepositParticulars,
+          remarks: editModalDepositRemarks,
+          amount: editModalDepositAmount,
+        },
+        { withCredentials: true },
+      );
+
+      if (response.status === 201) {
+        setModalEditDeposit(false);
+        toast.success('Edited the deposit entry!');
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+      }
+    }
+  }
+
 
   useEffect(() => {
     axios({
@@ -171,8 +221,8 @@ const Reports: React.FC = () => {
                   </Table.Head>
                   < Table.Body className="divide-y">
                     {DepositReport
-                      && DepositReport.map((Deposits) => (
-                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                      && DepositReport.map((Deposits, key) => (
+                        <Table.Row key={key} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                           <Table.Cell className="p-4">
                             <Checkbox />
                           </Table.Cell>
@@ -182,9 +232,73 @@ const Reports: React.FC = () => {
                           <Table.Cell>{Deposits.remarks}</Table.Cell>
                           <Table.Cell>{Deposits.amount}</Table.Cell>
                           <Table.Cell>
-                            <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                            <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+                              onClick={() => {
+                                setModalEditDeposit(true);
+                                setEditModalDepositUserDate("");
+                                setEditModalDepositCheckNo(Deposits.check_no);
+                                setEditModalDepositParticulars(Deposits.particulars);
+                                setEditModalDepositRemarks(Deposits.remarks);
+                                setEditModalDepositAmount(Deposits.amount);
+                              }}>
                               Edit
                             </a>
+                            <Modal
+                              show={openModalEditDeposit}
+                              size="md"
+                              popup
+                              onClose={() => setModalEditDeposit(false)}
+                              initialFocus={userInputRefInputRef}
+                            >
+                              <div className="fixed inset-0 flex items-center justify-center p-1">
+                                <div className="w-full max-w-md mx-auto bg-white rounded-lg border shadow-md sm:p-1 dark:bg-gray-800 dark:border-gray-700">
+                                  <Modal.Header />
+                                  <Modal.Body>
+                                    <div className="space-y-2">
+                                      <h3 className="text-xl font-medium text-gray-900 dark:text-white">Edit Deposit</h3>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="date" value="Date" />
+                                        </div>
+                                        <TextInput id="date" placeholder="date unta" required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="check" value="Check#" />
+                                        </div>
+                                        <TextInput id="check_no" placeholder={editModalDepositCheckNo?.toString()} required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="particulars" value="Particulars" />
+                                        </div>
+                                        <TextInput id="particulars" placeholder={editModalDepositParticulars} required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="remarks" value="Remarks" />
+                                        </div>
+                                        <TextInput id="remarks" placeholder={editModalDepositRemarks} required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="amount" value="Amount" />
+                                        </div>
+                                        <TextInput id="amount" placeholder={editModalDepositAmount?.toString()} required />
+                                      </div>
+                                      <div className="flex justify-end gap-3">
+                                        <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90">
+                                          Edit Entry
+                                        </button>
+                                        <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700">
+                                          Delete Entry
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </Modal.Body>
+                                </div>
+                              </div>
+                            </Modal>
                           </Table.Cell>
                         </Table.Row>
                       ))}
