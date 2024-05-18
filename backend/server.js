@@ -20,8 +20,10 @@ import Company from "./models/CompanyModel.js";
 // import refreshTokenRoute from "./routes/refreshTokenRoute.js";
 // import Deposit from "./models/depositsModel.js";
 
-// import depositsRoute from "./routes/depositsRoute.js";
-// import withdrawsRoute from "./routes/withdrawsRoute.js";
+import depositsRoute from "./routes/depositsRoute.js";
+import withdrawsRoute from "./routes/withdrawsRoute.js";
+import Deposit from "./models/depositsModel.js";
+import Withdraw from "./models/withdrawsModel.js";
 
 const app = express();
 app.get("/", (req, res) => {
@@ -50,8 +52,8 @@ app.use("/api/bank", createBankRoute);
 app.use("/api/company", getCompanyRoute);
 app.use("/api/company", createCompanyRoute);
 
-// app.use('/api/auth/Deposits', depositsRoute);
-// app.use('/api/auth/Withdrawals', withdrawsRoute);
+app.use('/api/auth/Deposits', depositsRoute);
+app.use('/api/auth/Withdrawals', withdrawsRoute);
 
 // Routes
 const port = 9000;
@@ -94,6 +96,7 @@ try {
     role: "Employee",
   });
 
+  /*
   await Bank.create({
     bank_name: "BDO1",
   });
@@ -106,6 +109,41 @@ try {
   await Bank.create({
     bank_name: "BANKWAYS1",
   });
+  */
+
+  //Put values into database for testing
+
+  await Deposit.create({
+    date: "12/13/2024",
+    check_no: 1,
+    particulars: "Din Shane Magallanes",
+    remarks: "Sample remark",
+    amount: 100,
+  })
+
+  await Deposit.create({
+    date: "12/13/2023",
+    check_no: 12,
+    particulars: "ClintStone",
+    remarks: "Guns",
+    amount: 1010,
+  })
+
+  await Withdraw.create({
+    date: "11/13/2024",
+    check_no: 1,
+    voucher_no: 1,
+    payee: "Din",
+    amount: 13000
+  })
+
+  await Withdraw.create({
+    date: "11/11/2024",
+    check_no: 12,
+    voucher_no: 31,
+    payee: "Stepheniga",
+    amount: 696969
+  })
 
   await Company.create({
     companyName: "Ang Architecture",

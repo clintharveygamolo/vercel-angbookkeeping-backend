@@ -17,7 +17,7 @@ export async function createDeposits(req, res) {
         res.status(201).json("Deposit Entry Successfully Created.");
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "An error occured while creating the entry."});
+        res.status(500).json({ error: "An error occured while creating the entry." });
     }
 }
 //this is the deposit entry editing fucntion.
@@ -28,14 +28,14 @@ export async function editDeposits(req, res) {
 
         const { deposit_id } = req.body;
 
-        const deposits = await Deposits.findOne({ where: {deposit_id: deposit_id} });
+        const deposits = await Deposits.findOne({ where: { deposit_id: deposit_id } });
 
-        if(currentUser.role !== 'Admin') {
+        if (currentUser.role !== 'Admin') {
             return res.status(403).json({ error: "Forbidden: Only admin users can edit deposit entries." });
         }
 
-        if(!deposits) {
-            return res.status(401).json({ message: "Updated failed, deposit entry not found."});
+        if (!deposits) {
+            return res.status(401).json({ message: "Updated failed, deposit entry not found." });
         }
 
         await Deposits.update({
@@ -45,17 +45,17 @@ export async function editDeposits(req, res) {
             remarks: req.body.remarks,
             amount: req.body.amount
         },
-        {
-            where: {
-                deposit_id: req.body.deposit_id
+            {
+                where: {
+                    deposit_id: req.body.deposit_id
+                }
             }
-        }
-    );
+        );
 
         res.status(201).json("Deposit Entry Successfully Edited.");
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "An error occured while updating the entry."});
+        res.status(500).json({ error: "An error occured while updating the entry." });
     }
 }
 //this is the deposit entry deletion function.
@@ -65,7 +65,7 @@ export async function deleteDeposits(req, res) {
 
         const { deposit_id } = req.body;
 
-        const deposits = await Deposits.findOne({ where: {deposit_id: deposit_id} });
+        const deposits = await Deposits.findOne({ where: { deposit_id: deposit_id } });
 
         if (currentUser.role !== 'Admin') {
             return res.status(403).json({ error: "Forbidden: Only admin users can delete deposit entries." });
@@ -86,5 +86,27 @@ export async function deleteDeposits(req, res) {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "An error occured while deleting the entry." });
+    }
+}
+
+//this is the deposit get function.
+export async function getDeposits(req, res) {
+    try {
+        const depositQuery = await Deposits.findAll({
+            attributes: ["deposit_id", "date", "check_no", "particulars", "remarks", "amount"],
+        });
+        res.status(200).json(userQuery);
+    } catch (error) {
+        res.status(400).json({ error: "An error occured while fetching deposits!" });
+    }
+}
+
+export async function getDeposit(req, res) {
+    const [deposit_id] = req.params.deposit_id;
+    try {
+        const depositQuery = await User.findByPk(deposit_id);
+        res.status(200).json(depositQuery);
+    } catch (error) {
+        res.status(400).json({ error: "An error occured while fetching deposits!" });
     }
 }
