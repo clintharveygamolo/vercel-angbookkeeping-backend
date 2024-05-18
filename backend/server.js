@@ -19,7 +19,7 @@ import Bank from "./models/BankModel.js";
 import Company from "./models/CompanyModel.js";
 // import refreshTokenRoute from "./routes/refreshTokenRoute.js";
 // import Deposit from "./models/depositsModel.js";
-
+import accountsRoute from "./routes/accountsRoute.js";
 import depositsRoute from "./routes/depositsRoute.js";
 import withdrawsRoute from "./routes/withdrawsRoute.js";
 
@@ -49,7 +49,7 @@ app.use("/api/bank", getBankRoute);
 app.use("/api/bank", createBankRoute);
 app.use("/api/company", getCompanyRoute);
 app.use("/api/company", createCompanyRoute);
-
+app.use('/api/auth/Accounts', accountsRoute);
 app.use('/api/auth/Deposits', depositsRoute);
 app.use('/api/auth/Withdrawals', withdrawsRoute);
 
@@ -94,19 +94,21 @@ try {
     role: "Employee",
   });
 
+  //Banks
   await Bank.create({
-    bank_name: "BDO1",
+    bankName: "BDO",
   });
   await Bank.create({
-    bank_name: "BPI1",
+    bankName: "Bank of America",
   });
   await Bank.create({
-    bank_name: "SB1",
+    bankName: "Citibank Philippines",
   });
   await Bank.create({
-    bank_name: "BANKWAYS1",
+    bankName: "Bankways, Inc.",
   });
 
+  //Companies
   await Company.create({
     companyName: "Ang Architecture",
   });
