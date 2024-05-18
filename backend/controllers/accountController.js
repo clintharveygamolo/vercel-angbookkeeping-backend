@@ -5,26 +5,36 @@ import User from '../models/userModel.js';
 
 export const createAccount = async (req, res) => {
     try {
-        const currentUser = await User.findByPk(req.body.user_id);
+        const { user_id, account_number, company_id, bank_id, bankCode } = req.body;
 
-        const company = await Company.create(req.body.company);
+        const currentUser = await User.findByPk(user_id);
 
-        const bank = await Bank.create(req.body.bank);
+        if (!currentUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
 
-        if(currentUser.role !== 'Admin') {
+        if (currentUser.role !== 'Admin') {
             return res.status(403).json({ error: "Forbidden: Only admin users can create accounts." });
         }
 
+        const company = await Company.findByPk(company_id);
+        if (!company) {
+            return res.status(404).json({ error: "Company not found" });
+        }
+
+        const bank = await Bank.findByPk(bank_id);
+        if (!bank) {
+            return res.status(404).json({ error: "Bank not found" });
+        }
+
         const account = await Account.create({
-            account_number: req.body.account_number,
-            company_id: req.body.company_id,
-            companyName: req.body.companyName,
-            bank_id: req.body.bank_id,
-            bankName: req.body.bankName,
-            bank_code: req.body.bankCode
+            bankCode: bankCode,
+            account_number: account_number,
+            company_id: company.id, // Use the id of the existing company
+            bank_id: bank.id,       // Use the id of the existing bank
         });
-        
-        res.status(201).json({ company, bank, bankCode, account });
+
+        res.status(201).json({ message: "Account created successfully", company, bank, account });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
