@@ -11,6 +11,6 @@ export async function createCompany(req, res) {
       .status(200)
       .json({ message: `Successfully created company: ${companyName}` });
   } catch (error) {
-    res.status(401).json({ message: "Error creating bank" });
+    res.status(401).json({ message: "Error creating company" });
   }
 }
