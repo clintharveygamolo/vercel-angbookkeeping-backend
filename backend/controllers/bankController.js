@@ -1,15 +1,15 @@
 import Bank from "../models/BankModel.js";
 
 export async function createBank(req, res) {
-  const { bank_name } = req.body;
+  const { bankName } = req.body;
 
   try {
     const newBank = await Bank.create({
-      bank_name: bank_name,
+      bankName: bankName,
     });
     res
       .status(201)
-      .json({ message: `Successfully created bank: ${bank_name}` });
+      .json({ message: `Successfully created bank: ${bankName}` });
   } catch (error) {
     res.status(401).json({ message: "Error creating bank" });
   }
