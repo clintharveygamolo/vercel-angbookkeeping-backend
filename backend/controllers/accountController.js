@@ -1,20 +1,31 @@
-/*import Account from "../models/accountModel.js";
-import User from "../models/userModel.js";
+import Company from '../models/CompanyModel.js';
+import Bank from '../models/BankModel.js';
+import Account from '../models/accountModel.js';
+import User from '../models/userModel.js';
 
-export async function createAccount(req, res) {
+export const createAccount = async (req, res) => {
     try {
-        await Account.create({
-            account_id: req.body.account_id,
-            company_name: req.body.company_name,
-            bank_code: req.body.bank_code,
-            bank_name: req.body.bank_name,
-            account_type: req.body.account_type,
-            account_number: req.body.account_number
-        });
+        const currentUser = await User.findByPk(req.body.user_id);
 
-        res.status(201).json("Account Entry Successfully Created.");
+        const company = await Company.create(req.body.company);
+
+        const bank = await Bank.create(req.body.bank);
+
+        if(currentUser.role !== 'Admin') {
+            return res.status(403).json({ error: "Forbidden: Only admin users can create accounts." });
+        }
+
+        const account = await Account.create({
+            account_number: req.body.account_number,
+            company_id: req.body.company_id,
+            companyName: req.body.companyName,
+            bank_id: req.body.bank_id,
+            bankName: req.body.bankName,
+            bank_code: req.body.bankCode
+        });
+        
+        res.status(201).json({ company, bank, bankCode, account });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "An error occured while creating the entry."});
+        res.status(500).json({ message: error.message });
     }
-};*/
+};
