@@ -3,7 +3,7 @@ import Bank from "../models/BankModel.js";
 export async function getBanks(req, res) {
   try {
     const bankQuery = await Bank.findAll({
-      attributes: ["bank_name"],
+      attributes: ["bankName"],
     });
     res.status(200).json(bankQuery);
   } catch (error) {
