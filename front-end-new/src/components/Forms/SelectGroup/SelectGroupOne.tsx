@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 
-const SelectGroupOne: React.FC = () => {
+export type DropdownFormProps = {
+  label: String;
+  options: { value: string; label: string }[];
+  onSelect: (value: string) => void;
+};
+
+const SelectGroupOne: React.FC<DropdownFormProps> = ({
+  label,
+  options,
+  onSelect,
+}) => {
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
@@ -22,16 +32,23 @@ const SelectGroupOne: React.FC = () => {
             setSelectedOption(e.target.value);
             changeTextColor();
           }}
-          className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${isOptionSelected ? 'text-black dark:text-white' : ''
-            }`}
+          className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+            isOptionSelected ? 'text-black dark:text-white' : ''
+          }`}
         >
           <option value="" disabled className="text-body dark:text-bodydark">
             Select your account type
           </option>
-          <option value="Savings Account" className="text-body dark:text-bodydark">
+          <option
+            value="Savings Account"
+            className="text-body dark:text-bodydark"
+          >
             Savings Account
           </option>
-          <option value="Checkings Account" className="text-body dark:text-bodydark">
+          <option
+            value="Checkings Account"
+            className="text-body dark:text-bodydark"
+          >
             Checkings Account
           </option>
         </select>
