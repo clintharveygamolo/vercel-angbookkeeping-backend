@@ -95,7 +95,7 @@ export async function getDeposits(req, res) {
         const depositQuery = await Deposits.findAll({
             attributes: ["deposit_id", "date", "check_no", "particulars", "remarks", "amount"],
         });
-        res.status(200).json(userQuery);
+        res.status(200).json(depositQuery);
     } catch (error) {
         res.status(400).json({ error: "An error occured while fetching deposits!" });
     }

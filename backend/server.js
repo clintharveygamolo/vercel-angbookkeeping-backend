@@ -122,6 +122,14 @@ try {
   })
 
   await Deposit.create({
+    date: "12/13/2022",
+    check_no: 1,
+    particulars: "Randell San",
+    remarks: "Pisot",
+    amount: 100,
+  })
+
+  await Deposit.create({
     date: "12/13/2023",
     check_no: 12,
     particulars: "ClintStone",

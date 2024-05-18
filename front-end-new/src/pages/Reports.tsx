@@ -1,6 +1,6 @@
 //"use client";
 
-import React from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../layout/DefaultLayout';
 import SelectGroupOne from '../components/Forms/SelectGroup/SelectGroupOne';
@@ -8,10 +8,42 @@ import SelectGroupOne from '../components/Forms/SelectGroup/SelectGroupOne';
 import { Button, Checkbox, Table, Tabs } from "flowbite-react";
 import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 
-import axios from '../../api/axiosconfig';
+import axios from '../api/axiosconfig';
 import { AxiosError } from 'axios';
 
+export type Deposits = {
+  date: Date;
+  check_no: number;
+  particulars: string;
+  remarks: string;
+  amount: number;
+}
+
+export type Withdraws = {
+  date: Date;
+  check_no: number;
+  voucher_no: number;
+  payee: string;
+  remarks: number;
+  amount: number;
+}
+
 const Reports: React.FC = () => {
+
+  const [DepositReport, setDeposits] = useState<Deposits[] | null>();
+
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: '/api/auth/Deposits/Get',
+    })
+      .then((response: { data: SetStateAction<Deposits[] | null | undefined> }) => {
+        setDeposits(response.data);
+        console.log(response.data);
+      })
+      .catch((error: any) => console.error(error));
+  }, []);
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Reports" />
@@ -129,6 +161,7 @@ const Reports: React.FC = () => {
                       <Checkbox />
                     </Table.HeadCell>
                     <Table.HeadCell>Date</Table.HeadCell>
+                    <Table.HeadCell>Check #</Table.HeadCell>
                     <Table.HeadCell>Particular</Table.HeadCell>
                     <Table.HeadCell>Remarks</Table.HeadCell>
                     <Table.HeadCell>Amount</Table.HeadCell>
@@ -136,23 +169,25 @@ const Reports: React.FC = () => {
                       <span className="sr-only">Edit</span>
                     </Table.HeadCell>
                   </Table.Head>
-                  <Table.Body className="divide-y">
-                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <Table.Cell className="p-4">
-                        <Checkbox />
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        {'Apple MacBook Pro 17"'}
-                      </Table.Cell>
-                      <Table.Cell>Sliver</Table.Cell>
-                      <Table.Cell>Laptop</Table.Cell>
-                      <Table.Cell>$2999</Table.Cell>
-                      <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                          Edit
-                        </a>
-                      </Table.Cell>
-                    </Table.Row>
+                  < Table.Body className="divide-y">
+                    {DepositReport
+                      && DepositReport.map((Deposits) => (
+                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                          <Table.Cell className="p-4">
+                            <Checkbox />
+                          </Table.Cell>
+                          <Table.Cell>date unta</Table.Cell>
+                          <Table.Cell>{Deposits.check_no}</Table.Cell>
+                          <Table.Cell>{Deposits.particulars}</Table.Cell>
+                          <Table.Cell>{Deposits.remarks}</Table.Cell>
+                          <Table.Cell>{Deposits.amount}</Table.Cell>
+                          <Table.Cell>
+                            <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                              Edit
+                            </a>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
 
                     {/* <!-- Deposits Total --> */}
 
@@ -310,7 +345,7 @@ const Reports: React.FC = () => {
         </div>
       </div>
 
-    </DefaultLayout>
+    </DefaultLayout >
   );
 };
 
