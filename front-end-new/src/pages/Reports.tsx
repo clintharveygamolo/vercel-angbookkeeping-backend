@@ -1,17 +1,115 @@
 //"use client";
 
-import React from 'react';
+import React, { SetStateAction, useEffect, useRef, useState } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../layout/DefaultLayout';
 import SelectGroupOne from '../components/Forms/SelectGroup/SelectGroupOne';
 
-import { Button, Checkbox, Table, Tabs } from "flowbite-react";
+import { Button, Checkbox, Table, Tabs, Modal, TextInput, Label } from "flowbite-react";
 import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 
-import axios from '../../api/axiosconfig';
+import axios from '../api/axiosconfig';
+import axiosConfig from '.././api/axiosconfig.js';
 import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
+
+export type Deposits = {
+  date: Date;
+  check_no: number;
+  particulars: string;
+  remarks: string;
+  amount: number;
+}
+
+export type Withdraws = {
+  date: Date;
+  check_no: number;
+  voucher_no: number;
+  payee: string;
+  remarks: number;
+  amount: number;
+}
 
 const Reports: React.FC = () => {
+
+  const [DepositReport, setDeposits] = useState<Deposits[] | null>();
+  const [WithdrawReport, setWithdraws] = useState<Withdraws[] | null>();
+  const userInputRefInputRef = useRef<HTMLInputElement>(null);
+
+  //values for deposit
+  const [DepositDateForm, setDepositDateForm] = useState('');
+  const [DepositCheckNo, setDepositCheckNo] = useState(Number);
+  const [DepositDateParticulars, setDepositParticulars] = useState('');
+  const [DepositRemarks, setDepositRemarks] = useState('');
+  const [DepositAmount, setDepositAmount] = useState(Number);
+
+  //edit Modal for Deposit
+  const [openModalEditDeposit, setModalEditDeposit] = useState(false);
+
+  const [editModalDepositDate, setEditModalDepositUserDate] = useState<string>(''); //Date please
+  const [editModalDepositCheckNo, setEditModalDepositCheckNo] = useState<number>();
+  const [editModalDepositParticulars, setEditModalDepositParticulars] = useState<string>('');
+  const [editModalDepositRemarks, setEditModalDepositRemarks] = useState<string>('');
+  const [editModalDepositAmount, setEditModalDepositAmount] = useState<number>();
+
+  //edit Modal for Withdraws
+
+
+  // handle edit deposit
+  const editDeposit = async (deposit_id: number) => {
+    e.preventDefault();
+    try {
+      const response = await axiosConfig.post(
+        '/api/auth/Deposits/Edit',
+        {
+          date: editModalDepositDate,
+          check_no: editModalDepositCheckNo,
+          particulars: editModalDepositParticulars,
+          remarks: editModalDepositRemarks,
+          amount: editModalDepositAmount,
+        },
+        { withCredentials: true },
+      );
+
+      if (response.status === 201) {
+        setModalEditDeposit(false);
+        toast.success('Edited the deposit entry!');
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+      }
+    }
+  }
+
+  // get Deposits
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: '/api/auth/Deposits/Get',
+    })
+      .then((response: { data: SetStateAction<Deposits[] | null | undefined> }) => {
+        setDeposits(response.data);
+        console.log(response.data);
+      })
+      .catch((error: any) => console.error(error));
+  }, []);
+
+  // get Withdraws
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: '/api/auth/Withdrawals/Get',
+    })
+      .then((response: { data: SetStateAction<Withdraws[] | null | undefined> }) => {
+        setWithdraws(response.data);
+        console.log(response.data);
+      })
+      .catch((error: any) => console.error(error));
+  }, []);
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Reports" />
@@ -129,6 +227,7 @@ const Reports: React.FC = () => {
                       <Checkbox />
                     </Table.HeadCell>
                     <Table.HeadCell>Date</Table.HeadCell>
+                    <Table.HeadCell>Check #</Table.HeadCell>
                     <Table.HeadCell>Particular</Table.HeadCell>
                     <Table.HeadCell>Remarks</Table.HeadCell>
                     <Table.HeadCell>Amount</Table.HeadCell>
@@ -136,27 +235,94 @@ const Reports: React.FC = () => {
                       <span className="sr-only">Edit</span>
                     </Table.HeadCell>
                   </Table.Head>
-                  <Table.Body className="divide-y">
-                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <Table.Cell className="p-4">
-                        <Checkbox />
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        {'Apple MacBook Pro 17"'}
-                      </Table.Cell>
-                      <Table.Cell>Sliver</Table.Cell>
-                      <Table.Cell>Laptop</Table.Cell>
-                      <Table.Cell>$2999</Table.Cell>
-                      <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                          Edit
-                        </a>
-                      </Table.Cell>
-                    </Table.Row>
+                  < Table.Body className="divide-y">
+                    {DepositReport
+                      && DepositReport.map((Deposits, key) => (
+                        <Table.Row key={key} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                          <Table.Cell className="p-4">
+                            <Checkbox />
+                          </Table.Cell>
+                          <Table.Cell>date unta</Table.Cell>
+                          <Table.Cell>{Deposits.check_no}</Table.Cell>
+                          <Table.Cell>{Deposits.particulars}</Table.Cell>
+                          <Table.Cell>{Deposits.remarks}</Table.Cell>
+                          <Table.Cell>{Deposits.amount}</Table.Cell>
+                          <Table.Cell>
+                            <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+                              onClick={() => {
+                                setModalEditDeposit(true);
+                                setEditModalDepositUserDate("");
+                                setEditModalDepositCheckNo(Deposits.check_no);
+                                setEditModalDepositParticulars(Deposits.particulars);
+                                setEditModalDepositRemarks(Deposits.remarks);
+                                setEditModalDepositAmount(Deposits.amount);
+                              }}>
+                              Edit
+                            </a>
+                            <Modal
+                              show={openModalEditDeposit}
+                              size="md"
+                              popup
+                              onClose={() => setModalEditDeposit(false)}
+                              initialFocus={userInputRefInputRef}
+                            >
+                              <div className="fixed inset-0 flex items-center justify-center p-1">
+                                <div className="w-full max-w-md mx-auto bg-white rounded-lg border shadow-md sm:p-1 dark:bg-gray-800 dark:border-gray-700">
+                                  <Modal.Header />
+                                  <Modal.Body>
+                                    <div className="space-y-2">
+                                      <h3 className="text-xl font-medium text-gray-900 dark:text-white">Edit Deposit</h3>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="date" value="Date" />
+                                        </div>
+                                        <TextInput id="date" placeholder="date unta" required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="check" value="Check#" />
+                                        </div>
+                                        <TextInput id="check_no" placeholder={editModalDepositCheckNo?.toString()} required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="particulars" value="Particulars" />
+                                        </div>
+                                        <TextInput id="particulars" placeholder={editModalDepositParticulars} required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="remarks" value="Remarks" />
+                                        </div>
+                                        <TextInput id="remarks" placeholder={editModalDepositRemarks} required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="amount" value="Amount" />
+                                        </div>
+                                        <TextInput id="amount" placeholder={editModalDepositAmount?.toString()} required />
+                                      </div>
+                                      <div className="flex justify-end gap-3">
+                                        <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90">
+                                          Edit Entry
+                                        </button>
+                                        <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700">
+                                          Delete Entry
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </Modal.Body>
+                                </div>
+                              </div>
+                            </Modal>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
 
                     {/* <!-- Deposits Total --> */}
 
                     <Table.Row className="font-bold">
+                      <Table.Cell></Table.Cell>
                       <Table.Cell></Table.Cell>
                       <Table.Cell></Table.Cell>
                       <Table.Cell></Table.Cell>
@@ -189,7 +355,7 @@ const Reports: React.FC = () => {
                     </Table.HeadCell>
                     <Table.HeadCell>Date</Table.HeadCell>
                     <Table.HeadCell>Check #</Table.HeadCell>
-                    <Table.HeadCell>Invoice #</Table.HeadCell>
+                    <Table.HeadCell>Voucher #</Table.HeadCell>
                     <Table.HeadCell>Payee</Table.HeadCell>
                     <Table.HeadCell>Remarks</Table.HeadCell>
                     <Table.HeadCell>Amount</Table.HeadCell>
@@ -198,24 +364,25 @@ const Reports: React.FC = () => {
                     </Table.HeadCell>
                   </Table.Head>
                   <Table.Body className="divide-y">
-                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <Table.Cell className="p-4">
-                        <Checkbox />
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        {'Apple MacBook Pro 17"'}
-                      </Table.Cell>
-                      <Table.Cell>Sliver</Table.Cell>
-                      <Table.Cell>Laptop</Table.Cell>
-                      <Table.Cell>Laptop</Table.Cell>
-                      <Table.Cell>Laptop</Table.Cell>
-                      <Table.Cell>$2999</Table.Cell>
-                      <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                          Edit
-                        </a>
-                      </Table.Cell>
-                    </Table.Row>
+                    {WithdrawReport
+                      && WithdrawReport.map((Withdraws, key) => (
+                        <Table.Row key={key} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                          <Table.Cell className="p-4">
+                            <Checkbox />
+                          </Table.Cell>
+                          <Table.Cell>date unta</Table.Cell>
+                          <Table.Cell>{Withdraws.check_no}</Table.Cell>
+                          <Table.Cell>{Withdraws.voucher_no}</Table.Cell>
+                          <Table.Cell>{Withdraws.payee}</Table.Cell>
+                          <Table.Cell>{Withdraws.remarks}</Table.Cell>
+                          <Table.Cell>{Withdraws.amount}</Table.Cell>
+                          <Table.Cell>
+                            <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                              Edit
+                            </a>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
 
                     {/* <!-- Withdraws Total --> */}
 
@@ -310,7 +477,7 @@ const Reports: React.FC = () => {
         </div>
       </div>
 
-    </DefaultLayout>
+    </DefaultLayout >
   );
 };
 

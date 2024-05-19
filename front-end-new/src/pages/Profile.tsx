@@ -221,7 +221,7 @@ const Profile = () => {
             </h3>
             <p className="font-medium">{auth.role}</p>
             <div className="mx-auto max-w-180">
-              <h4 className="font-semibold text-black dark:text-white">{}</h4>
+              <h4 className="font-semibold text-black dark:text-white">{ }</h4>
             </div>
           </div>
         </div>
