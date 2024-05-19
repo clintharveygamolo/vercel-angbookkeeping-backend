@@ -18,7 +18,7 @@ export async function createWithdraws(req, res) {
         res.status(201).json("Withdrawal Entry Successfully Created.");
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "An error occured while creating the entry."});
+        res.status(500).json({ error: "An error occured while creating the entry." });
     }
 }
 
@@ -88,5 +88,27 @@ export async function deleteWithdraws(req, res) {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "An error occured while deleting the entry." });
+    }
+}
+
+//this is the withdraw get function.
+export async function getWithdraws(req, res) {
+    try {
+        const withdrawQuery = await Withdraws.findAll({
+            attributes: ["withdraw_id", "date", "check_no", "voucher_no", "payee", "remarks", "amount"],
+        });
+        res.status(200).json(withdrawQuery);
+    } catch (error) {
+        res.status(400).json({ error: "An error occured while fetching deposits!" });
+    }
+}
+
+export async function getWithdraw(req, res) {
+    const [withdraw_id] = req.params.withdraw_id;
+    try {
+        const withdrawQuery = await User.findByPk(withdraw_id);
+        res.status(200).json(withdrawQuery);
+    } catch (error) {
+        res.status(400).json({ error: "An error occured while fetching deposits!" });
     }
 }

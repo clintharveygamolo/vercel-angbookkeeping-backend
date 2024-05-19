@@ -33,6 +33,7 @@ export type Withdraws = {
 const Reports: React.FC = () => {
 
   const [DepositReport, setDeposits] = useState<Deposits[] | null>();
+  const [WithdrawReport, setWithdraws] = useState<Withdraws[] | null>();
   const userInputRefInputRef = useRef<HTMLInputElement>(null);
 
   //values for deposit
@@ -53,6 +54,8 @@ const Reports: React.FC = () => {
 
   //edit Modal for Withdraws
 
+
+  // handle edit deposit
   const editDeposit = async (deposit_id: number) => {
     e.preventDefault();
     try {
@@ -81,7 +84,7 @@ const Reports: React.FC = () => {
     }
   }
 
-
+  // get Deposits
   useEffect(() => {
     axios({
       method: 'GET',
@@ -89,6 +92,19 @@ const Reports: React.FC = () => {
     })
       .then((response: { data: SetStateAction<Deposits[] | null | undefined> }) => {
         setDeposits(response.data);
+        console.log(response.data);
+      })
+      .catch((error: any) => console.error(error));
+  }, []);
+
+  // get Withdraws
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: '/api/auth/Withdrawals/Get',
+    })
+      .then((response: { data: SetStateAction<Withdraws[] | null | undefined> }) => {
+        setWithdraws(response.data);
         console.log(response.data);
       })
       .catch((error: any) => console.error(error));
@@ -309,6 +325,7 @@ const Reports: React.FC = () => {
                       <Table.Cell></Table.Cell>
                       <Table.Cell></Table.Cell>
                       <Table.Cell></Table.Cell>
+                      <Table.Cell></Table.Cell>
                       <Table.Cell>Total</Table.Cell>
                       <Table.Cell>Pesos</Table.Cell>
                       <Table.Cell></Table.Cell>
@@ -338,7 +355,7 @@ const Reports: React.FC = () => {
                     </Table.HeadCell>
                     <Table.HeadCell>Date</Table.HeadCell>
                     <Table.HeadCell>Check #</Table.HeadCell>
-                    <Table.HeadCell>Invoice #</Table.HeadCell>
+                    <Table.HeadCell>Voucher #</Table.HeadCell>
                     <Table.HeadCell>Payee</Table.HeadCell>
                     <Table.HeadCell>Remarks</Table.HeadCell>
                     <Table.HeadCell>Amount</Table.HeadCell>
@@ -347,24 +364,25 @@ const Reports: React.FC = () => {
                     </Table.HeadCell>
                   </Table.Head>
                   <Table.Body className="divide-y">
-                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <Table.Cell className="p-4">
-                        <Checkbox />
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        {'Apple MacBook Pro 17"'}
-                      </Table.Cell>
-                      <Table.Cell>Sliver</Table.Cell>
-                      <Table.Cell>Laptop</Table.Cell>
-                      <Table.Cell>Laptop</Table.Cell>
-                      <Table.Cell>Laptop</Table.Cell>
-                      <Table.Cell>$2999</Table.Cell>
-                      <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                          Edit
-                        </a>
-                      </Table.Cell>
-                    </Table.Row>
+                    {WithdrawReport
+                      && WithdrawReport.map((Withdraws, key) => (
+                        <Table.Row key={key} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                          <Table.Cell className="p-4">
+                            <Checkbox />
+                          </Table.Cell>
+                          <Table.Cell>date unta</Table.Cell>
+                          <Table.Cell>{Withdraws.check_no}</Table.Cell>
+                          <Table.Cell>{Withdraws.voucher_no}</Table.Cell>
+                          <Table.Cell>{Withdraws.payee}</Table.Cell>
+                          <Table.Cell>{Withdraws.remarks}</Table.Cell>
+                          <Table.Cell>{Withdraws.amount}</Table.Cell>
+                          <Table.Cell>
+                            <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                              Edit
+                            </a>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
 
                     {/* <!-- Withdraws Total --> */}
 
