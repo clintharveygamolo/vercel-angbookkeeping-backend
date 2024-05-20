@@ -9,13 +9,13 @@ services:
       - public
       - private
     develop:
-      watch: 
+      watch:
         - action: sync
           path: ./src
           target: /src/src
-          ignore: 
+          ignore:
             - node_modules/
-        - action: rebuild 
+        - action: rebuild
           path: package.json
     ports:
       - "5173:5173"
@@ -33,13 +33,13 @@ services:
       - public
       - private
     develop:
-      watch: 
+      watch:
         - action: sync
           path: .
           target: .
-          ignore: 
+          ignore:
             - node_modules/
-        - action: rebuild 
+        - action: rebuild
           path: package.json
     depends_on:
       - mariadb

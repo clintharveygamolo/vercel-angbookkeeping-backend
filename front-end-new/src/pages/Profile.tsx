@@ -68,7 +68,8 @@ const Profile = () => {
       console.error('Error deleting user', err);
     }
   };
-  const createUserAccount = async (e: { preventDefault: () => void }) => {
+
+  const createUserAccount = async () => {
     e.preventDefault();
     try {
       const response = await axiosConfig.post(
