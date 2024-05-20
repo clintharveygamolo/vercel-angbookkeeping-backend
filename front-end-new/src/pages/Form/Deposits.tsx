@@ -24,6 +24,7 @@ export type Deposits = {
 };
 
 const Deposits = () => {
+  // const [dateValue, setdateValue] = useState('');
   const [check_noValue, setcheck_noValue] = useState('');
   const [particularsValue, setparticularsValue] = useState('');
   const [remarksValue, setremarksValue] = useState('');
@@ -134,6 +135,8 @@ const Deposits = () => {
           </div>
         </div>
       </div>
+
+      {/*   FORM    */}
 
       <form onSubmit={handleSubmit}>
         <div className="my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
