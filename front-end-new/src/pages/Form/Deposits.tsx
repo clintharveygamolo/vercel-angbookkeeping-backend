@@ -23,45 +23,44 @@ export type Deposits = {
   amount: number;
 };
 
-//const [dateValue, setdateValue] = useState('');
-const [check_noValue, setcheck_noValue] = useState('');
-const [particularsValue, setparticularsValue] = useState('');
-const [remarksValue, setremarksValue] = useState('');
-const [amountValue, setamountValue] = useState('');
-
-const createDeposit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    const response = await axiosConfig.post(
-      '/api/auth/Deposits/Create',
-      {
-        date: "12/13/2024",
-        check_no: check_noValue,
-        particulars: particularsValue,
-        remarks: remarksValue,
-        amount: amountValue,
-      },
-      { withCredentials: true },
-    );
-
-    if (response.status === 201) {
-      toast.success('Created a deposit!');
-    }
-  } catch (err: any) {
-    if (axios.isAxiosError(err)) {
-      toast.error(err.response?.data.message);
-    } else if (err instanceof Error) {
-      console.error('Error:', err);
-    }
-  }
-};
-
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  createDeposit(e);
-}
-
 const Deposits = () => {
+  const [check_noValue, setcheck_noValue] = useState('');
+  const [particularsValue, setparticularsValue] = useState('');
+  const [remarksValue, setremarksValue] = useState('');
+  const [amountValue, setamountValue] = useState('');
+
+  const createDeposit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axiosConfig.post(
+        '/api/auth/Deposits/Create',
+        {
+          date: "12/13/2024",
+          check_no: check_noValue,
+          particulars: particularsValue,
+          remarks: remarksValue,
+          amount: amountValue,
+        },
+        { withCredentials: true },
+      );
+
+      if (response.status === 201) {
+        toast.success('Created a deposit!');
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.error('Error:', err);
+      }
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createDeposit(e);
+  }
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Add Deposits" />
