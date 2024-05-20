@@ -14,6 +14,7 @@ import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
 
 export type Deposits = {
+  deposit_id: number;
   date: Date;
   check_no: number;
   particulars: string;
@@ -22,6 +23,7 @@ export type Deposits = {
 }
 
 export type Withdraws = {
+  withdraw_id: number;
   date: Date;
   check_no: number;
   voucher_no: number;
@@ -36,6 +38,7 @@ const Reports: React.FC = () => {
   const userInputRefInputRef = useRef<HTMLInputElement>(null);
 
   //values for deposit
+  const [DepositIDForm, setDepositIDForm] = useState('');
   const [DepositDateForm, setDepositDateForm] = useState('');
   const [DepositCheckNo, setDepositCheckNo] = useState(Number);
   const [DepositDateParticulars, setDepositParticulars] = useState('');
@@ -44,6 +47,8 @@ const Reports: React.FC = () => {
 
   //edit Modal for Deposit
   const [openModalEditDeposit, setModalEditDeposit] = useState(false);
+  //to delete
+  const [DepositToDelete, setDepositToDelete] = useState<number>(0);
 
   const [editModalDepositDate, setEditModalDepositUserDate] = useState<string>(''); //Date please
   const [editModalDepositCheckNo, setEditModalDepositCheckNo] = useState<number>();
@@ -51,7 +56,21 @@ const Reports: React.FC = () => {
   const [editModalDepositRemarks, setEditModalDepositRemarks] = useState<string>('');
   const [editModalDepositAmount, setEditModalDepositAmount] = useState<number>();
 
+  //get for Deposits
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: '/api/auth/Deposits/Get',
+    })
+      .then((response: { data: SetStateAction<Deposits[] | null | undefined> }) => {
+        setDeposits(response.data);
+        console.log(response.data);
+      })
+      .catch((error: any) => console.error(error));
+  }, []);
+
   //edit Modal for Withdraws
+  const [openModalEditWithdraws, setModalEditWithdraws] = useState(false);
 
   const editDeposit = async (deposit_id: number) => {
     e.preventDefault();
@@ -81,18 +100,26 @@ const Reports: React.FC = () => {
     }
   }
 
+  //delete deposit function (in the edit modal)
+  const deleteDeposit = async (deposit_id: number) => {
+    try {
+      const response = await axiosConfig.delete(
+        `/api/auth/Deposits/Delete/${deposit_id}`,
+      );
 
-  useEffect(() => {
-    axios({
-      method: 'GET',
-      url: '/api/auth/Deposits/Get',
-    })
-      .then((response: { data: SetStateAction<Deposits[] | null | undefined> }) => {
-        setDeposits(response.data);
-        console.log(response.data);
-      })
-      .catch((error: any) => console.error(error));
-  }, []);
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        setModalEditDeposit(false);
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+      }
+      console.error('Error deleting deposit', err);
+    }
+  };
 
   return (
     <DefaultLayout>
@@ -240,6 +267,8 @@ const Reports: React.FC = () => {
                                 setEditModalDepositParticulars(Deposits.particulars);
                                 setEditModalDepositRemarks(Deposits.remarks);
                                 setEditModalDepositAmount(Deposits.amount);
+
+                                setDepositToDelete(Deposits.deposit_id);
                               }}>
                               Edit
                             </a>
@@ -287,10 +316,19 @@ const Reports: React.FC = () => {
                                         <TextInput id="amount" placeholder={editModalDepositAmount?.toString()} required />
                                       </div>
                                       <div className="flex justify-end gap-3">
-                                        <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90">
+                                        <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90"
+                                        //onClick={(e) => {
+                                        //editDeposit(e);
+                                        //setModalEditDeposit(false);
+                                        //}}
+                                        >
                                           Edit Entry
                                         </button>
-                                        <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700">
+                                        <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700"
+                                          onClick={() => {
+                                            deleteDeposit(DepositToDelete);
+                                            setModalEditDeposit(false);
+                                          }}>
                                           Delete Entry
                                         </button>
                                       </div>
