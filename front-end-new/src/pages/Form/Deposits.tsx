@@ -56,8 +56,9 @@ const createDeposit = async (e: React.FormEvent) => {
   }
 };
 
-const handleSubmit = (e) => {
-
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  createDeposit(e);
 }
 
 const Deposits = () => {

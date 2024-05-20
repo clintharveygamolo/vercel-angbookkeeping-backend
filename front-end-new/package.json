@@ -34,7 +34,6 @@
     "react-router-dom": "^6.23.0",
     "react-toastify": "^9.1.3",
     "sort-by": "^0.0.2",
-    //added new dependency react-hook-form
     "react-hook-form": "^7.51.4"
   },
   "devDependencies": {
