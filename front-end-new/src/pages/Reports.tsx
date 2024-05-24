@@ -11,9 +11,10 @@ import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 import axios from '../api/axiosconfig';
 import axiosConfig from '.././api/axiosconfig.js';
 import { AxiosError } from 'axios';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 export type Deposits = {
+  deposit_id: number;
   date: Date;
   check_no: number;
   particulars: string;
@@ -22,11 +23,12 @@ export type Deposits = {
 }
 
 export type Withdraws = {
+  withdraw_id: number;
   date: Date;
   check_no: number;
   voucher_no: number;
   payee: string;
-  remarks: number;
+  remarks: string;
   amount: number;
 }
 
@@ -37,6 +39,7 @@ const Reports: React.FC = () => {
   const userInputRefInputRef = useRef<HTMLInputElement>(null);
 
   //values for deposit
+  const [DepositIDForm, setDepositIDForm] = useState('');
   const [DepositDateForm, setDepositDateForm] = useState('');
   const [DepositCheckNo, setDepositCheckNo] = useState(Number);
   const [DepositDateParticulars, setDepositParticulars] = useState('');
@@ -45,6 +48,9 @@ const Reports: React.FC = () => {
 
   //edit Modal for Deposit
   const [openModalEditDeposit, setModalEditDeposit] = useState(false);
+  const [DepositToEdit, setDepositToEdit] = useState<number>(0);
+  //to delete
+  const [DepositToDelete, setDepositToDelete] = useState<number>(0);
 
   const [editModalDepositDate, setEditModalDepositUserDate] = useState<string>(''); //Date please
   const [editModalDepositCheckNo, setEditModalDepositCheckNo] = useState<number>();
@@ -52,16 +58,36 @@ const Reports: React.FC = () => {
   const [editModalDepositRemarks, setEditModalDepositRemarks] = useState<string>('');
   const [editModalDepositAmount, setEditModalDepositAmount] = useState<number>();
 
+  //get for Deposits
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: '/api/auth/Deposits/Get',
+    })
+      .then((response: { data: SetStateAction<Deposits[] | null | undefined> }) => {
+        setDeposits(response.data);
+        console.log(response.data);
+      })
+      .catch((error: any) => console.error(error));
+  }, []);
+
   //edit Modal for Withdraws
+  const [openModalEditWithdraws, setModalEditWithdraws] = useState(false);
 
+  const [editModalDWithdrawDate, setEditModalWithdrawUserDate] = useState<string>(''); //Date please
+  const [editModalWithdrawCheckNo, setEditModalWithdrawCheckNo] = useState<number>();
+  const [editModalWithdrawVoucherNo, setEditModalWithdrawVoucherNo] = useState<number>();
+  const [editModalWithdrawPayee, setEditModalWithdrawPayee] = useState<string>('');
+  const [editModalWithdrawRemarks, setEditModalWithdrawRemarks] = useState<string>('');
+  const [editModalWithdrawAmount, setEditModalWithdrawAmount] = useState<number>();
 
-  // handle edit deposit
   const editDeposit = async (deposit_id: number) => {
     e.preventDefault();
     try {
-      const response = await axiosConfig.post(
+      const response = await axiosConfig.put(
         '/api/auth/Deposits/Edit',
         {
+          user_id: 10001,
           date: editModalDepositDate,
           check_no: editModalDepositCheckNo,
           particulars: editModalDepositParticulars,
@@ -83,6 +109,85 @@ const Reports: React.FC = () => {
       }
     }
   }
+
+  /*
+  const deleteDeposit = async (deposit_id: number) => {
+    try {
+      const response = await axiosConfig.delete(
+        `/api/auth/Deposits/Delete/${deposit_id}`,
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        setModalEditDeposit(false);
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+      }
+      console.error('Error deleting deposit', err);
+    }
+  };
+  */
+
+  //delete function for deposits
+
+  const deleteDeposit = async (deposit_id: number, user_id: number) => {
+    try {
+      // Send DELETE request with deposit_id in the URL and user_id in the request body
+
+      //USER ID MUST BE DEPENDENT ON THE SESSION (PLEASE CHANGE)
+      const response = await axios.delete(
+        `/api/auth/Deposits/Delete/${deposit_id}`,
+        {
+          data: { user_id }
+        }
+      );
+
+      // Check for successful response
+      if (response.status === 200) {
+        toast.success(response.data); // Display success message
+        setModalEditDeposit(false);
+      }
+    } catch (err) {
+      // Handle axios errors specifically
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.error || "An error occurred while deleting the deposit."); // Display error message
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+        toast.error("An unexpected error occurred."); // Display general error message
+      }
+      console.error('Error deleting deposit', err);
+    }
+  };
+
+  //delete function for withdraws
+
+  const deleteWithdraw = async (withdraw_id: number, user_id: number) => {
+    try {
+      const response = await axios.delete(
+        `/api/auth/Withdrawals/Delete/${withdraw_id}`,
+        {
+          data: { user_id }
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data);
+        setModalEditWithdraws(false);
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.error || "An error occurred while deleting the withdrawal entry.");
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+        toast.error("An unexpected error occurred.");
+      }
+      console.error('Error deleting withdrawal entry', err);
+    }
+  };
 
   // get Deposits
   useEffect(() => {
@@ -242,7 +347,7 @@ const Reports: React.FC = () => {
                           <Table.Cell className="p-4">
                             <Checkbox />
                           </Table.Cell>
-                          <Table.Cell>date unta</Table.Cell>
+                          <Table.Cell>{Deposits.deposit_id}</Table.Cell>
                           <Table.Cell>{Deposits.check_no}</Table.Cell>
                           <Table.Cell>{Deposits.particulars}</Table.Cell>
                           <Table.Cell>{Deposits.remarks}</Table.Cell>
@@ -256,6 +361,8 @@ const Reports: React.FC = () => {
                                 setEditModalDepositParticulars(Deposits.particulars);
                                 setEditModalDepositRemarks(Deposits.remarks);
                                 setEditModalDepositAmount(Deposits.amount);
+
+                                setDepositToDelete(Deposits.deposit_id);
                               }}>
                               Edit
                             </a>
@@ -276,7 +383,7 @@ const Reports: React.FC = () => {
                                         <div className="mb-2 block">
                                           <Label htmlFor="date" value="Date" />
                                         </div>
-                                        <TextInput id="date" placeholder="date unta" required />
+                                        <TextInput id="date" placeholder={editModalDepositDate?.toString()} required />
                                       </div>
                                       <div>
                                         <div className="mb-2 block">
@@ -303,10 +410,19 @@ const Reports: React.FC = () => {
                                         <TextInput id="amount" placeholder={editModalDepositAmount?.toString()} required />
                                       </div>
                                       <div className="flex justify-end gap-3">
-                                        <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90">
+                                        <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90"
+                                        //onClick={() => {
+                                        // editDeposit();
+                                        //  setModalEditDeposit(false);
+                                        //}}
+                                        >
                                           Edit Entry
                                         </button>
-                                        <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700">
+                                        <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700"
+                                          onClick={() => {
+                                            deleteDeposit(DepositToDelete, 10001);
+                                            setModalEditDeposit(false);
+                                          }}>
                                           Delete Entry
                                         </button>
                                       </div>
@@ -377,9 +493,84 @@ const Reports: React.FC = () => {
                           <Table.Cell>{Withdraws.remarks}</Table.Cell>
                           <Table.Cell>{Withdraws.amount}</Table.Cell>
                           <Table.Cell>
-                            <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                            <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+                              onClick={() => {
+                                setModalEditWithdraws(true);
+                                setEditModalWithdrawUserDate(Withdraws.date.toDateString);
+                                setEditModalWithdrawCheckNo(Withdraws.check_no);
+                                setEditModalWithdrawVoucherNo(Withdraws.check_no);
+                                setEditModalWithdrawPayee(Withdraws.payee);
+                                setEditModalWithdrawRemarks(Withdraws.remarks);
+                                setEditModalWithdrawAmount(Withdraws.amount);
+
+                                setDepositToDelete(Withdraws.withdraw_id);
+                              }}>
                               Edit
                             </a>
+                            <Modal
+                              show={openModalEditWithdraws}
+                              size="md"
+                              popup
+                              onClose={() => setModalEditDeposit(false)}
+                              initialFocus={userInputRefInputRef}
+                            >
+                              <div className="fixed inset-0 flex items-center justify-center p-4">
+                                <div className="w-full max-w-md mx-auto bg-white rounded-lg border shadow-md sm:p-2 dark:bg-gray-800 dark:border-gray-700">
+                                  <Modal.Header />
+                                  <Modal.Body>
+                                    <div className="space-y-2">
+                                      <h3 className="text-xl font-medium text-gray-900 dark:text-white">Create/Edit Entry</h3>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="date" value="Date" />
+                                        </div>
+                                        <TextInput id="date" placeholder={editModalDWithdrawDate?.toString()} required />
+                                      </div>
+                                      <div className="flex space-x-4">
+                                        <div className="w-1/2">
+                                          <div className="mb-2 block">
+                                            <Label htmlFor="checkNumber" value="Check#" />
+                                          </div>
+                                          <TextInput id="checkNumber" placeholder={editModalWithdrawCheckNo?.toString()} required />
+                                        </div>
+                                        <div className="w-1/2">
+                                          <div className="mb-2 block">
+                                            <Label htmlFor="voucherNumber" value="Voucher#" />
+                                          </div>
+                                          <TextInput id="voucherNumber" placeholder={editModalWithdrawVoucherNo?.toString()} required />
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="payee" value="Payee" />
+                                        </div>
+                                        <TextInput id="payee" placeholder={editModalWithdrawPayee} required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="remarks" value="Remarks" />
+                                        </div>
+                                        <TextInput id="remarks" placeholder={editModalWithdrawRemarks} required />
+                                      </div>
+                                      <div>
+                                        <div className="mb-2 block">
+                                          <Label htmlFor="amount" value="Amount" />
+                                        </div>
+                                        <TextInput id="amount" placeholder={editModalWithdrawAmount?.toString()} required />
+                                      </div>
+                                      <div className="flex justify-end gap-3">
+                                        <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90">
+                                          Edit Entry
+                                        </button>
+                                        <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700">
+                                          Delete Entry
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </Modal.Body>
+                                </div>
+                              </div>
+                            </Modal>
                           </Table.Cell>
                         </Table.Row>
                       ))}
@@ -470,13 +661,10 @@ const Reports: React.FC = () => {
                 </Button>
               </div>
             </Tabs.Item>
-
-
           </Tabs>
-
         </div>
       </div>
-
+      <ToastContainer />
     </DefaultLayout >
   );
 };

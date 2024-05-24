@@ -4,8 +4,8 @@ import { createWithdraws, editWithdraws, deleteWithdraws, getWithdraw, getWithdr
 const router = express.Router();
 
 router.post('/Create', createWithdraws);
-router.post('/Edit', editWithdraws);
-router.post('/Delete', deleteWithdraws);
+router.put('/Edit', editWithdraws);
+router.delete('/Delete/:withdraw_id', deleteWithdraws);
 router.get('/Get', getWithdraws);
 router.get('/GetID', getWithdraw);
 
