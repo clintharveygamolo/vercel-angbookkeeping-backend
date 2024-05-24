@@ -11,7 +11,7 @@ import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 import axios from '../api/axiosconfig';
 import axiosConfig from '.././api/axiosconfig.js';
 import { AxiosError } from 'axios';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 export type Deposits = {
   deposit_id: number;
@@ -47,6 +47,7 @@ const Reports: React.FC = () => {
 
   //edit Modal for Deposit
   const [openModalEditDeposit, setModalEditDeposit] = useState(false);
+  const [DepositToEdit, setDepositToEdit] = useState<number>(0);
   //to delete
   const [DepositToDelete, setDepositToDelete] = useState<number>(0);
 
@@ -75,9 +76,10 @@ const Reports: React.FC = () => {
   const editDeposit = async (deposit_id: number) => {
     e.preventDefault();
     try {
-      const response = await axiosConfig.post(
+      const response = await axiosConfig.put(
         '/api/auth/Deposits/Edit',
         {
+          user_id: 10001,
           date: editModalDepositDate,
           check_no: editModalDepositCheckNo,
           particulars: editModalDepositParticulars,
@@ -101,6 +103,8 @@ const Reports: React.FC = () => {
   }
 
   //delete deposit function (in the edit modal)
+
+  /*
   const deleteDeposit = async (deposit_id: number) => {
     try {
       const response = await axiosConfig.delete(
@@ -116,6 +120,36 @@ const Reports: React.FC = () => {
         toast.error(err.response?.data.message);
       } else if (err && err instanceof Error) {
         console.log('Error: ', err);
+      }
+      console.error('Error deleting deposit', err);
+    }
+  };
+  */
+
+  const deleteDeposit = async (deposit_id: number, user_id: number) => {
+    try {
+      // Send DELETE request with deposit_id in the URL and user_id in the request body
+
+      //USER ID MUST BE DEPENDENT ON THE SESSION (PLEASE CHANGE)
+      const response = await axios.delete(
+        `/api/auth/Deposits/Delete/${deposit_id}`,
+        {
+          data: { user_id }
+        }
+      );
+
+      // Check for successful response
+      if (response.status === 200) {
+        toast.success(response.data); // Display success message
+        setModalEditDeposit(false);
+      }
+    } catch (err) {
+      // Handle axios errors specifically
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.error || "An error occurred while deleting the deposit."); // Display error message
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+        toast.error("An unexpected error occurred."); // Display general error message
       }
       console.error('Error deleting deposit', err);
     }
@@ -253,7 +287,7 @@ const Reports: React.FC = () => {
                           <Table.Cell className="p-4">
                             <Checkbox />
                           </Table.Cell>
-                          <Table.Cell>date unta</Table.Cell>
+                          <Table.Cell>{Deposits.deposit_id}</Table.Cell>
                           <Table.Cell>{Deposits.check_no}</Table.Cell>
                           <Table.Cell>{Deposits.particulars}</Table.Cell>
                           <Table.Cell>{Deposits.remarks}</Table.Cell>
@@ -289,7 +323,7 @@ const Reports: React.FC = () => {
                                         <div className="mb-2 block">
                                           <Label htmlFor="date" value="Date" />
                                         </div>
-                                        <TextInput id="date" placeholder="date unta" required />
+                                        <TextInput id="date" placeholder={editModalDepositDate?.toString()} required />
                                       </div>
                                       <div>
                                         <div className="mb-2 block">
@@ -317,16 +351,16 @@ const Reports: React.FC = () => {
                                       </div>
                                       <div className="flex justify-end gap-3">
                                         <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90"
-                                        //onClick={(e) => {
-                                        //editDeposit(e);
-                                        //setModalEditDeposit(false);
+                                        //onClick={() => {
+                                        // editDeposit();
+                                        //  setModalEditDeposit(false);
                                         //}}
                                         >
                                           Edit Entry
                                         </button>
                                         <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700"
                                           onClick={() => {
-                                            deleteDeposit(DepositToDelete);
+                                            deleteDeposit(DepositToDelete, 10001);
                                             setModalEditDeposit(false);
                                           }}>
                                           Delete Entry
@@ -490,13 +524,10 @@ const Reports: React.FC = () => {
                 </Button>
               </div>
             </Tabs.Item>
-
-
           </Tabs>
-
         </div>
       </div>
-
+      <ToastContainer />
     </DefaultLayout >
   );
 };

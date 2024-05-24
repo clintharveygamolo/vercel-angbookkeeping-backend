@@ -59,11 +59,12 @@ export async function editDeposits(req, res) {
     }
 }
 //this is the deposit entry deletion function.
-export async function deleteDeposits(req, res) {
+
+/*export async function deleteDeposits(req, res) {
     try {
         const currentUser = await User.findByPk(req.body.user_id);
 
-        const { deposit_id } = req.body;
+        const {deposit_id} = req.body;
 
         const deposits = await Deposits.findOne({ where: { deposit_id: deposit_id } });
 
@@ -86,6 +87,46 @@ export async function deleteDeposits(req, res) {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "An error occured while deleting the entry." });
+    }
+}
+*/
+
+export async function deleteDeposits(req, res) {
+    try {
+        const { user_id } = req.body; // Extract user_id from request body
+        const { deposit_id } = req.params; // Extract deposit_id from URL parameters
+
+        // Log the received user_id and deposit_id
+        console.log(`Received user_id: ${user_id}, deposit_id: ${deposit_id}`);
+
+        const currentUser = await User.findByPk(user_id);
+
+        // Log currentUser
+        console.log(`Current user: ${JSON.stringify(currentUser)}`);
+
+        if (!currentUser) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        if (currentUser.role !== 'Admin') {
+            return res.status(403).json({ error: "Forbidden: Only admin users can delete deposit entries." });
+        }
+
+        const deposit = await Deposits.findOne({ where: { deposit_id } });
+
+        // Log deposit
+        console.log(`Deposit found: ${JSON.stringify(deposit)}`);
+
+        if (!deposit) {
+            return res.status(404).json({ message: "Deletion failed, deposit entry not found." });
+        }
+
+        await Deposits.destroy({ where: { deposit_id } });
+
+        res.status(200).json("Deposit Entry Successfully Deleted.");
+    } catch (error) {
+        console.error("Error occurred while deleting deposit entry:", error);
+        res.status(500).json({ error: "An error occurred while deleting the entry." });
     }
 }
 
