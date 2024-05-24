@@ -12,10 +12,8 @@ import axios from '../api/axiosconfig';
 import axiosConfig from '.././api/axiosconfig.js';
 import { AxiosError } from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
-import { ToastContainer, toast } from 'react-toastify';
 
 export type Deposits = {
-  deposit_id: number;
   deposit_id: number;
   date: Date;
   check_no: number;
@@ -25,7 +23,6 @@ export type Deposits = {
 }
 
 export type Withdraws = {
-  withdraw_id: number;
   withdraw_id: number;
   date: Date;
   check_no: number;
@@ -43,7 +40,6 @@ const Reports: React.FC = () => {
 
   //values for deposit
   const [DepositIDForm, setDepositIDForm] = useState('');
-  const [DepositIDForm, setDepositIDForm] = useState('');
   const [DepositDateForm, setDepositDateForm] = useState('');
   const [DepositCheckNo, setDepositCheckNo] = useState(Number);
   const [DepositDateParticulars, setDepositParticulars] = useState('');
@@ -52,9 +48,6 @@ const Reports: React.FC = () => {
 
   //edit Modal for Deposit
   const [openModalEditDeposit, setModalEditDeposit] = useState(false);
-  const [DepositToEdit, setDepositToEdit] = useState<number>(0);
-  //to delete
-  const [DepositToDelete, setDepositToDelete] = useState<number>(0);
   const [DepositToEdit, setDepositToEdit] = useState<number>(0);
   //to delete
   const [DepositToDelete, setDepositToDelete] = useState<number>(0);
@@ -106,10 +99,8 @@ const Reports: React.FC = () => {
     e.preventDefault();
     try {
       const response = await axiosConfig.put(
-      const response = await axiosConfig.put(
         '/api/auth/Deposits/Edit',
         {
-          user_id: 10001,
           user_id: 10001,
           date: editModalDepositDate,
           check_no: editModalDepositCheckNo,
