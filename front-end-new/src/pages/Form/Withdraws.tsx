@@ -7,7 +7,7 @@ import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 
 import { useState } from 'react';
 import axiosConfig from '../../api/axiosconfig.js';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 export type Withdraws = {
   date: Date;
@@ -255,6 +255,7 @@ const Withdraws = () => {
           </div>
         </div>
       </form>
+      <ToastContainer />
     </DefaultLayout>
   );
 };

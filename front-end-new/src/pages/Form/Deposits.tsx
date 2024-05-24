@@ -10,7 +10,7 @@ import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 import axiosConfig from '../../api/axiosconfig.js';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 import React, { useRef } from "react";
 import { useForm } from 'react-hook-form'
@@ -237,7 +237,7 @@ const Deposits = () => {
           </div>
         </div>
       </form>
-
+      <ToastContainer />
     </DefaultLayout>
   );
 };
