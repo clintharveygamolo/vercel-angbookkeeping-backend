@@ -4,8 +4,8 @@ import { createDeposits, editDeposits, deleteDeposits, getDeposits, getDeposit }
 const router = express.Router();
 
 router.post('/Create', createDeposits);
-router.post('/Edit', editDeposits);
-router.post('/Delete', deleteDeposits);
+router.put('/Edit', editDeposits);
+router.delete('/Delete/:deposit_id', deleteDeposits);
 router.get('/Get', getDeposits);
 router.get('/GetID', getDeposit);
 
