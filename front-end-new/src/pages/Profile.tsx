@@ -19,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export type User = {
   user_id: number;
   name: string;
+  password: string;
   role: string;
 };
 
@@ -36,6 +37,10 @@ const Profile = () => {
   const [selectedRole, setSelectedRole] = useState<string>('');
 
   const [userToDelete, setUserToDelete] = useState<number>(0);
+
+  const [editModalUserName, setEditModalUserName] = useState<string>('');
+  const [editModalPassword, setEditModalPassword] = useState<string>('');
+  const [editModalRole, setEditModalRole] = useState<string>('');
 
   const handleRoleChange = (role: string) => {
     setSelectedRole(role);
@@ -63,7 +68,8 @@ const Profile = () => {
       console.error('Error deleting user', err);
     }
   };
-  const createUserAccount = async (e: { preventDefault: () => void }) => {
+
+  const createUserAccount = async () => {
     e.preventDefault();
     try {
       const response = await axiosConfig.post(
@@ -90,32 +96,31 @@ const Profile = () => {
     }
   };
 
-  // const editUserAccount = async (e: { preventDefault: () => void }) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await axiosConfig.post(
-  //       '/api/createUser',
-  //       {
-  //         user_id: auth.user_id,
-  //         name: userNameFormValue,
-  //         password: userPasswordFormValue,
-  //         role: selectedRole,
-  //       },
-  //       { withCredentials: true },
-  //     );
+  const editUserAccount = async (user_id: number) => {
+    e.preventDefault();
+    try {
+      const response = await axiosConfig.post(
+        '/api/user/editUser',
+        {
+          name: userNameFormValue,
+          password: userPasswordFormValue,
+          role: selectedRole,
+        },
+        { withCredentials: true },
+      );
 
-  //     if (response.status === 201) {
-  //       setOpenModal(false);
-  //       toast.success('Created a user!');
-  //     }
-  //   } catch (err) {
-  //     if (err && err instanceof AxiosError) {
-  //       toast.error(err.response?.data.message);
-  //     } else if (err && err instanceof Error) {
-  //       console.log('Error: ', err);
-  //     }
-  //   }
-  // };
+      if (response.status === 201) {
+        setOpenModal(false);
+        toast.success('Created a user!');
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+      }
+    }
+  };
 
   useEffect(() => {
     axiosConfig({
@@ -217,7 +222,7 @@ const Profile = () => {
             </h3>
             <p className="font-medium">{auth.role}</p>
             <div className="mx-auto max-w-180">
-              <h4 className="font-semibold text-black dark:text-white">{}</h4>
+              <h4 className="font-semibold text-black dark:text-white">{ }</h4>
             </div>
           </div>
         </div>
@@ -338,7 +343,8 @@ const Profile = () => {
               </tr>
             </thead>
             <tbody>
-              {userAccounts && userAccounts.map((user, key) => (
+              {userAccounts &&
+                userAccounts.map((user, key) => (
                   <tr key={key}>
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
@@ -365,7 +371,12 @@ const Profile = () => {
                         {/* <!-- View Icon --> */}
                         <button
                           className="hover:text-primary"
-                          onClick={() => setOpenEditModal(true)}
+                          onClick={() => {
+                            setOpenEditModal(true);
+                            setEditModalUserName(user.name);
+                            setEditModalPassword(user.password);
+                            setEditModalRole(user.role);
+                          }}
                         >
                           <svg
                             className="fill-current"
@@ -410,7 +421,7 @@ const Profile = () => {
                                 <TextInput
                                   id="username"
                                   ref={userInputRefInputRef}
-                                  placeholder="Username"
+                                  placeholder={editModalUserName}
                                   required
                                 />
                               </div>
@@ -420,6 +431,7 @@ const Profile = () => {
                                 </div>
                                 <TextInput
                                   id="password"
+                                  value={editModalPassword}
                                   type="password"
                                   required
                                 />
@@ -451,10 +463,9 @@ const Profile = () => {
                         <button
                           className="hover:text-primary"
                           onClick={() => {
-                            setOpenDeleteModal(true)
-                            setUserToDelete(user.user_id)
-                          }
-                        }
+                            setOpenDeleteModal(true);
+                            setUserToDelete(user.user_id);
+                          }}
                         >
                           <svg
                             className="fill-current"

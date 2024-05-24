@@ -1,59 +1,74 @@
+'use client';
+
 import { Link } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import SelectGroupOne from '../../components/Forms/SelectGroup/SelectGroupOne';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { Product } from '../../types/product';
-import ProductOne from '../../images/product/product-01.png';
-import ProductTwo from '../../images/product/product-02.png';
-import ProductThree from '../../images/product/product-03.png';
-import ProductFour from '../../images/product/product-04.png';
 
-import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo';
 import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 
-const productData: Product[] = [
-  {
-    image: ProductOne,
-    name: 'Apple Watch Series 7',
-    category: 'Electronics',
-    price: 296,
-    sold: 22,
-    profit: 45,
-  },
-  {
-    image: ProductTwo,
-    name: 'Macbook Pro M1',
-    category: 'Electronics',
-    price: 546,
-    sold: 12,
-    profit: 125,
-  },
-  {
-    image: ProductThree,
-    name: 'Dell Inspiron 15',
-    category: 'Electronics',
-    price: 443,
-    sold: 64,
-    profit: 247,
-  },
-  {
-    image: ProductFour,
-    name: 'HP Probook 450',
-    category: 'Electronics',
-    price: 499,
-    sold: 72,
-    profit: 103,
-  },
-];
+import axiosConfig from '../../api/axiosconfig.js';
+import { AxiosError } from 'axios';
+import { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+
+import React, { useRef } from "react";
+import { useForm } from 'react-hook-form'
+
+export type Deposits = {
+  date: Date;
+  check_no: number;
+  particulars: string;
+  remarks: string;
+  amount: number;
+};
 
 const Deposits = () => {
+  // const [dateValue, setdateValue] = useState('');
+  const [check_noValue, setcheck_noValue] = useState('');
+  const [particularsValue, setparticularsValue] = useState('');
+  const [remarksValue, setremarksValue] = useState('');
+  const [amountValue, setamountValue] = useState('');
+
+  const createDeposit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axiosConfig.post(
+        '/api/auth/Deposits/Create',
+        {
+          date: "12/13/2024",
+          check_no: check_noValue,
+          particulars: particularsValue,
+          remarks: remarksValue,
+          amount: amountValue,
+        },
+        { withCredentials: true },
+      );
+
+      if (response.status === 201) {
+        toast.success('Created a deposit!');
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.error('Error:', err);
+      }
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createDeposit(e);
+  }
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Add Deposits" />
 
       <div className="grid grid-cols-1 gap-9 sm:grid-cols-1">
         <div className="flex flex-col gap-9">
-          {/* <!-- Contact Form --> */}
+          {/* <!-- Find Account --> */}
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
               <h3 className="font-medium text-black dark:text-white">
@@ -121,7 +136,9 @@ const Deposits = () => {
         </div>
       </div>
 
-      <form action='#'>
+      {/*   FORM    */}
+
+      <form onSubmit={handleSubmit}>
         <div className="my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="py-6 px-4 md:px-6 xl:px-7.5 flex items-center justify-between">
             <h4 className="text-xl font-semibold text-black dark:text-white">
@@ -132,57 +149,95 @@ const Deposits = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+          <div className="grid grid-cols-4 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-2 flex items-center">
               <p className="font-medium">Date</p>
             </div>
             <div className="col-span-2 flex items-center">
+              <p className="font-medium">Check Number</p>
+            </div>
+            <div className="col-span-2 flex items-center">
               <p className="font-medium">Particular</p>
             </div>
-            <div className="col-span-2 flex items-center sm:flex">
+            <div className="col-span-2 flex items-center">
               <p className="font-medium">Remarks</p>
-            </div>
-            <div className="col-span-1 flex items-center">
-              <p className="font-medium">Amount</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5" >
+          <div className="grid grid-cols-4 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-2 flex items-center">
-              <div className=" ">
+              <div>
                 <DatePickerOne />
               </div>
             </div>
-            <div className="col-span-2 hidden items-center sm:flex">
+            <div className="col-span-2 flex items-center">
               <div>
                 <input
+                  id="check_no_input"
+                  value={check_noValue}
+                  type="text"
+                  placeholder="Check Number"
+                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setcheck_noValue(e.target.value)
+                  }
+                />
+              </div>
+            </div>
+            <div className="col-span-2 flex items-center">
+              <div>
+                <input
+                  id="particular_input"
+                  value={particularsValue}
                   type="text"
                   placeholder="Particular"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setparticularsValue(e.target.value)
+                  }
                 />
               </div>
             </div>
             <div className="col-span-2 flex items-center">
               <div>
                 <input
+                  id="remarks_input"
+                  value={remarksValue}
                   type="text"
                   placeholder="Remarks"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setremarksValue(e.target.value)
+                  }
                 />
               </div>
             </div>
+          </div>
+
+          <div className="grid grid-cols-4 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-2 flex items-center">
+              <p className="font-medium">Amount</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
+            <div className="col-span-1 flex items-center">
               <div>
                 <input
+                  id="amount_input"
+                  value={amountValue}
                   type="text"
                   placeholder="Amount"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setamountValue(e.target.value)
+                  }
                 />
               </div>
             </div>
           </div>
         </div>
       </form>
+      <ToastContainer />
     </DefaultLayout>
   );
 };

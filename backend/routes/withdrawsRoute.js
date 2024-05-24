@@ -1,10 +1,12 @@
 import express from 'express';
-import { createWithdraws, editWithdraws, deleteWithdraws } from '../controllers/withdrawsController.js';
+import { createWithdraws, editWithdraws, deleteWithdraws, getWithdraw, getWithdraws } from '../controllers/withdrawsController.js';
 
 const router = express.Router();
 
 router.post('/Create', createWithdraws);
-router.post('/Edit/:withdraw_id', editWithdraws);
-router.post('/Delete', deleteWithdraws);
+router.put('/Edit', editWithdraws);
+router.delete('/Delete/:withdraw_id', deleteWithdraws);
+router.get('/Get', getWithdraws);
+router.get('/GetID', getWithdraw);
 
 export default router;

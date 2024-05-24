@@ -1,6 +1,5 @@
 import sequelize from '../util/database.js';
 import { DataTypes } from 'sequelize';
-import Bank from '../models/BankModel.js';
 
 const Company = sequelize.define("Company", {
     company_id: {
