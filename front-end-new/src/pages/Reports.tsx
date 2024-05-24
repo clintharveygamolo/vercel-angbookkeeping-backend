@@ -49,7 +49,8 @@ const Reports: React.FC = () => {
   //edit Modal for Deposit
   const [openModalEditDeposit, setModalEditDeposit] = useState(false);
   const [DepositToEdit, setDepositToEdit] = useState<number>(0);
-  //to delete
+
+  //edit
   const [DepositToDelete, setDepositToDelete] = useState<number>(0);
 
   const [editModalDepositDate, setEditModalDepositUserDate] = useState<string>(''); //Date please
@@ -58,18 +59,33 @@ const Reports: React.FC = () => {
   const [editModalDepositRemarks, setEditModalDepositRemarks] = useState<string>('');
   const [editModalDepositAmount, setEditModalDepositAmount] = useState<number>();
 
-  //get for Deposits
-  useEffect(() => {
-    axios({
-      method: 'GET',
-      url: '/api/auth/Deposits/Get',
-    })
-      .then((response: { data: SetStateAction<Deposits[] | null | undefined> }) => {
-        setDeposits(response.data);
-        console.log(response.data);
-      })
-      .catch((error: any) => console.error(error));
-  }, []);
+  //delete for Deposits
+  const deleteDeposit = async (deposit_id: number, user_id: number) => {
+    try {
+      // Send DELETE request with deposit_id in the URL and user_id in the request body
+
+      const response = await axios.delete(
+        `/api/auth/Deposits/Delete/${deposit_id}`,
+        {
+          data: { user_id }
+        }
+      );
+
+      // Check for successful response
+      if (response.status === 200) {
+        toast.success(response.data);
+        setModalEditDeposit(false);
+      }
+    } catch (err) {
+      // Handle axios errors specifically
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.error || "An error occurred while deleting the deposit.");
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+      }
+      console.error('Error deleting deposit', err);
+    }
+  };
 
   //get for Deposits
   useEffect(() => {
@@ -85,8 +101,8 @@ const Reports: React.FC = () => {
   }, []);
 
   //edit Modal for Withdraws
-
   const [openModalEditWithdraws, setModalEditWithdraws] = useState(false);
+  const [WithdrawToDelete, setWithdrawtoDelete] = useState<number>(0);
 
   const [editModalDWithdrawDate, setEditModalWithdrawUserDate] = useState<string>(''); //Date please
   const [editModalWithdrawCheckNo, setEditModalWithdrawCheckNo] = useState<number>();
@@ -124,18 +140,31 @@ const Reports: React.FC = () => {
     }
   }
 
-  // get Deposits
-  useEffect(() => {
-    axios({
-      method: 'GET',
-      url: '/api/auth/Deposits/Get',
-    })
-      .then((response: { data: SetStateAction<Deposits[] | null | undefined> }) => {
-        setDeposits(response.data);
-        console.log(response.data);
-      })
-      .catch((error: any) => console.error(error));
-  }, []);
+  // delete Withdraws
+
+  const deleteWithdraw = async (withdraw_id: number, user_id: number) => {
+    try {
+      const response = await axios.delete(
+        `/api/auth/Withdrawals/Delete/${withdraw_id}`,
+        {
+          data: { user_id }
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data);
+        setModalEditWithdraws(false);
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.error || "An error occurred while deleting the withdrawal entry.");
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+        toast.error("An unexpected error occurred.");
+      }
+      console.error('Error deleting withdrawal entry', err);
+    }
+  };
 
   // get Withdraws
   useEffect(() => {
@@ -438,7 +467,7 @@ const Reports: React.FC = () => {
                                 setEditModalWithdrawRemarks(Withdraws.remarks);
                                 setEditModalWithdrawAmount(Withdraws.amount);
 
-                                setDepositToDelete(Withdraws.withdraw_id);
+                                setWithdrawtoDelete(Withdraws.withdraw_id);
                               }}>
                               Edit
                             </a>
@@ -497,7 +526,11 @@ const Reports: React.FC = () => {
                                         <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90">
                                           Edit Entry
                                         </button>
-                                        <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700">
+                                        <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700"
+                                          onClick={() => {
+                                            deleteWithdraw(WithdrawToDelete, 10001);
+                                            setModalEditWithdraws(false);
+                                          }}>
                                           Delete Entry
                                         </button>
                                       </div>
