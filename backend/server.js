@@ -13,10 +13,12 @@ import deleteUserRoute from "./routes/deleteUserRoute.js";
 import setAssociations from "./util/dbAssociations.js";
 import createCompanyRoute from "./routes/createCompanyRoute.js";
 import createBankRoute from "./routes/createBankRoute.js";
+import createAccountRoute from "./routes/accountsRoute.js";
 import getBankRoute from "./routes/getBankRoute.js";
 import getCompanyRoute from "./routes/getCompanyRoute.js";
 import Bank from "./models/BankModel.js";
 import Company from "./models/CompanyModel.js";
+import Account from "./models/accountModel.js";
 // import refreshTokenRoute from "./routes/refreshTokenRoute.js";
 // import Deposit from "./models/depositsModel.js";
 
@@ -51,6 +53,7 @@ app.use("/api/bank", getBankRoute);
 app.use("/api/bank", createBankRoute);
 app.use("/api/company", getCompanyRoute);
 app.use("/api/company", createCompanyRoute);
+app.use("/api/account", createAccountRoute);
 
 app.use('/api/auth/Deposits', depositsRoute);
 app.use('/api/auth/Withdrawals', withdrawsRoute);
@@ -98,16 +101,16 @@ try {
 
   /*
   await Bank.create({
-    bank_name: "BDO1",
+    bank_name: "BDO",
   });
   await Bank.create({
-    bank_name: "BPI1",
+    bank_name: "BPI",
   });
   await Bank.create({
-    bank_name: "SB1",
+    bank_name: "SB",
   });
   await Bank.create({
-    bank_name: "BANKWAYS1",
+    bank_name: "BANKWAYS",
   });
   */
 
@@ -164,6 +167,34 @@ try {
   });
   await Company.create({
     companyName: "Roa Hotels Inc.",
+  });
+
+  await Account.create({
+    account_number: 1234567,
+    bank_code: "BDO1",
+    company_id: 1,
+    bank_id: 1,
+  });
+
+  await Account.create({
+    account_number: 7654321,
+    bank_code: "BDO2",
+    company_id: 1,
+    bank_id: 1,
+  });
+
+  await Account.create({
+    account_number: 2345234,
+    bank_code: "BPI1",
+    company_id: 2,
+    bank_id: 2,
+  });
+
+  await Account.create({
+    account_number: 983514,
+    bank_code: "BANKWAYS1",
+    company_id: 3,
+    bank_id: 4,
   });
 
   app.listen(port);
