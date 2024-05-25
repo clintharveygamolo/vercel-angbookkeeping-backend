@@ -73,7 +73,7 @@ try {
   await User.create({
     name: "Troy Red Demafeliz",
     password: userPass,
-    role: "User",
+    role: "Viewer",
   });
 
   const employeePass = await bcrypt.hash("employeepass", 12);
