@@ -8,7 +8,7 @@ const Bank = sequelize.define("Bank", {
         autoIncrement: true,
         allowNull: false
     },
-    bankName: {
+    bank_name: {
         type: DataTypes.STRING,
         allowNull: false
     }

@@ -99,7 +99,6 @@ try {
     role: "Employee",
   });
 
-  /*
   await Bank.create({
     bank_name: "BDO",
   });
@@ -112,7 +111,6 @@ try {
   await Bank.create({
     bank_name: "BANKWAYS",
   });
-  */
 
   //Put values into database for testing
 
