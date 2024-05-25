@@ -21,6 +21,7 @@ import Company from "./models/CompanyModel.js";
 import Account from "./models/accountModel.js";
 // import refreshTokenRoute from "./routes/refreshTokenRoute.js";
 // import Deposit from "./models/depositsModel.js";
+import filterRoute from "./routes/filterRoute.js"
 
 import depositsRoute from "./routes/depositsRoute.js";
 import withdrawsRoute from "./routes/withdrawsRoute.js";
@@ -57,6 +58,10 @@ app.use("/api/account", createAccountRoute);
 
 app.use('/api/auth/Deposits', depositsRoute);
 app.use('/api/auth/Withdrawals', withdrawsRoute);
+
+//app.use('/api/transactions/', filterRoute);
+//for filter route
+app.use("/api", filterRoute);
 
 // Routes
 const port = 9000;
