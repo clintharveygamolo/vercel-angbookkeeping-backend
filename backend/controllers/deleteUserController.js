@@ -1,7 +1,7 @@
 import User from '../models/userModel.js';
 
 export async function deleteUser(req, res) {
-    const { user_id } = req.params;
+    const [ user_id ] = req.params.user_id;
     try {
         const user = await User.findByPk(user_id);
         if (!user) {

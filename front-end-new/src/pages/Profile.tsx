@@ -51,6 +51,9 @@ const Profile = () => {
   };
 
   const deleteUserAccount = async (user_id: number) => {
+    // if (user_id === auth.user_id) {
+    //   toast.error('Cannot delete current user!');
+    // }
     try {
       const response = await axiosConfig.delete(
         `/api/user/deleteUser/${user_id}`,
@@ -73,6 +76,7 @@ const Profile = () => {
   };
 
   const createUserAccount = async () => {
+    e.preventDefault();
     try {
       const response = await axiosConfig.post(
         '/api/createUser',
@@ -86,11 +90,10 @@ const Profile = () => {
       );
 
       if (response.status === 201) {
-        toast.success('Created a user!');
-        const updatedUsers = await axiosConfig.get(`/api/get/users`);
-        setUserNameFormValue('');
-        setUserAccounts(updatedUsers.data);
         setOpenModal(false);
+        const updatedUsers = await axiosConfig.get(`/api/get/users`);
+        setUserAccounts(updatedUsers.data);
+        toast.success('Created a user!');
       }
     } catch (err) {
       if (err && err instanceof AxiosError) {
@@ -263,21 +266,20 @@ const Profile = () => {
                   <Modal.Body>
                     <div className="space-y-2">
                       <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                        Create Account
+                        Create/Edit Account
                       </h3>
                       <div>
                         <div className="mb-2 block">
                           <Label htmlFor="name" value="Name" />
                         </div>
                         <TextInput
-                          ref={userInputRefInputRef}
                           id="name"
                           value={userNameFormValue}
-                          placeholder='Enter name'
+                          ref={userInputRefInputRef}
+                          placeholder="Name"
                           onChange={(e: any) =>
                             setUserNameFormValue(e.target.value)
                           }
-                          type="text"
                           required
                         />
                       </div>
@@ -289,7 +291,6 @@ const Profile = () => {
                           ref={userInputRefInputRef}
                           id="password"
                           value={userPasswordFormValue}
-                          placeholder='Enter password'
                           onChange={(e: any) =>
                             setUserPasswordFormValue(e.target.value)
                           }
@@ -313,8 +314,9 @@ const Profile = () => {
                       </div>
                       <div className="flex justify-end gap-3">
                         <button
-                          onClick={() => {
-                            createUserAccount();
+                          onClick={(e) => {
+                            createUserAccount(e);
+                            setOpenDeleteModal(false);
                           }}
                           className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90"
                         >
@@ -424,10 +426,10 @@ const Profile = () => {
                               </h3>
                               <div>
                                 <div className="mb-2 block">
-                                  <Label htmlFor="name" value="Name" />
+                                  <Label htmlFor="username" value="Name" />
                                 </div>
                                 <TextInput
-                                  id="name"
+                                  id="username"
                                   ref={userInputRefInputRef}
                                   onChange={(e: any) =>
                                     setUserNameFormValue(e.target.value)
