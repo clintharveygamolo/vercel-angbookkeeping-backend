@@ -311,7 +311,7 @@ const Reports: React.FC = () => {
                           <Table.Cell className="p-4">
                             <Checkbox />
                           </Table.Cell>
-                          <Table.Cell>{Deposits.deposit_id}</Table.Cell>
+                          <Table.Cell>{Deposits.date.toString()}</Table.Cell>
                           <Table.Cell>{Deposits.check_no}</Table.Cell>
                           <Table.Cell>{Deposits.particulars}</Table.Cell>
                           <Table.Cell>{Deposits.remarks}</Table.Cell>
@@ -450,7 +450,7 @@ const Reports: React.FC = () => {
                           <Table.Cell className="p-4">
                             <Checkbox />
                           </Table.Cell>
-                          <Table.Cell>date unta</Table.Cell>
+                          <Table.Cell>{Withdraws.date.toString()}</Table.Cell>
                           <Table.Cell>{Withdraws.check_no}</Table.Cell>
                           <Table.Cell>{Withdraws.voucher_no}</Table.Cell>
                           <Table.Cell>{Withdraws.payee}</Table.Cell>
@@ -587,13 +587,15 @@ const Reports: React.FC = () => {
                         <Table.HeadCell>Amount</Table.HeadCell>
                       </Table.Head>
                       <Table.Body className="divide-y">
-                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                            {'Apple MacBook Pro 17"'}
-                          </Table.Cell>
-                          <Table.Cell>$2999</Table.Cell>
-                        </Table.Row>
-                        {/* Add additional rows as necessary */}
+                        {DepositReport
+                          && DepositReport.map((Deposits, key) => (
+                            <Table.Row key={key} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                              <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                {Deposits.date.toString()}
+                              </Table.Cell>
+                              <Table.Cell>{Deposits.amount}</Table.Cell>
+                            </Table.Row>
+                          ))}
                       </Table.Body>
                     </Table>
                   </div>
@@ -611,12 +613,15 @@ const Reports: React.FC = () => {
                         <Table.HeadCell>Amount</Table.HeadCell>
                       </Table.Head>
                       <Table.Body className="divide-y">
-                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                            Microsoft Surface Pro
-                          </Table.Cell>
-                          <Table.Cell>$1999</Table.Cell>
-                        </Table.Row>
+                        {WithdrawReport
+                          && WithdrawReport.map((Withdraws, key) => (
+                            <Table.Row key={key} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                              <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                {Withdraws.date.toString()}
+                              </Table.Cell>
+                              <Table.Cell>{Withdraws.amount}</Table.Cell>
+                            </Table.Row>
+                          ))}
                       </Table.Body>
                     </Table>
                   </div>
