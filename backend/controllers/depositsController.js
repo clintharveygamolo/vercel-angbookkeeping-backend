@@ -20,7 +20,7 @@ export async function createDeposits(req, res) {
         res.status(500).json({ error: "An error occured while creating the entry." });
     }
 }
-//this is the deposit entry editing fucntion.
+//this is the deposit entry editing function.
 export async function editDeposits(req, res) {
     try {
         const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());

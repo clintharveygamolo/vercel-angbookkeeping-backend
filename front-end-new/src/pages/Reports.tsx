@@ -3,7 +3,10 @@
 import React, { SetStateAction, useEffect, useRef, useState } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../layout/DefaultLayout';
-import SelectGroupOne from '../components/Forms/SelectGroup/SelectGroupOne';
+
+import SelectGroupOne, {
+  FromDBDropdownFormProps,
+} from '../components/Forms/SelectGroup/SelectGroupOne.js';
 
 import { Button, Checkbox, Table, Tabs, Modal, TextInput, Label } from "flowbite-react";
 import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
@@ -12,6 +15,8 @@ import axios from '../api/axiosconfig';
 import axiosConfig from '.././api/axiosconfig.js';
 import { AxiosError } from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+import SelectGroupThree from '../components/Forms/SelectGroup/SelectGroupThree.js';
 
 export type Deposits = {
   deposit_id: number;
@@ -34,6 +39,35 @@ export type Withdraws = {
 
 const Reports: React.FC = () => {
 
+  const auth: any = useAuthUser();
+
+  //dropdown const
+  const [AccountIdDropDownValue, setAccountIdDropdownValue] = useState<number>();
+  const [AccountIdDropdownOptions, setAccountIdDropdownOptions] = useState<FromDBDropdownFormProps['options']>([]);
+  const getAccountIdValue = (value: any) => {
+    setAccountIdDropdownValue(value);
+  }
+
+  //dropdown
+  useEffect(() => {
+    const fetchAccountId = async () => {
+      try {
+        const response = await axios.get(`/api/account/getAccount/${auth.user_id}`);
+        if (response.status === 200) {
+          const account = response.data;
+          const options = account.map((account: { account_id: number; bank_code: string; }) => ({
+            value: account.account_id,
+            label: account.bank_code,
+          }));
+          setAccountIdDropdownOptions(options);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchAccountId();
+  }, [auth.user_id]); // assuming user_id is a dependency
+
   const [DepositReport, setDeposits] = useState<Deposits[] | null>();
   const [WithdrawReport, setWithdraws] = useState<Withdraws[] | null>();
   const userInputRefInputRef = useRef<HTMLInputElement>(null);
@@ -48,12 +82,13 @@ const Reports: React.FC = () => {
 
   //edit Modal for Deposit
   const [openModalEditDeposit, setModalEditDeposit] = useState(false);
-  const [DepositToEdit, setDepositToEdit] = useState<number>(0);
 
-  //edit
+  //delete function
+  const [DepositToEdit, setDepositToEdit] = useState<number>(0);
+  //edit function
   const [DepositToDelete, setDepositToDelete] = useState<number>(0);
 
-  const [editModalDepositDate, setEditModalDepositUserDate] = useState<string>(''); //Date please
+  const [editModalDepositDate, setEditModalDepositDate] = useState<string>(''); //Date please
   const [editModalDepositCheckNo, setEditModalDepositCheckNo] = useState<number>();
   const [editModalDepositParticulars, setEditModalDepositParticulars] = useState<string>('');
   const [editModalDepositRemarks, setEditModalDepositRemarks] = useState<string>('');
@@ -62,12 +97,11 @@ const Reports: React.FC = () => {
   //delete for Deposits
   const deleteDeposit = async (deposit_id: number, user_id: number) => {
     try {
-      // Send DELETE request with deposit_id in the URL and user_id in the request body
 
       const response = await axios.delete(
         `/api/auth/Deposits/Delete/${deposit_id}`,
         {
-          data: { user_id }
+          data: { user_id: auth.user_id }
         }
       );
 
@@ -111,14 +145,16 @@ const Reports: React.FC = () => {
   const [editModalWithdrawRemarks, setEditModalWithdrawRemarks] = useState<string>('');
   const [editModalWithdrawAmount, setEditModalWithdrawAmount] = useState<number>();
 
+
+  //edit deposit
   const editDeposit = async (deposit_id: number) => {
-    e.preventDefault();
     try {
       const response = await axiosConfig.put(
         '/api/auth/Deposits/Edit',
         {
+          //please change the user ID
           user_id: 10001,
-          date: editModalDepositDate,
+          //date: editModalDepositDate,
           check_no: editModalDepositCheckNo,
           particulars: editModalDepositParticulars,
           remarks: editModalDepositRemarks,
@@ -147,7 +183,7 @@ const Reports: React.FC = () => {
       const response = await axios.delete(
         `/api/auth/Withdrawals/Delete/${withdraw_id}`,
         {
-          data: { user_id }
+          data: { user_id: auth.user_id }
         }
       );
 
@@ -185,7 +221,6 @@ const Reports: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-9 sm:grid-cols-1">
         <div className="flex flex-col gap-9">
-
           {/* <!-- Find Account --> */}
 
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -233,19 +268,14 @@ const Reports: React.FC = () => {
                 </div>
 
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                  <div className="w-full xl:w-2/3">
-                    <SelectGroupOne />
-                  </div>
-                  <div className="w-full xl:w-1/3">
-                    <label className="mb-2.5 block text-black dark:text-white">
-                      Bank Code
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter Bank Code"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    />
-                  </div>
+                  <label className="mb-2.5 block text-black dark:text-white">
+                    Bank Code
+                  </label>
+                  <SelectGroupThree
+                    label={'Bank Code'}
+                    options={AccountIdDropdownOptions}
+                    onSelect={getAccountIdValue}
+                  />
                 </div>
 
                 <div className="flex justify-end gap-3">
@@ -280,8 +310,11 @@ const Reports: React.FC = () => {
           />
         </div>
         <div className="p-6.5 my-6 py-1">
-          <Tabs aria-label="Pills" style="pills" className="bg-gray-100 rounded-lg">
-
+          <Tabs
+            aria-label="Pills"
+            style="pills"
+            className="bg-gray-100 rounded-lg"
+          >
             {/* <!-- Deposits Report --> */}
 
             <Tabs.Item
@@ -311,7 +344,7 @@ const Reports: React.FC = () => {
                           <Table.Cell className="p-4">
                             <Checkbox />
                           </Table.Cell>
-                          <Table.Cell>{Deposits.deposit_id}</Table.Cell>
+                          <Table.Cell>{Deposits.date.toString()}</Table.Cell>
                           <Table.Cell>{Deposits.check_no}</Table.Cell>
                           <Table.Cell>{Deposits.particulars}</Table.Cell>
                           <Table.Cell>{Deposits.remarks}</Table.Cell>
@@ -320,13 +353,14 @@ const Reports: React.FC = () => {
                             <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
                               onClick={() => {
                                 setModalEditDeposit(true);
-                                setEditModalDepositUserDate("");
+                                setEditModalDepositDate(Deposits.date.toString());
                                 setEditModalDepositCheckNo(Deposits.check_no);
                                 setEditModalDepositParticulars(Deposits.particulars);
                                 setEditModalDepositRemarks(Deposits.remarks);
                                 setEditModalDepositAmount(Deposits.amount);
 
                                 setDepositToDelete(Deposits.deposit_id);
+                                setDepositToEdit(Deposits.deposit_id);
                               }}>
                               Edit
                             </a>
@@ -347,38 +381,49 @@ const Reports: React.FC = () => {
                                         <div className="mb-2 block">
                                           <Label htmlFor="date" value="Date" />
                                         </div>
-                                        <TextInput id="date" placeholder={editModalDepositDate?.toString()} required />
+                                        <TextInput id="date" placeholder={editModalDepositDate?.toString()} required
+                                          onChange={(e: any) => setEditModalDepositDate(e.target.value)}
+                                          type="text" />
                                       </div>
                                       <div>
                                         <div className="mb-2 block">
                                           <Label htmlFor="check" value="Check#" />
                                         </div>
-                                        <TextInput id="check_no" placeholder={editModalDepositCheckNo?.toString()} required />
+                                        <TextInput id="check_no" placeholder={editModalDepositCheckNo?.toString()} required
+                                          onChange={(e: any) => setEditModalDepositCheckNo(e.target.value)}
+                                          type="number"
+                                        />
                                       </div>
                                       <div>
                                         <div className="mb-2 block">
                                           <Label htmlFor="particulars" value="Particulars" />
                                         </div>
-                                        <TextInput id="particulars" placeholder={editModalDepositParticulars} required />
+                                        <TextInput id="particulars" placeholder={editModalDepositParticulars} required
+                                          onChange={(e: any) => setEditModalDepositParticulars(e.target.value)}
+                                          type="text" />
                                       </div>
                                       <div>
                                         <div className="mb-2 block">
                                           <Label htmlFor="remarks" value="Remarks" />
                                         </div>
-                                        <TextInput id="remarks" placeholder={editModalDepositRemarks} required />
+                                        <TextInput id="remarks" placeholder={editModalDepositRemarks} required
+                                          onChange={(e: any) => setEditModalDepositRemarks(e.target.value)}
+                                          type="text" />
                                       </div>
                                       <div>
                                         <div className="mb-2 block">
                                           <Label htmlFor="amount" value="Amount" />
                                         </div>
-                                        <TextInput id="amount" placeholder={editModalDepositAmount?.toString()} required />
+                                        <TextInput id="amount" placeholder={editModalDepositAmount?.toString()} required
+                                          onChange={(e: any) => setEditModalDepositAmount(e.target.value)}
+                                          type="text" />
                                       </div>
                                       <div className="flex justify-end gap-3">
                                         <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90"
-                                        //onClick={() => {
-                                        // editDeposit();
-                                        //  setModalEditDeposit(false);
-                                        //}}
+                                          onClick={() => {
+                                            editDeposit(DepositToEdit);
+                                            setModalEditDeposit(false);
+                                          }}
                                         >
                                           Edit Entry
                                         </button>
@@ -450,7 +495,7 @@ const Reports: React.FC = () => {
                           <Table.Cell className="p-4">
                             <Checkbox />
                           </Table.Cell>
-                          <Table.Cell>date unta</Table.Cell>
+                          <Table.Cell>{Withdraws.date.toString()}</Table.Cell>
                           <Table.Cell>{Withdraws.check_no}</Table.Cell>
                           <Table.Cell>{Withdraws.voucher_no}</Table.Cell>
                           <Table.Cell>{Withdraws.payee}</Table.Cell>
@@ -555,8 +600,6 @@ const Reports: React.FC = () => {
                       <Table.Cell>Pesos</Table.Cell>
                       <Table.Cell></Table.Cell>
                     </Table.Row>
-
-
                   </Table.Body>
                 </Table>
               </div>
@@ -578,7 +621,9 @@ const Reports: React.FC = () => {
                 {/* Deposits Table */}
                 <div className="w-1/2">
                   <div className="mb-2">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Deposits</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      Deposits
+                    </h4>
                   </div>
                   <div className="overflow-x-auto">
                     <Table hoverable>
@@ -587,13 +632,15 @@ const Reports: React.FC = () => {
                         <Table.HeadCell>Amount</Table.HeadCell>
                       </Table.Head>
                       <Table.Body className="divide-y">
-                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                            {'Apple MacBook Pro 17"'}
-                          </Table.Cell>
-                          <Table.Cell>$2999</Table.Cell>
-                        </Table.Row>
-                        {/* Add additional rows as necessary */}
+                        {DepositReport
+                          && DepositReport.map((Deposits, key) => (
+                            <Table.Row key={key} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                              <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                {Deposits.date.toString()}
+                              </Table.Cell>
+                              <Table.Cell>{Deposits.amount}</Table.Cell>
+                            </Table.Row>
+                          ))}
                       </Table.Body>
                     </Table>
                   </div>
@@ -602,7 +649,9 @@ const Reports: React.FC = () => {
                 {/* Withdraws Table */}
                 <div className="w-1/2">
                   <div className="mb-2">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Withdraws</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      Withdraws
+                    </h4>
                   </div>
                   <div className="overflow-x-auto">
                     <Table hoverable>
@@ -611,12 +660,15 @@ const Reports: React.FC = () => {
                         <Table.HeadCell>Amount</Table.HeadCell>
                       </Table.Head>
                       <Table.Body className="divide-y">
-                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                            Microsoft Surface Pro
-                          </Table.Cell>
-                          <Table.Cell>$1999</Table.Cell>
-                        </Table.Row>
+                        {WithdrawReport
+                          && WithdrawReport.map((Withdraws, key) => (
+                            <Table.Row key={key} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                              <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                {Withdraws.date.toString()}
+                              </Table.Cell>
+                              <Table.Cell>{Withdraws.amount}</Table.Cell>
+                            </Table.Row>
+                          ))}
                       </Table.Body>
                     </Table>
                   </div>

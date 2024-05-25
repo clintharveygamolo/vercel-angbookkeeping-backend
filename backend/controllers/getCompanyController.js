@@ -3,7 +3,7 @@ import Company from "../models/CompanyModel.js";
 export async function getCompanies(req, res) {
   try {
     const companyQuery = await Company.findAll({
-      attributes: ["companyName"],
+      attributes: ["company_id", "companyName"],
     });
     res.status(200).json(companyQuery);
   } catch (error) {
