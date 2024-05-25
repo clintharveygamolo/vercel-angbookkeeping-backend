@@ -225,7 +225,7 @@ const AccountsTable = () => {
             >
               <div className="flex items-center gap-3 p-2.5 xl:p-5">
                 <p className="hidden text-black dark:text-white sm:block">
-                  {`${bankAccount.companyName} ${bankAccount.account_id}`}
+                  {`${bankAccount.companyName}`}
                 </p>
               </div>
 

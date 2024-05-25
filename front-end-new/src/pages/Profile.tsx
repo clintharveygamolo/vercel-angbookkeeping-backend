@@ -76,7 +76,6 @@ const Profile = () => {
   };
 
   const createUserAccount = async () => {
-    e.preventDefault();
     try {
       const response = await axiosConfig.post(
         '/api/createUser',
@@ -90,10 +89,10 @@ const Profile = () => {
       );
 
       if (response.status === 201) {
-        setOpenModal(false);
+        toast.success('Created a user!');
         const updatedUsers = await axiosConfig.get(`/api/get/users`);
         setUserAccounts(updatedUsers.data);
-        toast.success('Created a user!');
+        setOpenModal(false);
       }
     } catch (err) {
       if (err && err instanceof AxiosError) {
@@ -266,7 +265,7 @@ const Profile = () => {
                   <Modal.Body>
                     <div className="space-y-2">
                       <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                        Create/Edit Account
+                        Create Account
                       </h3>
                       <div>
                         <div className="mb-2 block">
@@ -276,10 +275,11 @@ const Profile = () => {
                           id="name"
                           value={userNameFormValue}
                           ref={userInputRefInputRef}
-                          placeholder="Name"
+                          placeholder="Enter name"
                           onChange={(e: any) =>
                             setUserNameFormValue(e.target.value)
                           }
+                          type='text'
                           required
                         />
                       </div>
@@ -291,6 +291,7 @@ const Profile = () => {
                           ref={userInputRefInputRef}
                           id="password"
                           value={userPasswordFormValue}
+                          placeholder='Enter password'
                           onChange={(e: any) =>
                             setUserPasswordFormValue(e.target.value)
                           }
@@ -314,9 +315,8 @@ const Profile = () => {
                       </div>
                       <div className="flex justify-end gap-3">
                         <button
-                          onClick={(e) => {
-                            createUserAccount(e);
-                            setOpenDeleteModal(false);
+                          onClick={() => {
+                            createUserAccount();
                           }}
                           className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90"
                         >
@@ -426,10 +426,10 @@ const Profile = () => {
                               </h3>
                               <div>
                                 <div className="mb-2 block">
-                                  <Label htmlFor="username" value="Name" />
+                                  <Label htmlFor="name" value="Name" />
                                 </div>
                                 <TextInput
-                                  id="username"
+                                  id="name"
                                   ref={userInputRefInputRef}
                                   onChange={(e: any) =>
                                     setUserNameFormValue(e.target.value)
