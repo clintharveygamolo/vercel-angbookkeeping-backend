@@ -6,7 +6,15 @@ export async function createUser(req, res) {
         const { user_id, name, password, role } = req.body;
         const currentUser = await User.findByPk(user_id);
         if(currentUser.role !== 'Admin') {
-            return res.status(403).json({ error: "Forbidden: Only admin users can create new users." });
+            return res.status(403).json({ message: "Forbidden: Only admin users can create new users." });
+        }
+
+        if (!user_id, !password, !role) {
+            return res.status(401).json({ message: "All fields are required" });
+        }
+
+        if (!/^\d+$/.test(user_id)) {
+            return res.status(401).json({ message: "User ID must contain only numbers." });
         }
 
         const newUserPass = await bcrypt.hash(password, 12);
@@ -19,6 +27,6 @@ export async function createUser(req, res) {
         res.status(201).json(newUser);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "An error occured while creating the user."});
+        res.status(500).json({ message: "An error occured while creating the user."});
     }
 }

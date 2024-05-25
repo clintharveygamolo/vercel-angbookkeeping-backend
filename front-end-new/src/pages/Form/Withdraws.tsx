@@ -1,51 +1,64 @@
-import { Link } from 'react-router-dom';
+'use client';
+
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import SelectGroupOne from '../../components/Forms/SelectGroup/SelectGroupOne';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { Product } from '../../types/product';
-import ProductOne from '../../images/product/product-01.png';
-import ProductTwo from '../../images/product/product-02.png';
-import ProductThree from '../../images/product/product-03.png';
-import ProductFour from '../../images/product/product-04.png';
 import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 
+import { useState } from 'react';
+import axiosConfig from '../../api/axiosconfig.js';
+import { ToastContainer, toast } from 'react-toastify';
 
-const productData: Product[] = [
-  {
-    image: ProductOne,
-    name: 'Apple Watch Series 7',
-    category: 'Electronics',
-    price: 296,
-    sold: 22,
-    profit: 45,
-  },
-  {
-    image: ProductTwo,
-    name: 'Macbook Pro M1',
-    category: 'Electronics',
-    price: 546,
-    sold: 12,
-    profit: 125,
-  },
-  {
-    image: ProductThree,
-    name: 'Dell Inspiron 15',
-    category: 'Electronics',
-    price: 443,
-    sold: 64,
-    profit: 247,
-  },
-  {
-    image: ProductFour,
-    name: 'HP Probook 450',
-    category: 'Electronics',
-    price: 499,
-    sold: 72,
-    profit: 103,
-  },
-];
+export type Withdraws = {
+  date: Date;
+  check_no: number;
+  voucher_no: number;
+  payee: string;
+  remarks: string;
+  amount: number;
+};
 
 const Withdraws = () => {
+  // const [dateValue, setdateValue] = useState('');
+  const [check_noValue, setcheck_noValue] = useState('');
+  const [voucher_noValue, setvoucher_noValue] = useState('');
+  const [payeeValue, setpayeeValue] = useState('');
+  const [remarksValue, setremarksValue] = useState('');
+  const [amountValue, setamountValue] = useState('');
+
+  const createWithdrawal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axiosConfig.post(
+        '/api/auth/Withdrawals/Create',
+        {
+          date: "12/13/2024",
+          check_no: check_noValue,
+          voucher_no: voucher_noValue,
+          payee: payeeValue,
+          remarks: remarksValue,
+          amount: amountValue,
+        },
+        { withCredentials: true },
+      );
+
+      if (response.status === 201) {
+        toast.success('Created a withdrawal!');
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.error('Error:', err);
+      }
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createWithdrawal(e);
+  }
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Add Withdraws" />
@@ -99,7 +112,7 @@ const Withdraws = () => {
 
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full xl:w-2/3">
-                    <SelectGroupOne />
+                    {/* <SelectGroupOne /> */}
                   </div>
                   <div className="w-full xl:w-1/3">
                     <label className="mb-2.5 block text-black dark:text-white">
@@ -122,8 +135,10 @@ const Withdraws = () => {
         </div>
       </div>
 
+      {/*   FORM    */}
 
-      <form action="#">
+
+      <form onSubmit={handleSubmit}>
         <div className="my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="py-6 px-4 md:px-6 xl:px-7.5 flex items-center justify-between">
             <h4 className="text-xl font-semibold text-black dark:text-white">
@@ -139,14 +154,14 @@ const Withdraws = () => {
               <p className="font-medium">Date</p>
             </div>
             <div className="px-2 col-span-3 hidden items-center sm:flex">
-              <p className="font-medium">Invoice Number</p>
+              <p className="font-medium">Check Number</p>
             </div>
             <div className="col-span-3 flex items-center">
-              <p className="font-medium">Check Number</p>
+              <p className="font-medium">Invoice Number</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5" >
+          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-2 flex items-center">
               <div className=" ">
                 <DatePickerOne />
@@ -155,18 +170,28 @@ const Withdraws = () => {
             <div className="col-span-3 hidden items-center sm:flex">
               <div className="w-full px-2">
                 <input
+                  id="check_no_input"
+                  value={check_noValue}
                   type="text"
-                  placeholder="Invoice #"
+                  placeholder="Check #"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setcheck_noValue(e.target.value)
+                  }
                 />
               </div>
             </div>
             <div className="col-span-3 flex items-center">
-              <div className='w-full'>
+              <div className="w-full">
                 <input
+                  id="voucher_no_input"
+                  value={voucher_noValue}
                   type="text"
-                  placeholder="Check #"
+                  placeholder="voucher #"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setvoucher_noValue(e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -184,37 +209,53 @@ const Withdraws = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5" >
+          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-3 hidden items-center sm:flex">
               <div className="w-full">
                 <input
+                  id="payee_input"
+                  value={payeeValue}
                   type="text"
                   placeholder="Payee"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setpayeeValue(e.target.value)
+                  }
                 />
               </div>
             </div>
             <div className="col-span-3 hidden items-center sm:flex">
               <div className="px-2 w-full">
                 <input
+                  id="remarks_input"
+                  value={remarksValue}
                   type="text"
                   placeholder="Remarks"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setremarksValue(e.target.value)
+                  }
                 />
               </div>
             </div>
             <div className="col-span-2 flex items-center">
-              <div className='w-full'>
+              <div className="w-full">
                 <input
+                  id="check_no_input"
+                  value={amountValue}
                   type="text"
                   placeholder="Amount"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setamountValue(e.target.value)
+                  }
                 />
               </div>
             </div>
           </div>
         </div>
       </form>
+      <ToastContainer />
     </DefaultLayout>
   );
 };

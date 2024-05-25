@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 
-interface SelectGroupTwoProps {
-  selectedRole: string;
-  onRoleChange: (role: string) => void;
-}
+export type FromDBDropdownFormProps = {
+  label: String;
+  options: { value: number | string; label: string }[];
+  onSelect: (value: any) => void;
+};
 
-const SelectGroupTwo: React.FC<SelectGroupTwoProps> = ({
-  selectedRole,
-  onRoleChange,
+const SelectGroupTwo: React.FC<FromDBDropdownFormProps> = ({
+  label,
+  options,
+  onSelect,
 }) => {
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
@@ -21,11 +23,11 @@ const SelectGroupTwo: React.FC<SelectGroupTwoProps> = ({
   //   changeTextColor();
   // }
   const handleChange = (e: any) => {
-    const role = e.target.value;
-    setSelectedOption(role);
+    const value = e.target.value;
+    setSelectedOption(value);
     setIsOptionSelected(true);
     changeTextColor();
-    onRoleChange(role);
+    onSelect(value);
   };
 
   return (
@@ -39,17 +41,18 @@ const SelectGroupTwo: React.FC<SelectGroupTwoProps> = ({
           }`}
         >
           <option value="" disabled className="text-body dark:text-bodydark">
-            Role
+            {`Select your ${label}`}
           </option>
-          <option value="Admin" className="text-body dark:text-bodydark">
-            Admin
-          </option>
-          <option value="Employee" className="text-body dark:text-bodydark">
-            Employee
-          </option>
-          <option value="Viewer" className="text-body dark:text-bodydark">
-            Viewer
-          </option>
+          {options &&
+            options.map((dropDownValue) => (
+              <option
+                key={dropDownValue.value}
+                value={dropDownValue.value}
+                className="text-body dark:text-bodydark"
+              >
+                {dropDownValue.label}
+              </option>
+            ))}
         </select>
 
         <span className="absolute top-1/2 right-4 z-10 -translate-y-1/2">

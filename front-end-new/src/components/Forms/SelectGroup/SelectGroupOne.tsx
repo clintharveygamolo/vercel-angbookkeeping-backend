@@ -1,39 +1,68 @@
 import React, { useState } from 'react';
+// export type DropdownFormProps = {
+//   label: String;
+//   options: { value: string; label: string }[];
+//   onSelect: (value: string) => void;
+// };
+export type FromDBDropdownFormProps = {
+  label: String;
+  options: { value: number | string; label: string }[];
+  onSelect: (value: any) => void;
+};
 
-const SelectGroupOne: React.FC = () => {
-  const [selectedOption, setSelectedOption] = useState<string>('');
+// export type FromUserDropdownFormProps = {
+//   label: String;
+//   options: { value: string; label: string }[];
+//   onSelect: (value: any) => void;
+// };
+
+// type SelectGroupOneProps = FromDBDropdownFormProps | FromUserDropdownFormProps;
+
+const SelectGroupOne: React.FC<FromDBDropdownFormProps> = ({
+  label,
+  options,
+  onSelect,
+}) => {
+  const [selectedOption, setSelectedOption] = useState<string | number>('');
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
   const changeTextColor = () => {
     setIsOptionSelected(true);
   };
 
+  const handleChange = (e: any) => {
+    const value = e.target.value;
+    setSelectedOption(value);
+    setIsOptionSelected(true);
+    changeTextColor();
+    onSelect(value);
+  };
+
   return (
     <div className="mb-4.5">
-      <label className="mb-2.5 block text-black dark:text-white">
-        {' '}
-        Account Type{' '}
-      </label>
+      <label className="mb-2.5 block text-black dark:text-white">{label}</label>
 
       <div className="relative z-20 bg-transparent dark:bg-form-input">
         <select
           value={selectedOption}
-          onChange={(e) => {
-            setSelectedOption(e.target.value);
-            changeTextColor();
-          }}
-          className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${isOptionSelected ? 'text-black dark:text-white' : ''
-            }`}
+          onChange={handleChange}
+          className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+            isOptionSelected ? 'text-black dark:text-white' : ''
+          }`}
         >
           <option value="" disabled className="text-body dark:text-bodydark">
-            Select your account type
+            Select your {label.toLowerCase()}
           </option>
-          <option value="Savings Account" className="text-body dark:text-bodydark">
-            Savings Account
-          </option>
-          <option value="Checkings Account" className="text-body dark:text-bodydark">
-            Checkings Account
-          </option>
+          {options &&
+            options.map((dropDownValue) => (
+              <option
+                key={dropDownValue.value}
+                value={dropDownValue.value}
+                className="text-body dark:text-bodydark"
+              >
+                {dropDownValue.label}
+              </option>
+            ))}
         </select>
 
         <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">

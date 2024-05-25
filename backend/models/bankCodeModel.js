@@ -1,16 +1,17 @@
 import sequelize from '../util/database.js';
 import { DataTypes } from 'sequelize';
 
-const AccountType = sequelize.define("AccountType", {
-    acccount_type_id: {
+const BankCode = sequelize.define("Bank Code", {
+    bank_code_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
         allowNull: false
     },
-    account_type: {
+    bank_code: {
         type: DataTypes.STRING,
         allowNull: false
-    },
+    }
 });
 
-export default AccountType;
+export default BankCode;

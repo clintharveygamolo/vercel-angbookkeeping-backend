@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import SelectGroupOne, {
   FromDBDropdownFormProps,
@@ -8,7 +8,6 @@ import axios from '../../api/axiosconfig';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button, Label, Modal, TextInput } from 'flowbite-react';
 import { AxiosError } from 'axios';
 
 const FormLayout = () => {
@@ -17,6 +16,12 @@ const FormLayout = () => {
 
   const [companyDropDownValue, setCompanyDropdownValue] = useState<number>();
   const [bankDropdownValue, setBankDropdownValue] = useState<number>();
+  useState<string>('');
+
+  const accountDropdownOptions: FromDBDropdownFormProps['options'] = [
+    { label: 'Savings account', value: 'Savings account' },
+    { label: 'Checking account', value: 'Savings account' },
+  ];
 
   const [companyDropdownOptions, setCompanyDropdownOptions] = useState<
     FromDBDropdownFormProps['options']
@@ -40,7 +45,7 @@ const FormLayout = () => {
   useEffect(() => {
     const fetchCompanyNames = async () => {
       try {
-        const response = await axios.get('/api/company/getCompany/');
+        const response = await axios.get('/api/company/getCompany');
         if (response.status === 200) {
           const companies = response.data;
           const options = companies.map(
@@ -114,7 +119,7 @@ const FormLayout = () => {
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
               <h3 className="font-medium text-black dark:text-white">
-                Create Account
+                Find Account
               </h3>
             </div>
             <form action="#">
