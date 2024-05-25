@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 
 interface SelectGroupTwoProps {
   selectedRole: string;
-  onRoleChange: (role: string) => void
+  onRoleChange: (role: string) => void;
 }
 
-const SelectGroupTwo: React.FC<SelectGroupTwoProps> = ({ selectedRole, onRoleChange}) => {
+const SelectGroupTwo: React.FC<SelectGroupTwoProps> = ({
+  selectedRole,
+  onRoleChange,
+}) => {
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
@@ -17,21 +20,23 @@ const SelectGroupTwo: React.FC<SelectGroupTwoProps> = ({ selectedRole, onRoleCha
   //   setSelectedOption(e.target.value);
   //   changeTextColor();
   // }
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (e: any) => {
     const role = e.target.value;
-    onRoleChange(role);
+    setSelectedOption(role);
     setIsOptionSelected(true);
     changeTextColor();
+    onRoleChange(role);
   };
 
   return (
     <div>
       <div className="relative z-20 bg-white dark:bg-form-input">
         <select
-          value={selectedRole}
+          value={selectedOption}
           onChange={handleChange}
-          className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-12 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${isOptionSelected ? 'text-black dark:text-white' : ''
-            }`}
+          className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-12 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
+            isOptionSelected ? 'text-black dark:text-white' : ''
+          }`}
         >
           <option value="" disabled className="text-body dark:text-bodydark">
             Role

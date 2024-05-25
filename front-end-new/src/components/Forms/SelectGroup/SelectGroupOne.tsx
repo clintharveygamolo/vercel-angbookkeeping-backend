@@ -23,7 +23,7 @@ const SelectGroupOne: React.FC<FromDBDropdownFormProps> = ({
   options,
   onSelect,
 }) => {
-  const [selectedOption, setSelectedOption] = useState<number>();
+  const [selectedOption, setSelectedOption] = useState<string | number>('');
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
   const changeTextColor = () => {

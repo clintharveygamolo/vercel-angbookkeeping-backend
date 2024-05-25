@@ -32,18 +32,22 @@ const Profile = () => {
   const [userAccounts, setUserAccounts] = useState<User[] | null>();
   const auth: any = useAuthUser();
 
-  const [userNameFormValue, setUserNameFormValue] = useState('');
-  const [userPasswordFormValue, setUserPasswordFormValue] = useState('');
+  const [userNameFormValue, setUserNameFormValue] = useState<string>('');
+  const [userPasswordFormValue, setUserPasswordFormValue] =
+    useState<string>('');
   const [selectedRole, setSelectedRole] = useState<string>('');
 
   const [userToDelete, setUserToDelete] = useState<number>(0);
 
   const [editModalUserName, setEditModalUserName] = useState<string>('');
-  const [editModalPassword, setEditModalPassword] = useState<string>('');
   const [editModalRole, setEditModalRole] = useState<string>('');
 
   const handleRoleChange = (role: string) => {
     setSelectedRole(role);
+  };
+
+  const handleRoleChangeEdit = (role: string) => {
+    setEditModalRole(role);
   };
 
   const deleteUserAccount = async (user_id: number) => {
@@ -57,6 +61,8 @@ const Profile = () => {
 
       if (response.status === 200) {
         toast.success(response.data.message);
+        const updatedUsers = await axiosConfig.get(`/api/get/users`);
+        setUserAccounts(updatedUsers.data);
         setOpenDeleteModal(false);
       }
     } catch (err) {
@@ -85,6 +91,8 @@ const Profile = () => {
 
       if (response.status === 201) {
         setOpenModal(false);
+        const updatedUsers = await axiosConfig.get(`/api/get/users`);
+        setUserAccounts(updatedUsers.data);
         toast.success('Created a user!');
       }
     } catch (err) {
@@ -98,8 +106,8 @@ const Profile = () => {
 
   const editUserAccount = async (user_id: number) => {
     try {
-      const response = await axiosConfig.post(
-        '/api/user/editUser',
+      const response = await axiosConfig.put(
+        `/api/user/editUser/${auth.user_id}/${user_id}`,
         {
           name: userNameFormValue,
           password: userPasswordFormValue,
@@ -109,8 +117,10 @@ const Profile = () => {
       );
 
       if (response.status === 201) {
-        setOpenModal(false);
-        toast.success('Created a user!');
+        toast.success('Edited a user!');
+        const updatedUsers = await axiosConfig.get(`/api/get/users`);
+        setUserAccounts(updatedUsers.data);
+        setOpenEditModal(false);
       }
     } catch (err) {
       if (err && err instanceof AxiosError) {
@@ -355,11 +365,12 @@ const Profile = () => {
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
-                        className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium {user.role === 'Employee'
-                          ? 'bg-success text-success'
-                          : user.role === 'Viewer'
-                          ? 'bg-danger text-danger'
-                          : 'bg-warning text-warning'
+                        className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
+                          user.role === 'Employee'
+                            ? 'bg-success text-success'
+                            : user.role === 'Viewer'
+                            ? 'bg-danger text-danger'
+                            : 'bg-warning text-warning'
                         }`}
                       >
                         {user.role}
@@ -372,8 +383,8 @@ const Profile = () => {
                           className="hover:text-primary"
                           onClick={() => {
                             setOpenEditModal(true);
+                            setUserToDelete(user.user_id);
                             setEditModalUserName(user.name);
-                            setEditModalPassword(user.password);
                             setEditModalRole(user.role);
                           }}
                         >
@@ -415,11 +426,15 @@ const Profile = () => {
                               </h3>
                               <div>
                                 <div className="mb-2 block">
-                                  <Label htmlFor="username" value="Username" />
+                                  <Label htmlFor="username" value="Name" />
                                 </div>
                                 <TextInput
                                   id="username"
                                   ref={userInputRefInputRef}
+                                  onChange={(e: any) =>
+                                    setUserNameFormValue(e.target.value)
+                                  }
+                                  value={editModalUserName}
                                   placeholder={editModalUserName}
                                   required
                                 />
@@ -430,8 +445,10 @@ const Profile = () => {
                                 </div>
                                 <TextInput
                                   id="password"
-                                  value={editModalPassword}
                                   type="password"
+                                  onChange={(e: any) =>
+                                    setUserPasswordFormValue(e.target.value)
+                                  }
                                   required
                                 />
                               </div>
@@ -441,16 +458,16 @@ const Profile = () => {
                                     <Label htmlFor="role" value="Select Role" />
                                   </div>
                                   <SelectGroupTwo
-                                    selectedRole={selectedRole}
-                                    onRoleChange={handleRoleChange}
+                                    selectedRole={editModalRole}
+                                    onRoleChange={handleRoleChangeEdit}
                                   />
                                 </div>
                               </div>
                               <div className="flex justify-end gap-3">
-                                <button className="flex justify-center rounded bg-red-700 p-3 font-small text-gray hover:bg-opacity-90">
-                                  Delete Account
-                                </button>
-                                <button className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90">
+                                <button
+                                  onClick={() => editUserAccount(userToDelete)}
+                                  className="flex justify-center rounded bg-primary p-3 font-small text-gray hover:bg-opacity-90"
+                                >
                                   Edit Account
                                 </button>
                               </div>
