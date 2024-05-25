@@ -96,7 +96,6 @@ const Profile = () => {
   };
 
   const editUserAccount = async (user_id: number) => {
-    e.preventDefault();
     try {
       const response = await axiosConfig.post(
         '/api/user/editUser',

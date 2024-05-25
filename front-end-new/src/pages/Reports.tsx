@@ -5,7 +5,7 @@ import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../layout/DefaultLayout';
 import SelectGroupOne from '../components/Forms/SelectGroup/SelectGroupOne';
 
-import { Button, Checkbox, Table, Tabs } from "flowbite-react";
+import { Button, Checkbox, Table, Tabs } from 'flowbite-react';
 import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 
 const Reports: React.FC = () => {
@@ -15,7 +15,6 @@ const Reports: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-9 sm:grid-cols-1">
         <div className="flex flex-col gap-9">
-
           {/* <!-- Find Account --> */}
 
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -64,7 +63,7 @@ const Reports: React.FC = () => {
 
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full xl:w-2/3">
-                    <SelectGroupOne />
+                    {/* <SelectGroupOne /> */}
                   </div>
                   <div className="w-full xl:w-1/3">
                     <label className="mb-2.5 block text-black dark:text-white">
@@ -110,8 +109,11 @@ const Reports: React.FC = () => {
           />
         </div>
         <div className="p-6.5 my-6 py-1">
-          <Tabs aria-label="Pills" style="pills" className="bg-gray-100 rounded-lg">
-
+          <Tabs
+            aria-label="Pills"
+            style="pills"
+            className="bg-gray-100 rounded-lg"
+          >
             {/* <!-- Deposits Report --> */}
 
             <Tabs.Item
@@ -145,7 +147,10 @@ const Reports: React.FC = () => {
                       <Table.Cell>Laptop</Table.Cell>
                       <Table.Cell>$2999</Table.Cell>
                       <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                        <a
+                          href="#"
+                          className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+                        >
                           Edit
                         </a>
                       </Table.Cell>
@@ -208,7 +213,10 @@ const Reports: React.FC = () => {
                       <Table.Cell>Laptop</Table.Cell>
                       <Table.Cell>$2999</Table.Cell>
                       <Table.Cell>
-                        <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                        <a
+                          href="#"
+                          className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+                        >
                           Edit
                         </a>
                       </Table.Cell>
@@ -226,8 +234,6 @@ const Reports: React.FC = () => {
                       <Table.Cell>Pesos</Table.Cell>
                       <Table.Cell></Table.Cell>
                     </Table.Row>
-
-
                   </Table.Body>
                 </Table>
               </div>
@@ -249,7 +255,9 @@ const Reports: React.FC = () => {
                 {/* Deposits Table */}
                 <div className="w-1/2">
                   <div className="mb-2">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Deposits</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      Deposits
+                    </h4>
                   </div>
                   <div className="overflow-x-auto">
                     <Table hoverable>
@@ -273,7 +281,9 @@ const Reports: React.FC = () => {
                 {/* Withdraws Table */}
                 <div className="w-1/2">
                   <div className="mb-2">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Withdraws</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      Withdraws
+                    </h4>
                   </div>
                   <div className="overflow-x-auto">
                     <Table hoverable>
@@ -300,13 +310,9 @@ const Reports: React.FC = () => {
                 </Button>
               </div>
             </Tabs.Item>
-
-
           </Tabs>
-
         </div>
       </div>
-
     </DefaultLayout>
   );
 };

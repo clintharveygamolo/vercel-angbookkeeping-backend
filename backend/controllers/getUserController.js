@@ -12,7 +12,7 @@ export async function getUsers(req, res) {
 }
 
 export async function getUser(req, res) {
-  const [user_id] = req.params.user_id;
+  const { user_id } = req.params.user_id;
   try {
     const userQuery = await User.findByPk(user_id);
     res.status(200).json(userQuery);

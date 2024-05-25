@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import SelectGroupOne from '../../components/Forms/SelectGroup/SelectGroupOne';
 import DefaultLayout from '../../layout/DefaultLayout';
@@ -99,7 +98,7 @@ const Deposits = () => {
                 </div>
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full xl:w-2/3">
-                    <SelectGroupOne />
+                    {/* <SelectGroupOne /> */}
                   </div>
                   <div className="w-full xl:w-1/3">
                     <label className="mb-2.5 block text-black dark:text-white">
@@ -121,7 +120,7 @@ const Deposits = () => {
         </div>
       </div>
 
-      <form action='#'>
+      <form action="#">
         <div className="my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="py-6 px-4 md:px-6 xl:px-7.5 flex items-center justify-between">
             <h4 className="text-xl font-semibold text-black dark:text-white">
@@ -147,7 +146,7 @@ const Deposits = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5" >
+          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-2 flex items-center">
               <div className=" ">
                 <DatePickerOne />
