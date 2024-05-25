@@ -112,48 +112,6 @@ try {
     bank_name: "BANKWAYS",
   });
 
-  //Put values into database for testing
-
-  await Deposit.create({
-    date: "12/13/2024",
-    check_no: 1,
-    particulars: "Din Shane Magallanes",
-    remarks: "Sample remark",
-    amount: 100,
-  })
-
-  await Deposit.create({
-    date: "12/13/2022",
-    check_no: 1,
-    particulars: "Randell San",
-    remarks: "Pisot",
-    amount: 100,
-  })
-
-  await Deposit.create({
-    date: "12/13/2023",
-    check_no: 12,
-    particulars: "ClintStone",
-    remarks: "Guns",
-    amount: 1010,
-  })
-
-  await Withdraw.create({
-    date: "11/13/2024",
-    check_no: 1,
-    voucher_no: 1,
-    payee: "Din",
-    amount: 13000
-  })
-
-  await Withdraw.create({
-    date: "11/11/2024",
-    check_no: 12,
-    voucher_no: 31,
-    payee: "Stepheniga",
-    amount: 696969
-  })
-
   await Company.create({
     companyName: "Ang Architecture",
   });
@@ -194,6 +152,62 @@ try {
     company_id: 3,
     bank_id: 4,
   });
+
+  //Transactions
+
+  await Deposit.create({
+    date: "12/13/2024",
+    check_no: 1,
+    particulars: "Din Shane Magallanes",
+    remarks: "Sample remark",
+    amount: 100,
+    account_id: 1,
+  })
+
+  await Deposit.create({
+    date: "12/13/2024",
+    check_no: 1,
+    particulars: "Din Shane Taclob",
+    remarks: "Remark",
+    amount: 10000,
+    account_id: 1,
+  })
+
+  await Deposit.create({
+    date: "12/13/2022",
+    check_no: 1,
+    particulars: "Randell San",
+    remarks: "Pisot",
+    amount: 100,
+    account_id: 4,
+  })
+
+  await Deposit.create({
+    date: "12/13/2023",
+    check_no: 12,
+    particulars: "ClintStone",
+    remarks: "Guns",
+    amount: 1010,
+    account_id: 3,
+  })
+
+  await Withdraw.create({
+    date: "11/13/2024",
+    check_no: 1,
+    voucher_no: 1,
+    payee: "Din",
+    amount: 13000,
+    account_id: 1,
+  })
+
+  await Withdraw.create({
+    date: "11/11/2024",
+    check_no: 12,
+    voucher_no: 31,
+    payee: "Stepheniga",
+    amount: 696969,
+    account_id: 2,
+  })
 
   app.listen(port);
   console.log("Listening on port ", port);

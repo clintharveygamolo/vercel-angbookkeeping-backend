@@ -221,7 +221,7 @@ const AccountsTable = () => {
               className={
                 'grid grid-cols-3 sm:grid-cols-5 border-b border-stroke dark:border-strokedark'
               }
-              // key={key}
+            // key={key}
             >
               <div className="flex items-center gap-3 p-2.5 xl:p-5">
                 <p className="hidden text-black dark:text-white sm:block">
