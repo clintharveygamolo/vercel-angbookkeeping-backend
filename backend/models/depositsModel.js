@@ -20,7 +20,14 @@ const Deposit = sequelize.define("Deposit", {
     check_no: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true
+        unique: true,
+        validate: {
+            isNotNegative(value) {
+                if (parseFloat(value) <= 0) {
+                    throw new Error('Check Number must be a positive number');
+                }
+            }
+        }
     },
     particulars: {
         type: DataTypes.STRING,
