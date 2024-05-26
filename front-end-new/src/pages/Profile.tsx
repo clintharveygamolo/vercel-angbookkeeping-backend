@@ -76,13 +76,9 @@ const Profile = () => {
     }
   };
 
-<<<<<<< Updated upstream
-  const createUserAccount = async () => {
-=======
   const createUserAccount = async (e) => {
     e.preventDefault();
   
->>>>>>> Stashed changes
     try {
       const response = await axiosConfig.post(
         '/api/createUser',
