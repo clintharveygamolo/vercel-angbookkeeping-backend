@@ -1,6 +1,7 @@
 import Withdraws from '../models/withdrawsModel.js';
 import User from '../models/userModel.js';
 import { parse } from 'date-fns';
+import { Op } from 'sequelize';
 
 export async function createWithdraws(req, res) {
     try {
