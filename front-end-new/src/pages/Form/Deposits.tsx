@@ -1,4 +1,4 @@
-'use client';
+//'use client';
 
 import { Link } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
@@ -8,12 +8,17 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 
 import axiosConfig from '../../api/axiosconfig.js';
-import { AxiosError } from 'axios';
-import { useState } from 'react';
+import axios, { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
 import React, { useRef } from "react";
 import { useForm } from 'react-hook-form'
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+
+import SelectGroupThree from '../../components/Forms/SelectGroup/SelectGroupThree.js';
+
+export type AccountOption = { value: number; label: string };
 
 export type Deposits = {
   date: Date;
@@ -24,7 +29,9 @@ export type Deposits = {
 };
 
 const Deposits = () => {
-  // const [dateValue, setdateValue] = useState('');
+  //date
+  const [date, setDate] = useState('');
+
   const [check_noValue, setcheck_noValue] = useState('');
   const [particularsValue, setparticularsValue] = useState('');
   const [remarksValue, setremarksValue] = useState('');
@@ -32,15 +39,22 @@ const Deposits = () => {
 
   const createDeposit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (AccountIdDropDownValue === null) {
+      toast.error('Please select a Bank Code');
+      return;
+    }
+
     try {
       const response = await axiosConfig.post(
         '/api/auth/Deposits/Create',
         {
-          date: "12/13/2024",
+          date: date,
           check_no: check_noValue,
           particulars: particularsValue,
           remarks: remarksValue,
           amount: amountValue,
+          account_id: AccountIdDropDownValue,
         },
         { withCredentials: true },
       );
@@ -61,6 +75,35 @@ const Deposits = () => {
     e.preventDefault();
     createDeposit(e);
   }
+
+  const auth: any = useAuthUser();
+
+  const [AccountIdDropDownValue, setAccountIdDropdownValue] = useState<number | null>(null);
+  const [AccountIdDropdownOptions, setAccountIdDropdownOptions] = useState<AccountOption[]>([]);
+
+  // Fetch account options for dropdown
+  useEffect(() => {
+    const fetchBankCodes = async () => {
+      try {
+        const response = await axiosConfig.get(`/api/account/getAccount/${auth.user_id}`);
+        if (response.status === 200) {
+          const accounts = response.data;
+          const options = accounts.map((account: { account_id: number; bank_code: string; }) => ({
+            value: account.account_id,
+            label: account.bank_code,
+          }));
+          setAccountIdDropdownOptions(options);
+        }
+      } catch (error) {
+        console.error('Error fetching bank codes:', error);
+      }
+    };
+    fetchBankCodes();
+  }, [auth.user_id]);
+
+  const getAccountIdValue = (value: any) => {
+    setAccountIdDropdownValue(value);
+  };
 
   return (
     <DefaultLayout>
@@ -114,16 +157,13 @@ const Deposits = () => {
                 </div>
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full xl:w-2/3">
-                    {/* <SelectGroupOne /> */}
-                  </div>
-                  <div className="w-full xl:w-1/3">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Bank Code
                     </label>
-                    <input
-                      type="text"
-                      placeholder="Enter Bank Code"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    <SelectGroupThree
+                      label={'Bank Code'}
+                      options={AccountIdDropdownOptions}
+                      onSelect={getAccountIdValue}
                     />
                   </div>
                 </div>
@@ -167,7 +207,7 @@ const Deposits = () => {
           <div className="grid grid-cols-4 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-2 flex items-center">
               <div>
-                <DatePickerOne />
+                <DatePickerOne value={date} onChange={setDate} />
               </div>
             </div>
             <div className="col-span-2 flex items-center">
