@@ -4,15 +4,28 @@ import { parse } from 'date-fns';
 
 export async function createWithdraws(req, res) {
     try {
-        const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
+        const { withdraw_id, date, check_no, voucher_no, payee, remarks, amount } = req.body;
+
+        const parsedDate = parse(date, 'MM/dd/yyyy', new Date());
+        
+        const existingCheck = await Withdraws.findOne({ where: { check_no } });
+        if (existingCheck) {
+            return res.status(409).json({ message: "Check Number already exists" });
+        }
+
+        const existingVouch = await Withdraws.findOne({ where: { voucher_no } });
+        if (existingVouch) {
+            return res.status(409).json({ message: "Voucher Number already exists" });
+        }
+
         await Withdraws.create({
-            withdraw_id: req.body.withdraw_id,
+            withdraw_id,
             date: parsedDate,
-            check_no: req.body.check_no,
-            voucher_no: req.body.voucher_no,
-            payee: req.body.payee,
-            remarks: req.body.remarks,
-            amount: req.body.amount
+            check_no,
+            voucher_no,
+            payee,
+            remarks,
+            amount
         });
 
         res.status(201).json("Withdrawal Entry Successfully Created.");
@@ -142,7 +155,7 @@ export async function getWithdraws(req, res) {
         });
         res.status(200).json(withdrawQuery);
     } catch (error) {
-        res.status(400).json({ error: "An error occured while fetching deposits!" });
+        res.status(400).json({ error: "An error occured while fetching withdrawals!" });
     }
 }
 
@@ -152,6 +165,6 @@ export async function getWithdraw(req, res) {
         const withdrawQuery = await User.findByPk(withdraw_id);
         res.status(200).json(withdrawQuery);
     } catch (error) {
-        res.status(400).json({ error: "An error occured while fetching deposits!" });
+        res.status(400).json({ error: "An error occured while fetching withdrawals!" });
     }
 }
