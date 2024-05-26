@@ -7,6 +7,7 @@ import userSix from '../images/user/user-06.png';
 import { SetStateAction, useEffect, useState } from 'react';
 import axiosConfig from '.././api/axiosconfig.js';
 import { AxiosError } from 'axios';
+import axios from 'axios';
 
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import { Button, Label, Modal, TextInput } from 'flowbite-react';
@@ -75,7 +76,13 @@ const Profile = () => {
     }
   };
 
+<<<<<<< Updated upstream
   const createUserAccount = async () => {
+=======
+  const createUserAccount = async (e) => {
+    e.preventDefault();
+  
+>>>>>>> Stashed changes
     try {
       const response = await axiosConfig.post(
         '/api/createUser',
@@ -85,9 +92,9 @@ const Profile = () => {
           password: userPasswordFormValue,
           role: selectedRole,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       );
-
+  
       if (response.status === 201) {
         toast.success('Created a user!');
         const updatedUsers = await axiosConfig.get(`/api/get/users`);
@@ -95,9 +102,9 @@ const Profile = () => {
         setOpenModal(false);
       }
     } catch (err) {
-      if (err && err instanceof AxiosError) {
+      if (axios.isAxiosError(err)) {
         toast.error(err.response?.data.message);
-      } else if (err && err instanceof Error) {
+      } else if (err instanceof Error) {
         console.log('Error: ', err);
       }
     }

@@ -19,7 +19,8 @@ const Deposit = sequelize.define("Deposit", {
     },
     check_no: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     particulars: {
         type: DataTypes.STRING,

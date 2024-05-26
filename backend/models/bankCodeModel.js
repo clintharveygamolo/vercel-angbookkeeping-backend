@@ -6,7 +6,8 @@ const BankCode = sequelize.define("Bank Code", {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     bank_code: {
         type: DataTypes.STRING,

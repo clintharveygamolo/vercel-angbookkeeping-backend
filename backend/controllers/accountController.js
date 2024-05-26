@@ -2,6 +2,7 @@ import Company from "../models/CompanyModel.js";
 import Bank from "../models/BankModel.js";
 import Account from "../models/accountModel.js";
 import User from "../models/userModel.js";
+import { Op } from 'sequelize';
 
 export const createAccount = async (req, res) => {
   try {
@@ -34,6 +35,11 @@ export const createAccount = async (req, res) => {
     const bank = await Bank.findByPk(bank_id);
     if (!bank) {
       return res.status(404).json({ error: "Bank not found" });
+    }
+
+    const existingAccount = await Account.findOne({ where: { bank_code: bank_code } });
+    if (existingAccount) {
+      return res.status(409).json({ message: "Bank Code already exists" });
     }
 
     const account = await Account.create({
@@ -121,7 +127,7 @@ export async function editBankAccount(req, res) {
     if (currentUser.role !== "Admin") {
       return res
         .status(403)
-        .json({ message: "Forbidden: Only admin users can create new users." });
+        .json({ message: "Forbidden: Only admin users can edit accounts." });
     }
 
     if ((!bank_code, !account_number, !bank_id, !company_id)) {
@@ -133,6 +139,15 @@ export async function editBankAccount(req, res) {
     if (!account) {
       return res.status(404).json({ message: "Account not found!" });
     }
+
+    const existingAccount = await Account.findOne({
+      where: { bank_code: bank_code, account_id: { [Op.ne]: account_id } }
+    });
+
+    if (existingAccount) {
+      return res.status(409).json({ message: "Bank code already exists!" });
+    }
+
     const updatedAccount = account.update({
       bank_code: bank_code,
       account_number: account_number,
@@ -150,6 +165,6 @@ export async function editBankAccount(req, res) {
     console.error(error);
     res
       .status(500)
-      .json({ message: "An error occured while updating the user." });
+      .json({ message: "An error occured while updating the account." });
   }
 }

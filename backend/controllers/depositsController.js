@@ -4,14 +4,22 @@ import { parse } from 'date-fns';
 //this is the deposit creation function.
 export async function createDeposits(req, res) {
     try {
-        const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
+        const { deposit_id, date, check_no, particulars, remarks, amount } = req.body;
+
+        const parsedDate = parse(date, 'MM/dd/yyyy', new Date());
+
+        const existingVar = await Deposits.findOne({ where: { check_no } });
+        if (existingVar) {
+            return res.status(409).json({ message: "Check Number already exists" });
+        }
+
         await Deposits.create({
-            deposit_id: req.body.deposit_id,
+            deposit_id,
             date: parsedDate,
-            check_no: req.body.check_no,
-            particulars: req.body.particulars,
-            remarks: req.body.remarks,
-            amount: req.body.amount
+            check_no,
+            particulars,
+            remarks,
+            amount
         });
 
         res.status(201).json("Deposit Entry Successfully Created.");
