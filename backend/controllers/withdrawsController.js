@@ -37,9 +37,9 @@ export async function createWithdraws(req, res) {
 
 export async function editWithdraws(req, res) {
     try {
-        const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
-        const currentUser = await User.findByPk(req.body.user_id);
         const { withdraw_id, date, check_no, voucher_no, payee, remarks, amount } = req.body;
+        const parsedDate = parse(date, 'MM/dd/yyyy', new Date());
+        const currentUser = await User.findByPk(req.body.user_id);
 
         const withdraws = await Withdraws.findOne({ where: { withdraw_id: withdraw_id } });
 
