@@ -4,11 +4,11 @@ import { parse } from 'date-fns';
 import { Op } from 'sequelize';
 
 export async function createWithdraws(req, res) {
-    try {
+    /*try {
         const { withdraw_id, date, check_no, voucher_no, payee, remarks, amount } = req.body;
 
         const parsedDate = parse(date, 'MM/dd/yyyy', new Date());
-        
+
         const existingCheck = await Withdraws.findOne({ where: { check_no } });
         if (existingCheck) {
             return res.status(409).json({ message: "Check Number already exists" });
@@ -20,16 +20,44 @@ export async function createWithdraws(req, res) {
         }
 
         await Withdraws.create({
+
             withdraw_id,
             date: parsedDate,
             check_no,
             voucher_no,
             payee,
             remarks,
-            amount
+            amount,
         });
 
         res.status(201).json("Withdrawal Entry Successfully Created.");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "An error occured while creating the entry." });
+    }*/
+
+    try {
+        const { withdraw_id, date, check_no, voucher_no, payee, remarks, amount, account_id } = req.body;
+
+        const parsedDate = parse(date, 'MM/dd/yyyy', new Date());
+
+        const [withdraw, created] = await Withdraws.findOrCreate({
+            where: { account_id, check_no },
+            defaults: {
+                withdraw_id,
+                date: parsedDate,
+                voucher_no,
+                payee,
+                remarks,
+                amount
+            }
+        });
+
+        if (!created) {
+            return res.status(409).json({ message: "Check Number already exists for this Account!" });
+        }
+
+        res.status(201).json("Deposit Entry Successfully Created.");
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "An error occured while creating the entry." });
@@ -55,7 +83,7 @@ export async function editWithdraws(req, res) {
         const existingCheckNo = await Withdraws.findOne({
             where: { check_no: check_no, withdraw_id: { [Op.ne]: withdraw_id } }
         });
-        
+
         if (existingCheckNo) {
             return res.status(409).json({ message: "Check number already exists!" });
         }

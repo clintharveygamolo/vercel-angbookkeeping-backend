@@ -51,7 +51,7 @@ export async function editDeposits(req, res) {
         const existingDeposit = await Deposits.findOne({
             where: { check_no: check_no, deposit_id: { [Op.ne]: deposit_id } }
         });
-      
+
         if (existingDeposit) {
             return res.status(409).json({ message: "Check Number already exists!" });
         }

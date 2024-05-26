@@ -37,7 +37,7 @@ const Withdraws = () => {
   const createWithdrawal = async (e: React.FormEvent) => {
 
     if (AccountIdDropDownValue === null) {
-      toast.error('Please select an account');
+      toast.error('Please select a Bank Code');
       return;
     }
 
