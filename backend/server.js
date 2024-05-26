@@ -171,7 +171,7 @@ try {
 
   await Deposit.create({
     date: "12/13/2024",
-    check_no: 1,
+    check_no: 2,
     particulars: "Din Shane Taclob",
     remarks: "Remark",
     amount: 10000,
@@ -180,7 +180,7 @@ try {
 
   await Deposit.create({
     date: "12/13/2022",
-    check_no: 1,
+    check_no: 3,
     particulars: "Randell San",
     remarks: "Pisot",
     amount: 100,
