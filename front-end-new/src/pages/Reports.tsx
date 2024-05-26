@@ -18,6 +18,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import SelectGroupThree from '../components/Forms/SelectGroup/SelectGroupThree.js';
 
+export type AccountOption = { value: number; label: string };
+
 export type Deposits = {
   deposit_id: number;
   date: Date;
@@ -41,35 +43,73 @@ const Reports: React.FC = () => {
 
   const auth: any = useAuthUser();
 
-  //dropdown const
-  const [AccountIdDropDownValue, setAccountIdDropdownValue] = useState<number>();
-  const [AccountIdDropdownOptions, setAccountIdDropdownOptions] = useState<FromDBDropdownFormProps['options']>([]);
-  const getAccountIdValue = (value: any) => {
-    setAccountIdDropdownValue(value);
-  }
+  // State for bank code dropdown
+  const [AccountIdDropDownValue, setAccountIdDropdownValue] = useState<number | null>(null);
+  const [AccountIdDropdownOptions, setAccountIdDropdownOptions] = useState<AccountOption[]>([]);
 
-  //dropdown
+  // State for transactions
+  const [DepositReport, setDeposits] = useState<Deposits[]>([]);
+  const [WithdrawReport, setWithdraws] = useState<Withdraws[]>([]);
+
+  // Fetch account options for dropdown
   useEffect(() => {
-    const fetchAccountId = async () => {
+    const fetchBankCodes = async () => {
       try {
         const response = await axios.get(`/api/account/getAccount/${auth.user_id}`);
         if (response.status === 200) {
-          const account = response.data;
-          const options = account.map((account: { account_id: number; bank_code: string; }) => ({
-            value: account.account_id,
+          const accounts = response.data;
+          const options = accounts.map((account: { account_id: number; bank_code: string; }) => ({
+            value: account.bank_code,
             label: account.bank_code,
           }));
           setAccountIdDropdownOptions(options);
         }
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching bank codes:', error);
       }
     };
-    fetchAccountId();
-  }, [auth.user_id]); // assuming user_id is a dependency
+    fetchBankCodes();
+  }, [auth.user_id]);
 
-  const [DepositReport, setDeposits] = useState<Deposits[] | null>();
-  const [WithdrawReport, setWithdraws] = useState<Withdraws[] | null>();
+  // Fetch all transactions on initial load
+  useEffect(() => {
+    const fetchAllTransactions = async () => {
+      try {
+        const response = await axios.get('/api/transactions');
+        if (response.status === 200) {
+          setDeposits(response.data.deposits);
+          setWithdraws(response.data.withdrawals);
+        }
+      } catch (error) {
+        console.error('Error fetching all transactions:', error);
+      }
+    };
+    fetchAllTransactions();
+  }, []);
+
+  // Fetch filtered transactions based on selected bank code
+  useEffect(() => {
+    const fetchFilteredTransactions = async () => {
+      try {
+        let response;
+        if (AccountIdDropDownValue === null) {
+          response = await axios.get('/api/transactions');
+        } else {
+          response = await axios.get(`/api/transactions/${AccountIdDropDownValue}`);
+        }
+        if (response.status === 200) {
+          setDeposits(response.data.deposits);
+          setWithdraws(response.data.withdrawals);
+        }
+      } catch (error) {
+        console.error('Error fetching filtered transactions:', error);
+      }
+    };
+    fetchFilteredTransactions();
+  }, [AccountIdDropDownValue]);
+
+  // end of filter
+
   const userInputRefInputRef = useRef<HTMLInputElement>(null);
 
   //values for deposit
@@ -122,6 +162,7 @@ const Reports: React.FC = () => {
   };
 
   //get for Deposits
+  /*
   useEffect(() => {
     axios({
       method: 'GET',
@@ -133,6 +174,7 @@ const Reports: React.FC = () => {
       })
       .catch((error: any) => console.error(error));
   }, []);
+  */
 
   //edit Modal for Withdraws
   const [openModalEditWithdraws, setModalEditWithdraws] = useState(false);
@@ -153,8 +195,8 @@ const Reports: React.FC = () => {
         '/api/auth/Deposits/Edit',
         {
           //please change the user ID
-          user_id: 10001,
-          //date: editModalDepositDate,
+          user_id: auth.user_id,
+          date: editModalDepositDate,
           check_no: editModalDepositCheckNo,
           particulars: editModalDepositParticulars,
           remarks: editModalDepositRemarks,
@@ -203,6 +245,7 @@ const Reports: React.FC = () => {
   };
 
   // get Withdraws
+  /*
   useEffect(() => {
     axios({
       method: 'GET',
@@ -214,6 +257,7 @@ const Reports: React.FC = () => {
       })
       .catch((error: any) => console.error(error));
   }, []);
+  */
 
   return (
     <DefaultLayout>
@@ -274,7 +318,7 @@ const Reports: React.FC = () => {
                   <SelectGroupThree
                     label={'Bank Code'}
                     options={AccountIdDropdownOptions}
-                    onSelect={getAccountIdValue}
+                    onSelect={setAccountIdDropdownValue}
                   />
                 </div>
 

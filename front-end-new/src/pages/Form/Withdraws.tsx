@@ -5,9 +5,15 @@ import SelectGroupOne from '../../components/Forms/SelectGroup/SelectGroupOne';
 import DefaultLayout from '../../layout/DefaultLayout';
 import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axiosConfig from '../../api/axiosconfig.js';
 import { ToastContainer, toast } from 'react-toastify';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+
+import SelectGroupThree from '../../components/Forms/SelectGroup/SelectGroupThree.js';
+import axios from 'axios';
+
+export type AccountOption = { value: number; label: string };
 
 export type Withdraws = {
   date: Date;
@@ -19,7 +25,9 @@ export type Withdraws = {
 };
 
 const Withdraws = () => {
-  // const [dateValue, setdateValue] = useState('');
+  //date
+  const [date, setDate] = useState('');
+
   const [check_noValue, setcheck_noValue] = useState('');
   const [voucher_noValue, setvoucher_noValue] = useState('');
   const [payeeValue, setpayeeValue] = useState('');
@@ -27,17 +35,24 @@ const Withdraws = () => {
   const [amountValue, setamountValue] = useState('');
 
   const createWithdrawal = async (e: React.FormEvent) => {
+
+    if (AccountIdDropDownValue === null) {
+      toast.error('Please select an account');
+      return;
+    }
+
     e.preventDefault();
     try {
       const response = await axiosConfig.post(
         '/api/auth/Withdrawals/Create',
         {
-          date: "12/13/2024",
+          date: date,
           check_no: check_noValue,
           voucher_no: voucher_noValue,
           payee: payeeValue,
           remarks: remarksValue,
           amount: amountValue,
+          account_id: AccountIdDropDownValue,
         },
         { withCredentials: true },
       );
@@ -58,6 +73,35 @@ const Withdraws = () => {
     e.preventDefault();
     createWithdrawal(e);
   }
+
+  const auth: any = useAuthUser();
+
+  const [AccountIdDropDownValue, setAccountIdDropdownValue] = useState<number | null>(null);
+  const [AccountIdDropdownOptions, setAccountIdDropdownOptions] = useState<AccountOption[]>([]);
+
+  // Fetch account options for dropdown
+  useEffect(() => {
+    const fetchBankCodes = async () => {
+      try {
+        const response = await axiosConfig.get(`/api/account/getAccount/${auth.user_id}`);
+        if (response.status === 200) {
+          const accounts = response.data;
+          const options = accounts.map((account: { account_id: number; bank_code: string; }) => ({
+            value: account.account_id,
+            label: account.bank_code,
+          }));
+          setAccountIdDropdownOptions(options);
+        }
+      } catch (error) {
+        console.error('Error fetching bank codes:', error);
+      }
+    };
+    fetchBankCodes();
+  }, [auth.user_id]);
+
+  const getAccountIdValue = (value: any) => {
+    setAccountIdDropdownValue(value);
+  };
 
   return (
     <DefaultLayout>
@@ -112,16 +156,13 @@ const Withdraws = () => {
 
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full xl:w-2/3">
-                    {/* <SelectGroupOne /> */}
-                  </div>
-                  <div className="w-full xl:w-1/3">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Bank Code
                     </label>
-                    <input
-                      type="text"
-                      placeholder="Enter Bank Code"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    <SelectGroupThree
+                      label={'Bank Code'}
+                      options={AccountIdDropdownOptions}
+                      onSelect={getAccountIdValue}
                     />
                   </div>
                 </div>
@@ -133,12 +174,12 @@ const Withdraws = () => {
             </form>
           </div>
         </div>
-      </div>
+      </div >
 
       {/*   FORM    */}
 
 
-      <form onSubmit={handleSubmit}>
+      < form onSubmit={handleSubmit} >
         <div className="my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="py-6 px-4 md:px-6 xl:px-7.5 flex items-center justify-between">
             <h4 className="text-xl font-semibold text-black dark:text-white">
@@ -164,7 +205,7 @@ const Withdraws = () => {
           <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-2 flex items-center">
               <div className=" ">
-                <DatePickerOne />
+                <DatePickerOne value={date} onChange={setDate} />
               </div>
             </div>
             <div className="col-span-3 hidden items-center sm:flex">
@@ -254,9 +295,9 @@ const Withdraws = () => {
             </div>
           </div>
         </div>
-      </form>
+      </form >
       <ToastContainer />
-    </DefaultLayout>
+    </DefaultLayout >
   );
 };
 
