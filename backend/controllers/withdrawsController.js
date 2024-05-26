@@ -39,8 +39,7 @@ export async function editWithdraws(req, res) {
     try {
         const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
         const currentUser = await User.findByPk(req.body.user_id);
-
-        const { withdraw_id } = req.body;
+        const { withdraw_id, date, check_no, voucher_no, payee, remarks, amount } = req.body;
 
         const withdraws = await Withdraws.findOne({ where: { withdraw_id: withdraw_id } });
 
@@ -51,18 +50,34 @@ export async function editWithdraws(req, res) {
         if (!withdraws) {
             return res.status(401).json({ message: "Updated failed, withdrawal entry not found." });
         }
+        //Check for existing check_no in other entries
+        const existingCheckNo = await Withdraws.findOne({
+            where: { check_no: check_no, withdraw_id: { [Op.ne]: withdraw_id } }
+        });
+        
+        if (existingCheckNo) {
+            return res.status(409).json({ message: "Check number already exists!" });
+        }
+        // Check for existing voucher_no in other entries
+        const existingVoucherNo = await Withdraws.findOne({
+            where: { voucher_no: voucher_no, withdraw_id: { [Op.ne]: withdraw_id } }
+        });
+
+        if (existingVoucherNo) {
+            return res.status(409).json({ message: "Voucher number already exists!" });
+        }
 
         await Withdraws.update({
             date: parsedDate,
-            check_no: req.body.check_no,
-            voucher_no: req.body.voucher_no,
-            payee: req.body.payee,
-            remarks: req.body.remarks,
-            amount: req.body.amount
+            check_no: check_no,
+            voucher_no: voucher_no,
+            payee: payee,
+            remarks: remarks,
+            amount: amount
         },
             {
                 where: {
-                    withdraw_id: req.body.withdraw_id
+                    withdraw_id: withdraw_id
                 }
             }
         );
