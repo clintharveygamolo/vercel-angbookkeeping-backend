@@ -33,8 +33,7 @@ export async function editDeposits(req, res) {
     try {
         const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
         const currentUser = await User.findByPk(req.body.user_id);
-
-        const { deposit_id } = req.body;
+        const { deposit_id, check_no, particulars, remarks, amount } = req.body;
 
         const deposits = await Deposits.findOne({ where: { deposit_id: deposit_id } });
 
@@ -46,16 +45,24 @@ export async function editDeposits(req, res) {
             return res.status(401).json({ message: "Updated failed, deposit entry not found." });
         }
 
+        const existingDeposit = await Account.findOne({
+            where: { check_no: check_no, deposit_id: { [Op.ne]: deposit_id } }
+        });
+      
+        if (existingDeposit) {
+            return res.status(409).json({ message: "Check Number already exists!" });
+        }
+
         await Deposits.update({
             date: parsedDate,
-            check_no: req.body.check_no,
-            particulars: req.body.particulars,
-            remarks: req.body.remarks,
-            amount: req.body.amount
+            check_no: check_no,
+            particulars: particulars,
+            remarks: remarks,
+            amount: amount
         },
             {
                 where: {
-                    deposit_id: req.body.deposit_id
+                    deposit_id: deposit_id
                 }
             }
         );
