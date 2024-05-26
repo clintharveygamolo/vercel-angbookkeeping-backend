@@ -20,7 +20,6 @@ const Withdraw = sequelize.define("Withdraw", {
     check_no: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         validate: {
             isNotNegative(value) {
                 if (parseFloat(value) <= 0) {
@@ -32,7 +31,6 @@ const Withdraw = sequelize.define("Withdraw", {
     voucher_no: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         validate: {
             isNotNegative(value) {
                 if (parseFloat(value) <= 0) {
