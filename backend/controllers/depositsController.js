@@ -1,26 +1,29 @@
 import Deposits from '../models/depositsModel.js';
 import User from '../models/userModel.js';
 import { parse } from 'date-fns';
+import { Op } from 'sequelize';
+import Account from '../models/accountModel.js';
 //this is the deposit creation function.
 export async function createDeposits(req, res) {
     try {
-        const { deposit_id, date, check_no, particulars, remarks, amount } = req.body;
+        const { deposit_id, date, check_no, account_id, particulars, remarks, amount } = req.body;
 
         const parsedDate = parse(date, 'MM/dd/yyyy', new Date());
 
-        const existingVar = await Deposits.findOne({ where: { check_no } });
-        if (existingVar) {
-            return res.status(409).json({ message: "Check Number already exists" });
-        }
-
-        await Deposits.create({
-            deposit_id,
-            date: parsedDate,
-            check_no,
-            particulars,
-            remarks,
-            amount
+        const [deposit, created] = await Deposits.findOrCreate({
+            where: { account_id, check_no },
+            defaults: {
+                deposit_id,
+                date: parsedDate,
+                particulars,
+                remarks,
+                amount
+            }
         });
+
+        if (!created) {
+            return res.status(409).json({ message: "Check Number already exists for this Account!" });
+        }
 
         res.status(201).json("Deposit Entry Successfully Created.");
     } catch (error) {
@@ -45,7 +48,7 @@ export async function editDeposits(req, res) {
             return res.status(401).json({ message: "Updated failed, deposit entry not found." });
         }
 
-        const existingDeposit = await Account.findOne({
+        const existingDeposit = await Deposits.findOne({
             where: { check_no: check_no, deposit_id: { [Op.ne]: deposit_id } }
         });
       
