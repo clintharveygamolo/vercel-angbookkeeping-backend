@@ -19,11 +19,27 @@ const Withdraw = sequelize.define("Withdraw", {
     },
     check_no: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        unique: true,
+        validate: {
+            isNotNegative(value) {
+                if (parseFloat(value) <= 0) {
+                    throw new Error('Check Number must be a positive number');
+                }
+            }
+        }
     },
     voucher_no: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        unique: true,
+        validate: {
+            isNotNegative(value) {
+                if (parseFloat(value) <= 0) {
+                    throw new Error('Voucher Number must be a positive number');
+                }
+            }
+        }
     },
     payee: {
         type: DataTypes.STRING,
