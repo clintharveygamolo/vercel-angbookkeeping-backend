@@ -12,7 +12,8 @@ export async function createWithdraws(req, res) {
             voucher_no: req.body.voucher_no,
             payee: req.body.payee,
             remarks: req.body.remarks,
-            amount: req.body.amount
+            amount: req.body.amount,
+            account_id: req.body.account_id
         });
 
         res.status(201).json("Withdrawal Entry Successfully Created.");

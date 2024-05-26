@@ -11,7 +11,8 @@ export async function createDeposits(req, res) {
             check_no: req.body.check_no,
             particulars: req.body.particulars,
             remarks: req.body.remarks,
-            amount: req.body.amount
+            amount: req.body.amount,
+            account_id: req.body.account_id
         });
 
         res.status(201).json("Deposit Entry Successfully Created.");
