@@ -7,9 +7,11 @@ import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import Anglogo from '../../images/AngBookkeeping.png';
 import axios from '../../api/axiosconfig.ts';
 import { AxiosError } from 'axios';
+import { ValidationError } from 'yup';
+import { loginValidationSchema } from '../../utils/validation/loginValidationSchema.js';
 
 const LogInForm: React.FC = () => {
-    const [userId, setUserId] = useState('');
+    const [userId, setUserId] = useState<number>();
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -17,9 +19,10 @@ const LogInForm: React.FC = () => {
 
     const onSubmit = async (e: { preventDefault: () => void}) => {
         e.preventDefault();
-        console.log("Values", e);
         setError("");
         try {
+            loginValidationSchema.validate({ userId, password }, {abortEarly: false});
+            
             const response = await axios.post('/api/auth/login', {
                 user_id: userId,
                 password: password
@@ -47,8 +50,16 @@ const LogInForm: React.FC = () => {
                 toast.error(err.response?.data.message, {
                     position: 'top-right'
                 });
-            } else if (err && err instanceof Error) setError(err.message);
-            console.log("Error: ", err);
+            } else if (err && err instanceof Error) {
+              setError(err.message);
+              console.log("Error", err);
+            } else if (err && err instanceof ValidationError) {
+              err.errors.forEach((error) => {
+                toast.error(error, {
+                  position: 'top-right',
+                });
+              });
+            }
         }
     };
 
