@@ -6,44 +6,44 @@ import 'react-toastify/dist/ReactToastify.css';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import Anglogo from '../../images/AngBookkeeping.png';
 import axios from '../../api/axiosconfig.ts';
-import { loginValidationSchema } from '../../utils/yupValidationSchemas.js';
+import { loginValidation } from '../../utils/yupValidationSchemas.js';
 import { AxiosError } from 'axios';
 import * as Yup from 'yup';
 
 const LogInForm: React.FC = () => {
-  const [userId, setUserId] = useState<number>();
+  const [userId, setUserId] = useState<number | undefined>();
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const signIn = useSignIn();
 
-  const validateLoginForm = async (values: {
-    userId: number;
-    password: string;
-  }) => {
-    try {
-      await loginValidationSchema.validate(values, { abortEarly: false });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        err.inner.forEach((err) => {
-          toast.error(err.message, {
-            position: 'top-right',
-          });
-        });
-        // const errorMessages = err.inner.map((err) => err.message);
-        // toast.error(errorMessages, {
-        //   position: 'top-right',
-        // });
-      } else {
-        console.error('Unexpected error: ', err);
-      }
-    }
-  };
+  // const validateLoginForm = async (values: {
+  //   userId: number | undefined;
+  //   password: string;
+  // }) => {
+  //   try {
+  //     await loginValidationSchema.validate(values, { abortEarly: false });
+  //   } catch (err) {
+  //     if (err instanceof Yup.ValidationError) {
+  //       err.inner.forEach((err) => {
+  //         toast.error(err.message, {
+  //           position: 'top-right',
+  //         });
+  //       });
+  //       // const errorMessages = err.inner.map((err) => err.message);
+  //       // toast.error(errorMessages, {
+  //       //   position: 'top-right',
+  //       // });
+  //     } else {
+  //       console.error('Unexpected error: ', err);
+  //     }
+  //   }
+  // };
 
   const onSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
-      await validateLoginForm({ userId, password });
+      await loginValidation.validate({ userId, password }, { abortEarly: false});
 
       const response = await axios.post(
         '/api/auth/login',
@@ -69,13 +69,18 @@ const LogInForm: React.FC = () => {
         navigate('/');
       }
     } catch (err) {
-      if (err && err instanceof AxiosError) {
-        setError(err.response?.data.message);
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((validationError) => {
+          toast.error(validationError.message, {
+            position: 'top-right'
+          });
+        });
+      } else if (err && err instanceof AxiosError) {
         toast.error(err.response?.data.message, {
           position: 'top-right',
         });
       } else if (err && err instanceof Error) setError(err.message);
-      console.log('Error: ', err);
+          console.log('Error: ', err);
     }
   };
 
@@ -118,7 +123,7 @@ const LogInForm: React.FC = () => {
           </form>
         </div>
       </div>
-      <ToastContainer autoClose={2000} limit={3} />
+      <ToastContainer autoClose={2000} limit={10} />
     </>
   );
 };
