@@ -12,3 +12,4 @@ COPY . .
 EXPOSE 1000
 
 CMD [ "npm", "start" ]
+# CMD [ "npm", "run", "test" ]
