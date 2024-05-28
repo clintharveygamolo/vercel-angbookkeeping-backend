@@ -2,6 +2,7 @@ import Company from "../models/CompanyModel.js";
 import Bank from "../models/BankModel.js";
 import Account from "../models/accountModel.js";
 import User from "../models/userModel.js";
+import { Op } from "sequelize";
 
 export const createAccount = async (req, res) => {
   try {
@@ -17,23 +18,36 @@ export const createAccount = async (req, res) => {
     const currentUser = await User.findByPk(user_id);
 
     if (!currentUser) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     if (currentUser.role !== "Admin") {
       return res
         .status(403)
-        .json({ error: "Forbidden: Only admin users can create accounts." });
+        .json({ message: "Forbidden: Only admin users can create accounts." });
     }
 
     const company = await Company.findByPk(company_id);
     if (!company) {
-      return res.status(404).json({ error: "Company not found" });
+      return res.status(404).json({ message: "Valid company required" });
     }
 
     const bank = await Bank.findByPk(bank_id);
     if (!bank) {
-      return res.status(404).json({ error: "Bank not found" });
+      return res.status(404).json({ message: "Valid bank required" });
+    }
+
+    const numericRegex = /^\d+$/;
+    if (!numericRegex.test(account_number)) {
+      return res
+        .status(404)
+        .json({ message: "account_number must be a number" });
+    }
+    const existingAccount = await Account.findOne({
+      where: { bank_code: bank_code },
+    });
+    if (existingAccount) {
+      return res.status(409).json({ message: "Bank Code already exists" });
     }
 
     const account = await Account.create({
@@ -60,13 +74,13 @@ export const getAccount = async (req, res) => {
     const { user_id } = req.params;
     const currentUser = await User.findByPk(user_id);
     if (!currentUser) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     if (currentUser.role !== "Admin") {
       return res
         .status(403)
-        .json({ error: "Forbidden: Only admin users can create accounts." });
+        .json({ message: "Forbidden: Only admin users can create accounts." });
     }
 
     const accounts = await Account.findAll({
@@ -121,35 +135,48 @@ export async function editBankAccount(req, res) {
     if (currentUser.role !== "Admin") {
       return res
         .status(403)
-        .json({ message: "Forbidden: Only admin users can create new users." });
+        .json({ message: "Forbidden: Only admin users can edit accounts." });
     }
 
-    if ((!bank_code, !account_number, !bank_id, !company_id)) {
-      return res
-        .status(401)
-        .json({ message: " All fields are required to edit!" });
-    }
     const account = await Account.findByPk(account_id);
     if (!account) {
       return res.status(404).json({ message: "Account not found!" });
     }
-    const updatedAccount = account.update({
-      bank_code: bank_code,
-      account_number: account_number,
-      bank_id: bank_id,
-      company_id: company_id,
+
+    const existingAccount = await Account.findOne({
+      where: { bank_code: bank_code, account_id: { [Op.ne]: account_id } },
     });
 
-    return res
-      .status(201)
-      .json({
-        message: "User information successfully updated!",
-        updated: updatedAccount,
-      });
+    if (existingAccount) {
+      return res.status(409).json({ message: "Bank code already exists!" });
+    }
+
+    const updatedFields = {};
+
+    if (company_id) {
+      updatedFields.company_id = company_id;
+    }
+
+    if (bank_id) {
+      updatedFields.bank_id = bank_id;
+    }
+
+    if (account_number) {
+      updatedFields.account_number = account_number;
+    }
+
+    if (bank_code) {
+      updatedFields.bank_code = bank_code;
+    }
+
+    await account.update(updatedFields);
+
+    return res.status(201).json({
+      message: "User information successfully updated!",
+    });
   } catch (error) {
-    console.error(error);
     res
       .status(500)
-      .json({ message: "An error occured while updating the user." });
+      .json({ message: "An error occured while updating the account." });
   }
 }

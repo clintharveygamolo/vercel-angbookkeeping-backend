@@ -7,16 +7,19 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import axios from '../../api/axiosconfig';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import { ToastContainer, toast } from 'react-toastify';
+import { createBankAccountValidationSchema } from '../../utils/yupValidationSchemas';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button, Label, Modal, TextInput } from 'flowbite-react';
+import * as Yup from 'yup';
 import { AxiosError } from 'axios';
 
 const FormLayout = () => {
-  const [accountNumberFormValue, setAccountNumberFormValue] = useState('');
-  const [bankCodeFormValue, setBankCodeFormValue] = useState('');
+  const [accountNumberFormValue, setAccountNumberFormValue] =
+    useState<number>();
+  const [bankCodeFormValue, setBankCodeFormValue] = useState<string>('');
 
-  const [companyDropDownValue, setCompanyDropdownValue] = useState<number>();
-  const [bankDropdownValue, setBankDropdownValue] = useState<number>();
+  const [companyDropDownValue, setCompanyDropdownValue] = useState<string>('');
+  const [bankDropdownValue, setBankDropdownValue] = useState<string>('');
 
   const [companyDropdownOptions, setCompanyDropdownOptions] = useState<
     FromDBDropdownFormProps['options']
@@ -44,7 +47,7 @@ const FormLayout = () => {
         if (response.status === 200) {
           const companies = response.data;
           const options = companies.map(
-            (company: { companyName: any; company_id: any }) => ({
+            (company: { companyName: string; company_id: number }) => ({
               value: company.company_id,
               label: company.companyName,
             }),
@@ -79,8 +82,37 @@ const FormLayout = () => {
     fetchBankNames();
   }, []);
 
+  const validateBankAccountForm = async (values: {
+    bankAccountNumber: any;
+    bankCode: any;
+  }) => {
+    try {
+      await createBankAccountValidationSchema.validate(values, {
+        abortEarly: false,
+      });
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((err) => {
+          toast.error(err.message, {
+            position: 'top-right',
+          });
+        });
+      } else {
+        toast.error('An unexpected error occured during validation!');
+      }
+      return false;
+    }
+  };
+
   const createAccount = async () => {
     try {
+      const isValid = await validateBankAccountForm({
+        bankAccountNumber: accountNumberFormValue,
+        bankCode: bankCodeFormValue,
+      });
+
+      if (!isValid) return;
       const response = await axios.post(
         '/api/account/createAccount',
         {
@@ -142,7 +174,7 @@ const FormLayout = () => {
                     </label>
                     <input
                       type="text"
-                      onChange={(e) => {
+                      onChange={(e: any) => {
                         setAccountNumberFormValue(e.target.value);
                       }}
                       placeholder="Enter Account #"
@@ -158,7 +190,7 @@ const FormLayout = () => {
                     </label>
                     <input
                       type="text"
-                      onChange={(e) => {
+                      onChange={(e: any) => {
                         setBankCodeFormValue(e.target.value);
                       }}
                       placeholder="Enter Bank Code"

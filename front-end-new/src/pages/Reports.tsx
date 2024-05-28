@@ -13,10 +13,32 @@ import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 
 import axios from '../api/axiosconfig';
 import axiosConfig from '.././api/axiosconfig.js';
-import { AxiosError } from 'axios';
+
 import { ToastContainer, toast } from 'react-toastify';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import SelectGroupThree from '../components/Forms/SelectGroup/SelectGroupThree.js';
+
+import * as Yup from 'yup';
+import { AxiosError } from 'axios';
+
+export type AccountOption = { value: number; label: string };
+
+export const validateEditDepositFormSchema = Yup.object().shape({
+  date: Yup.string().required('Date is required'),
+  check_no: Yup.number().positive().required('Check number is required'),
+  particulars: Yup.string().required('Particulars are required'),
+  remarks: Yup.string(),
+  amount: Yup.number().positive().required('Amount is required'),
+});
+
+export const validateEditWithdrawalFormSchema = Yup.object().shape({
+  date: Yup.date().required().typeError('Date must be a valid date'),
+  check_no: Yup.number().positive().required('Check number is required'),
+  voucher_no: Yup.number().positive().required('Voucher number is required'),
+  payee: Yup.string().required('Payee is required'),
+  remarks: Yup.string(),
+  amount: Yup.number().positive().required('Amount is required'),
+});
 
 export type Deposits = {
   deposit_id: number;
@@ -41,35 +63,73 @@ const Reports: React.FC = () => {
 
   const auth: any = useAuthUser();
 
-  //dropdown const
-  const [AccountIdDropDownValue, setAccountIdDropdownValue] = useState<number>();
-  const [AccountIdDropdownOptions, setAccountIdDropdownOptions] = useState<FromDBDropdownFormProps['options']>([]);
-  const getAccountIdValue = (value: any) => {
-    setAccountIdDropdownValue(value);
-  }
+  // State for bank code dropdown
+  const [AccountIdDropDownValue, setAccountIdDropdownValue] = useState<number | null>(null);
+  const [AccountIdDropdownOptions, setAccountIdDropdownOptions] = useState<AccountOption[]>([]);
 
-  //dropdown
+  // State for transactions
+  const [DepositReport, setDeposits] = useState<Deposits[]>([]);
+  const [WithdrawReport, setWithdraws] = useState<Withdraws[]>([]);
+
+  // Fetch account options for dropdown
   useEffect(() => {
-    const fetchAccountId = async () => {
+    const fetchBankCodes = async () => {
       try {
         const response = await axios.get(`/api/account/getAccount/${auth.user_id}`);
         if (response.status === 200) {
-          const account = response.data;
-          const options = account.map((account: { account_id: number; bank_code: string; }) => ({
-            value: account.account_id,
+          const accounts = response.data;
+          const options = accounts.map((account: { account_id: number; bank_code: string; }) => ({
+            value: account.bank_code,
             label: account.bank_code,
           }));
           setAccountIdDropdownOptions(options);
         }
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching bank codes:', error);
       }
     };
-    fetchAccountId();
-  }, [auth.user_id]); // assuming user_id is a dependency
+    fetchBankCodes();
+  }, [auth.user_id]);
 
-  const [DepositReport, setDeposits] = useState<Deposits[] | null>();
-  const [WithdrawReport, setWithdraws] = useState<Withdraws[] | null>();
+  // Fetch all transactions on initial load
+  useEffect(() => {
+    const fetchAllTransactions = async () => {
+      try {
+        const response = await axios.get('/api/transactions');
+        if (response.status === 200) {
+          setDeposits(response.data.deposits);
+          setWithdraws(response.data.withdrawals);
+        }
+      } catch (error) {
+        console.error('Error fetching all transactions:', error);
+      }
+    };
+    fetchAllTransactions();
+  }, []);
+
+  // Fetch filtered transactions based on selected bank code
+  useEffect(() => {
+    const fetchFilteredTransactions = async () => {
+      try {
+        let response;
+        if (AccountIdDropDownValue === null) {
+          response = await axios.get('/api/transactions');
+        } else {
+          response = await axios.get(`/api/transactions/${AccountIdDropDownValue}`);
+        }
+        if (response.status === 200) {
+          setDeposits(response.data.deposits);
+          setWithdraws(response.data.withdrawals);
+        }
+      } catch (error) {
+        console.error('Error fetching filtered transactions:', error);
+      }
+    };
+    fetchFilteredTransactions();
+  }, [AccountIdDropDownValue]);
+
+  // end of filter
+
   const userInputRefInputRef = useRef<HTMLInputElement>(null);
 
   //values for deposit
@@ -122,6 +182,7 @@ const Reports: React.FC = () => {
   };
 
   //get for Deposits
+  /*
   useEffect(() => {
     axios({
       method: 'GET',
@@ -133,28 +194,49 @@ const Reports: React.FC = () => {
       })
       .catch((error: any) => console.error(error));
   }, []);
+  */
 
   //edit Modal for Withdraws
   const [openModalEditWithdraws, setModalEditWithdraws] = useState(false);
   const [WithdrawToDelete, setWithdrawtoDelete] = useState<number>(0);
 
-  const [editModalDWithdrawDate, setEditModalWithdrawUserDate] = useState<string>(''); //Date please
+  const [editModalWithdrawDate, setEditModalWithdrawDate] = useState<string>(''); //Date please
   const [editModalWithdrawCheckNo, setEditModalWithdrawCheckNo] = useState<number>();
   const [editModalWithdrawVoucherNo, setEditModalWithdrawVoucherNo] = useState<number>();
   const [editModalWithdrawPayee, setEditModalWithdrawPayee] = useState<string>('');
   const [editModalWithdrawRemarks, setEditModalWithdrawRemarks] = useState<string>('');
   const [editModalWithdrawAmount, setEditModalWithdrawAmount] = useState<number>();
 
+  //validate edit deposit
+
+  const validateEditDepositForm = async (values: any) => {
+    try {
+      await validateEditDepositFormSchema.validate(values, { abortEarly: false });
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          toast.error(error.message, {
+            position: 'top-right',
+          });
+        });
+      } else {
+        toast.error('An unexpected error occurred during validation!');
+      }
+      return false;
+    }
+  };
 
   //edit deposit
-  const editDeposit = async (deposit_id: number) => {
+  /*const editDeposit = async (deposit_id: number) => {
     try {
       const response = await axiosConfig.put(
         '/api/auth/Deposits/Edit',
         {
           //please change the user ID
-          user_id: 10001,
-          //date: editModalDepositDate,
+          user_id: auth.user_id,
+          deposit_id: deposit_id,  // Add deposit_id to the payload
+          date: editModalDepositDate,
           check_no: editModalDepositCheckNo,
           particulars: editModalDepositParticulars,
           remarks: editModalDepositRemarks,
@@ -174,11 +256,147 @@ const Reports: React.FC = () => {
         console.log('Error: ', err);
       }
     }
-  }
+  }*/
+
+  //new edit deposit
+  const editDeposit = async (deposit_id: number) => {
+    // Create the deposit data object
+    const depositData = {
+      date: editModalDepositDate,
+      check_no: editModalDepositCheckNo,
+      particulars: editModalDepositParticulars,
+      remarks: editModalDepositRemarks,
+      amount: editModalDepositAmount,
+    };
+
+    // Validate the deposit data
+    const isValid = await validateEditDepositForm(depositData);
+    if (!isValid) return;
+
+    try {
+      // Send the request to the server
+      const response = await axiosConfig.put(
+        '/api/auth/Deposits/Edit',
+        {
+          user_id: auth.user_id,
+          deposit_id: deposit_id,  // Add deposit_id to the payload
+          ...depositData,
+        },
+        { withCredentials: true },
+      );
+
+      // Handle the response
+      if (response.status === 201) {
+        setModalEditDeposit(false);
+        toast.success('Edited the deposit entry!');
+        setModalEditDeposit(false);
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.log('Error: ', err);
+      }
+    }
+  };
+
+  //validate edit withdraw
+  const validateEditWithdrawForm = async (values: any) => {
+    try {
+      await validateEditWithdrawalFormSchema.validate(values, { abortEarly: false });
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          toast.error(error.message, {
+            position: 'top-right',
+          });
+        });
+      } else {
+        toast.error('An unexpected error occurred during validation!');
+      }
+      return false;
+    }
+  };
+
+  //edit withdraw
+  /*const editWithdraw = async (withdraw_id: number) => {
+    try {
+      const response = await axiosConfig.put(
+        '/api/auth/Withdrawals/Edit',
+        {
+          user_id: auth.user_id,
+          withdraw_id: withdraw_id,  // Add withdraw_id to the payload
+          date: editModalWithdrawDate,
+          check_no: editModalWithdrawCheckNo,
+          voucher_no: editModalWithdrawVoucherNo,
+          payee: editModalWithdrawPayee,
+          remarks: editModalWithdrawRemarks,
+          amount: editModalWithdrawAmount,
+        },
+        { withCredentials: true },
+      );
+
+      if (response.status === 201) {
+        setModalEditDeposit(false);
+        toast.success('Edited the Withdraw entry!');
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      } else if (err && err instanceof Error) {
+        console.log('Error: ', err);
+      }
+    }
+  }*/
+
+  //new edit withdraw
+
+  const editWithdraw = async (withdraw_id: number) => {
+    // Create the withdraw data object
+    const withdrawData = {
+      date: editModalWithdrawDate,
+      check_no: editModalWithdrawCheckNo,
+      voucher_no: editModalWithdrawVoucherNo,
+      payee: editModalWithdrawPayee,
+      remarks: editModalWithdrawRemarks,
+      amount: editModalWithdrawAmount,
+    };
+
+    // Validate the withdraw data
+    const isValid = await validateEditWithdrawForm(withdrawData);
+    if (!isValid) return;
+
+    try {
+      // Send the request to the server
+      const response = await axiosConfig.put(
+        '/api/auth/Withdrawals/Edit',
+        {
+          user_id: auth.user_id,
+          withdraw_id: withdraw_id,  // Add withdraw_id to the payload
+          ...withdrawData,
+        },
+        { withCredentials: true },
+      );
+
+      // Handle the response
+      if (response.status === 201) {
+        setModalEditDeposit(false);
+        toast.success('Edited the Withdraw entry!');
+        setModalEditWithdraws(false);
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.log('Error:', err);
+      }
+    }
+  };
 
   // delete Withdraws
 
-  const deleteWithdraw = async (withdraw_id: number, user_id: number) => {
+  const deleteWithdraw = async (withdraw_id: number, user_id?: any) => {
     try {
       const response = await axios.delete(
         `/api/auth/Withdrawals/Delete/${withdraw_id}`,
@@ -203,6 +421,7 @@ const Reports: React.FC = () => {
   };
 
   // get Withdraws
+  /*
   useEffect(() => {
     axios({
       method: 'GET',
@@ -214,6 +433,7 @@ const Reports: React.FC = () => {
       })
       .catch((error: any) => console.error(error));
   }, []);
+  */
 
   return (
     <DefaultLayout>
@@ -274,7 +494,7 @@ const Reports: React.FC = () => {
                   <SelectGroupThree
                     label={'Bank Code'}
                     options={AccountIdDropdownOptions}
-                    onSelect={getAccountIdValue}
+                    onSelect={setAccountIdDropdownValue}
                   />
                 </div>
 
@@ -422,14 +642,13 @@ const Reports: React.FC = () => {
                                         <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90"
                                           onClick={() => {
                                             editDeposit(DepositToEdit);
-                                            setModalEditDeposit(false);
                                           }}
                                         >
                                           Edit Entry
                                         </button>
                                         <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700"
                                           onClick={() => {
-                                            deleteDeposit(DepositToDelete, 10001);
+                                            deleteDeposit(DepositToDelete, auth.user_id);
                                             setModalEditDeposit(false);
                                           }}>
                                           Delete Entry
@@ -505,7 +724,7 @@ const Reports: React.FC = () => {
                             <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
                               onClick={() => {
                                 setModalEditWithdraws(true);
-                                setEditModalWithdrawUserDate(Withdraws.date.toDateString);
+                                setEditModalWithdrawDate(Withdraws.date.toString());
                                 setEditModalWithdrawCheckNo(Withdraws.check_no);
                                 setEditModalWithdrawVoucherNo(Withdraws.check_no);
                                 setEditModalWithdrawPayee(Withdraws.payee);
@@ -533,47 +752,62 @@ const Reports: React.FC = () => {
                                         <div className="mb-2 block">
                                           <Label htmlFor="date" value="Date" />
                                         </div>
-                                        <TextInput id="date" placeholder={editModalDWithdrawDate?.toString()} required />
+                                        <TextInput id="date" placeholder={editModalWithdrawDate?.toString()} required
+                                          onChange={(e: any) => setEditModalWithdrawDate(e.target.value)}
+                                          type="text" />
                                       </div>
                                       <div className="flex space-x-4">
                                         <div className="w-1/2">
                                           <div className="mb-2 block">
                                             <Label htmlFor="checkNumber" value="Check#" />
                                           </div>
-                                          <TextInput id="checkNumber" placeholder={editModalWithdrawCheckNo?.toString()} required />
+                                          <TextInput id="checkNumber" placeholder={editModalWithdrawCheckNo?.toString()} required
+                                            onChange={(e: any) => setEditModalWithdrawCheckNo(e.target.value)}
+                                            type="text" />
                                         </div>
                                         <div className="w-1/2">
                                           <div className="mb-2 block">
                                             <Label htmlFor="voucherNumber" value="Voucher#" />
                                           </div>
-                                          <TextInput id="voucherNumber" placeholder={editModalWithdrawVoucherNo?.toString()} required />
+                                          <TextInput id="voucherNumber" placeholder={editModalWithdrawVoucherNo?.toString()} required
+                                            onChange={(e: any) => setEditModalWithdrawVoucherNo(e.target.value)}
+                                            type="text" />
                                         </div>
                                       </div>
                                       <div>
                                         <div className="mb-2 block">
                                           <Label htmlFor="payee" value="Payee" />
                                         </div>
-                                        <TextInput id="payee" placeholder={editModalWithdrawPayee} required />
+                                        <TextInput id="payee" placeholder={editModalWithdrawPayee} required
+                                          onChange={(e: any) => setEditModalWithdrawPayee(e.target.value)}
+                                          type="text" />
                                       </div>
                                       <div>
                                         <div className="mb-2 block">
                                           <Label htmlFor="remarks" value="Remarks" />
                                         </div>
-                                        <TextInput id="remarks" placeholder={editModalWithdrawRemarks} required />
+                                        <TextInput id="remarks" placeholder={editModalWithdrawRemarks} required
+                                          onChange={(e: any) => setEditModalWithdrawRemarks(e.target.value)}
+                                          type="text" />
                                       </div>
                                       <div>
                                         <div className="mb-2 block">
                                           <Label htmlFor="amount" value="Amount" />
                                         </div>
-                                        <TextInput id="amount" placeholder={editModalWithdrawAmount?.toString()} required />
+                                        <TextInput id="amount" placeholder={editModalWithdrawAmount?.toString()} required
+                                          onChange={(e: any) => setEditModalWithdrawAmount(e.target.value)}
+                                          type="text" />
                                       </div>
                                       <div className="flex justify-end gap-3">
-                                        <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90">
+                                        <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90"
+                                          onClick={() => {
+                                            editWithdraw(WithdrawToDelete);
+                                          }}>
                                           Edit Entry
                                         </button>
                                         <button className="flex justify-center rounded bg-red-600 p-3 font-small text-white hover:bg-red-700"
                                           onClick={() => {
-                                            deleteWithdraw(WithdrawToDelete, 10001);
+                                            deleteWithdraw(WithdrawToDelete, auth.user_id);
                                             setModalEditWithdraws(false);
                                           }}>
                                           Delete Entry
