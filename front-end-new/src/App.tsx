@@ -7,7 +7,7 @@ import Login from './pages/Authentication/LogInForm';
 import Calendar from './pages/Calendar';
 import Reports from './pages/Reports';
 import ECommerce from './pages/Dashboard/ECommerce';
-import FormElements from './pages/Form/Accountss';
+// import FormElements from './pages/ForputAccountss';
 import Accounts from './pages/Form/Accounts';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
@@ -31,7 +31,7 @@ function App() {
     cookieDomain: window.location.hostname,
     cookieSecure: window.location.protocol === 'http:',
     // refresh: refresh,
-    debug: true
+    debug: true,
   });
 
   useEffect(() => {
@@ -48,7 +48,7 @@ function App() {
     <AuthProvider store={store}>
       <Routes>
         <Route
-          path='/login'
+          path="/login"
           element={
             <>
               <PageTitle title="Sign In | Ang Book Keeping" />
@@ -111,7 +111,7 @@ function App() {
               </>
             }
           />
-          <Route
+          {/* <Route
             path="/forms/form-elements"
             element={
               <>
@@ -119,12 +119,12 @@ function App() {
                 <FormElements />
               </>
             }
-          />
+          /> */}
           <Route
             path="/forms/form-deposit"
             element={
               <>
-                <PageTitle title="Form Layout" />
+                <PageTitle title="Deposits" />
                 <Deposits />
               </>
             }
@@ -133,7 +133,7 @@ function App() {
             path="/forms/form-withdraws"
             element={
               <>
-                <PageTitle title="Form Layout" />
+                <PageTitle title="Withdraws" />
                 <Withdraws />
               </>
             }
@@ -176,7 +176,7 @@ function App() {
           />
         </Route>
       </Routes>
-    </ AuthProvider>
+    </AuthProvider>
   );
 }
 

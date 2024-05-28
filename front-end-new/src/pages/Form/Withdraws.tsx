@@ -1,51 +1,141 @@
-import { Link } from 'react-router-dom';
+'use client';
+
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import SelectGroupOne from '../../components/Forms/SelectGroup/SelectGroupOne';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { Product } from '../../types/product';
-import ProductOne from '../../images/product/product-01.png';
-import ProductTwo from '../../images/product/product-02.png';
-import ProductThree from '../../images/product/product-03.png';
-import ProductFour from '../../images/product/product-04.png';
 import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 
+import { useEffect, useState } from 'react';
+import axiosConfig from '../../api/axiosconfig.js';
+import { ToastContainer, toast } from 'react-toastify';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
-const productData: Product[] = [
-  {
-    image: ProductOne,
-    name: 'Apple Watch Series 7',
-    category: 'Electronics',
-    price: 296,
-    sold: 22,
-    profit: 45,
-  },
-  {
-    image: ProductTwo,
-    name: 'Macbook Pro M1',
-    category: 'Electronics',
-    price: 546,
-    sold: 12,
-    profit: 125,
-  },
-  {
-    image: ProductThree,
-    name: 'Dell Inspiron 15',
-    category: 'Electronics',
-    price: 443,
-    sold: 64,
-    profit: 247,
-  },
-  {
-    image: ProductFour,
-    name: 'HP Probook 450',
-    category: 'Electronics',
-    price: 499,
-    sold: 72,
-    profit: 103,
-  },
-];
+import SelectGroupThree from '../../components/Forms/SelectGroup/SelectGroupThree.js';
+import axios from 'axios';
+
+import * as Yup from 'yup';
+
+export type AccountOption = { value: number; label: string };
+
+export type Withdraws = {
+  date: string;
+  check_no: number;
+  voucher_no: number;
+  payee: string;
+  remarks: string;
+  amount: number;
+};
+
+export const validateCreateWithdrawalFormSchema = Yup.object().shape({
+  date: Yup.date().required().typeError('Date must be a valid date'),
+  check_no: Yup.number().positive().required('Check number is required'),
+  voucher_no: Yup.number().positive().required('Voucher number is required'),
+  payee: Yup.string().required('Payee is required'),
+  remarks: Yup.string(),
+  amount: Yup.number().positive().required('Amount is required'),
+});
 
 const Withdraws = () => {
+  //date
+  const [date, setDate] = useState<string>('');
+  const [check_noValue, setcheck_noValue] = useState<number>();
+  const [voucher_noValue, setvoucher_noValue] = useState<number>();
+  const [payeeValue, setpayeeValue] = useState<string>('');
+  const [remarksValue, setremarksValue] = useState<string>('');
+  const [amountValue, setamountValue] = useState<number>();
+
+  const validateCreateWithdrawalForm = async (values: Withdraws) => {
+    try {
+      await validateCreateWithdrawalFormSchema.validate(values, { abortEarly: false });
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          toast.error(error.message, {
+            position: 'top-right',
+          });
+        });
+      } else {
+        toast.error('An unexpected error occurred during validation!');
+      }
+      return false;
+    }
+  };
+
+  const createWithdrawal = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (AccountIdDropDownValue === null) {
+      toast.error('Please select a Bank Code');
+      return;
+    }
+
+    const withdrawalData: Withdraws = {
+      date: date,
+      check_no: check_noValue,
+      voucher_no: voucher_noValue,
+      payee: payeeValue,
+      remarks: remarksValue,
+      amount: amountValue,
+      account_id: AccountIdDropDownValue!,
+    };
+
+    const isValid = await validateCreateWithdrawalForm(withdrawalData);
+    if (!isValid) return;
+
+    try {
+      const response = await axiosConfig.post(
+        '/api/auth/Withdrawals/Create',
+        withdrawalData,
+        { withCredentials: true },
+      );
+
+      if (response.status === 201) {
+        toast.success('Created a withdrawal!');
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.error('Error:', err);
+      }
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createWithdrawal(e);
+  }
+
+  const auth: any = useAuthUser();
+
+  const [AccountIdDropDownValue, setAccountIdDropdownValue] = useState<number | null>(null);
+  const [AccountIdDropdownOptions, setAccountIdDropdownOptions] = useState<AccountOption[]>([]);
+
+  // Fetch account options for dropdown
+  useEffect(() => {
+    const fetchBankCodes = async () => {
+      try {
+        const response = await axiosConfig.get(`/api/account/getAccount/${auth.user_id}`);
+        if (response.status === 200) {
+          const accounts = response.data;
+          const options = accounts.map((account: { account_id: number; bank_code: string; }) => ({
+            value: account.account_id,
+            label: account.bank_code,
+          }));
+          setAccountIdDropdownOptions(options);
+        }
+      } catch (error) {
+        console.error('Error fetching bank codes:', error);
+      }
+    };
+    fetchBankCodes();
+  }, [auth.user_id]);
+
+  const getAccountIdValue = (value: any) => {
+    setAccountIdDropdownValue(value);
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Add Withdraws" />
@@ -99,16 +189,13 @@ const Withdraws = () => {
 
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full xl:w-2/3">
-                    <SelectGroupOne />
-                  </div>
-                  <div className="w-full xl:w-1/3">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Bank Code
                     </label>
-                    <input
-                      type="text"
-                      placeholder="Enter Bank Code"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    <SelectGroupThree
+                      label={'Bank Code'}
+                      options={AccountIdDropdownOptions}
+                      onSelect={getAccountIdValue}
                     />
                   </div>
                 </div>
@@ -120,10 +207,12 @@ const Withdraws = () => {
             </form>
           </div>
         </div>
-      </div>
+      </div >
+
+      {/*   FORM    */}
 
 
-      <form action="#">
+      < form onSubmit={handleSubmit} >
         <div className="my-6 py-1 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="py-6 px-4 md:px-6 xl:px-7.5 flex items-center justify-between">
             <h4 className="text-xl font-semibold text-black dark:text-white">
@@ -139,34 +228,44 @@ const Withdraws = () => {
               <p className="font-medium">Date</p>
             </div>
             <div className="px-2 col-span-3 hidden items-center sm:flex">
-              <p className="font-medium">Invoice Number</p>
+              <p className="font-medium">Check Number</p>
             </div>
             <div className="col-span-3 flex items-center">
-              <p className="font-medium">Check Number</p>
+              <p className="font-medium">Invoice Number</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5" >
+          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-2 flex items-center">
               <div className=" ">
-                <DatePickerOne />
+                <DatePickerOne value={date} onChange={setDate} />
               </div>
             </div>
             <div className="col-span-3 hidden items-center sm:flex">
               <div className="w-full px-2">
                 <input
+                  id="check_no_input"
+                  value={check_noValue}
                   type="text"
-                  placeholder="Invoice #"
+                  placeholder="Check #"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setcheck_noValue(e.target.value)
+                  }
                 />
               </div>
             </div>
             <div className="col-span-3 flex items-center">
-              <div className='w-full'>
+              <div className="w-full">
                 <input
+                  id="voucher_no_input"
+                  value={voucher_noValue}
                   type="text"
-                  placeholder="Check #"
+                  placeholder="voucher #"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setvoucher_noValue(e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -184,38 +283,54 @@ const Withdraws = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5" >
+          <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
             <div className="col-span-3 hidden items-center sm:flex">
               <div className="w-full">
                 <input
+                  id="payee_input"
+                  value={payeeValue}
                   type="text"
                   placeholder="Payee"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setpayeeValue(e.target.value)
+                  }
                 />
               </div>
             </div>
             <div className="col-span-3 hidden items-center sm:flex">
               <div className="px-2 w-full">
                 <input
+                  id="remarks_input"
+                  value={remarksValue}
                   type="text"
                   placeholder="Remarks"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setremarksValue(e.target.value)
+                  }
                 />
               </div>
             </div>
             <div className="col-span-2 flex items-center">
-              <div className='w-full'>
+              <div className="w-full">
                 <input
+                  id="check_no_input"
+                  value={amountValue}
                   type="text"
                   placeholder="Amount"
                   className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  onChange={(e: any) =>
+                    setamountValue(e.target.value)
+                  }
                 />
               </div>
             </div>
           </div>
         </div>
-      </form>
-    </DefaultLayout>
+      </form >
+      <ToastContainer />
+    </DefaultLayout >
   );
 };
 

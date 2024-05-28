@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useSignOut from 'react-auth-kit/hooks/useSignOut';
 
 import UserOne from '../../images/user/user-01.png';
+import userSix from '../../images/user/user-06.png';
 
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
@@ -13,15 +14,15 @@ const DropdownUser = () => {
   const dropdown = useRef<any>(null);
   const signOut = useSignOut();
   const auth: any = useAuthUser();
-  
+
   const logOut = async () => {
     try {
-      signOut()
+      signOut();
       navigate('/login');
     } catch (err) {
-      console.error("Error: ", err);
+      console.error('Error: ', err);
     }
-  }
+  };
 
   // close on click outside
   useEffect(() => {
@@ -65,7 +66,7 @@ const DropdownUser = () => {
         </span>
 
         <span className="h-12 w-12 rounded-full">
-          <img src={UserOne} alt="User" />
+          <img src={userSix} alt="User" />
         </span>
 
         <svg
@@ -121,7 +122,10 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <button onClick={logOut} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        <button
+          onClick={logOut}
+          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+        >
           <svg
             className="fill-current"
             width="22"

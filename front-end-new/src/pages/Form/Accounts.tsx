@@ -1,9 +1,141 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import SelectGroupOne from '../../components/Forms/SelectGroup/SelectGroupOne';
+import SelectGroupOne, {
+  FromDBDropdownFormProps,
+} from '../../components/Forms/SelectGroup/SelectGroupOne';
 import DefaultLayout from '../../layout/DefaultLayout';
+import axios from '../../api/axiosconfig';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+import { ToastContainer, toast } from 'react-toastify';
+import { createBankAccountValidationSchema } from '../../utils/yupValidationSchemas';
+import 'react-toastify/dist/ReactToastify.css';
+import { Button, Label, Modal, TextInput } from 'flowbite-react';
+import * as Yup from 'yup';
+import { AxiosError } from 'axios';
 
 const FormLayout = () => {
+  const [accountNumberFormValue, setAccountNumberFormValue] =
+    useState<number>();
+  const [bankCodeFormValue, setBankCodeFormValue] = useState<string>('');
+
+  const [companyDropDownValue, setCompanyDropdownValue] = useState<string>('');
+  const [bankDropdownValue, setBankDropdownValue] = useState<string>('');
+
+  const [companyDropdownOptions, setCompanyDropdownOptions] = useState<
+    FromDBDropdownFormProps['options']
+  >([]);
+
+  const [bankDropdownOptions, setBankDropdownOptions] = useState<
+    FromDBDropdownFormProps['options']
+  >([]);
+
+  const auth: any = useAuthUser();
+
+  // Getters dropdown values
+  const getCompanyValue = (value: any) => {
+    setCompanyDropdownValue(value);
+  };
+
+  const getBankValue = (value: any) => {
+    setBankDropdownValue(value);
+  };
+
+  useEffect(() => {
+    const fetchCompanyNames = async () => {
+      try {
+        const response = await axios.get('/api/company/getCompany/');
+        if (response.status === 200) {
+          const companies = response.data;
+          const options = companies.map(
+            (company: { companyName: string; company_id: number }) => ({
+              value: company.company_id,
+              label: company.companyName,
+            }),
+          );
+          setCompanyDropdownOptions(options);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCompanyNames();
+  }, []);
+
+  useEffect(() => {
+    const fetchBankNames = async () => {
+      try {
+        const response = await axios.get('/api/bank/getBank');
+        if (response.status === 200) {
+          const banks = response.data;
+          const options = banks.map(
+            (bank: { bank_id: any; bank_name: any }) => ({
+              value: bank.bank_id,
+              label: bank.bank_name,
+            }),
+          );
+          setBankDropdownOptions(options);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBankNames();
+  }, []);
+
+  const validateBankAccountForm = async (values: {
+    bankAccountNumber: any;
+    bankCode: any;
+  }) => {
+    try {
+      await createBankAccountValidationSchema.validate(values, {
+        abortEarly: false,
+      });
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((err) => {
+          toast.error(err.message, {
+            position: 'top-right',
+          });
+        });
+      } else {
+        toast.error('An unexpected error occured during validation!');
+      }
+      return false;
+    }
+  };
+
+  const createAccount = async () => {
+    try {
+      const isValid = await validateBankAccountForm({
+        bankAccountNumber: accountNumberFormValue,
+        bankCode: bankCodeFormValue,
+      });
+
+      if (!isValid) return;
+      const response = await axios.post(
+        '/api/account/createAccount',
+        {
+          user_id: auth.user_id,
+          account_number: accountNumberFormValue,
+          company_id: companyDropDownValue,
+          bank_id: bankDropdownValue,
+          bank_code: bankCodeFormValue,
+        },
+        { withCredentials: true },
+      );
+      if (response.status === 201) {
+        toast.success('Successfully created an account!');
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      } else if (err && err instanceof Error) {
+        console.error(`Error: ${err}`);
+      }
+    }
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Account" />
@@ -14,33 +146,26 @@ const FormLayout = () => {
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
               <h3 className="font-medium text-black dark:text-white">
-                Find Account
+                Create Account
               </h3>
             </div>
             <form action="#">
               <div className="p-6.5">
-                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                <div className="mb-1 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full">
-                    <label className="mb-2.5 block text-black dark:text-white">
-                      Company
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter company name"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    <SelectGroupOne
+                      label={'Company'}
+                      options={companyDropdownOptions}
+                      onSelect={getCompanyValue}
                     />
                   </div>
                 </div>
-
-                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                <div className="mb-1 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full xl:w-1/3">
-                    <label className="mb-2.5 block text-black dark:text-white">
-                      Bank
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter Bank"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    <SelectGroupOne
+                      label={'Bank'}
+                      options={bankDropdownOptions}
+                      onSelect={getBankValue}
                     />
                   </div>
                   <div className="w-full xl:w-2/3">
@@ -49,6 +174,9 @@ const FormLayout = () => {
                     </label>
                     <input
                       type="text"
+                      onChange={(e: any) => {
+                        setAccountNumberFormValue(e.target.value);
+                      }}
                       placeholder="Enter Account #"
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
@@ -56,15 +184,15 @@ const FormLayout = () => {
                 </div>
 
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                  <div className="w-full xl:w-2/3">
-                    <SelectGroupOne />
-                  </div>
                   <div className="w-full xl:w-1/3">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Bank Code
                     </label>
                     <input
                       type="text"
+                      onChange={(e: any) => {
+                        setBankCodeFormValue(e.target.value);
+                      }}
                       placeholder="Enter Bank Code"
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
@@ -72,13 +200,10 @@ const FormLayout = () => {
                 </div>
 
                 <div className="flex justify-end gap-3">
-                  <button className="flex justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
-                    Delete Account
-                  </button>
-                  <button className="flex justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
-                    Edit Account
-                  </button>
-                  <button className="flex justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                  <button
+                    onClick={createAccount}
+                    className="flex justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
+                  >
                     Create Account
                   </button>
                 </div>
@@ -87,6 +212,7 @@ const FormLayout = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </DefaultLayout>
   );
 };
