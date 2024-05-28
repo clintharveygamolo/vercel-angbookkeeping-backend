@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 // Middleware
 app.use(
   cors({
-    origin: "https://vercel-angbookkeeping-frontend.onrender.com/",
+    origin: "https://vercel-angbookkeeping-frontend.onrender.com",
     credentials: true,
   }),
 );
