@@ -6,9 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import Anglogo from '../../images/AngBookkeeping.png';
 import axios from '../../api/axiosconfig.ts';
-import { loginValidationSchema } from '../../utils/yupValidationSchemas.js';
 import { AxiosError } from 'axios';
-import * as Yup from 'yup';
 
 const LogInForm: React.FC = () => {
   const [userId, setUserId] = useState<number>();
@@ -17,34 +15,9 @@ const LogInForm: React.FC = () => {
   const navigate = useNavigate();
   const signIn = useSignIn();
 
-  const validateLoginForm = async (values: {
-    userId: number;
-    password: string;
-  }) => {
-    try {
-      await loginValidationSchema.validate(values, { abortEarly: false });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        err.inner.forEach((err) => {
-          toast.error(err.message, {
-            position: 'top-right',
-          });
-        });
-        // const errorMessages = err.inner.map((err) => err.message);
-        // toast.error(errorMessages, {
-        //   position: 'top-right',
-        // });
-      } else {
-        console.error('Unexpected error: ', err);
-      }
-    }
-  };
-
   const onSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
-      await validateLoginForm({ userId, password });
-
       const response = await axios.post(
         '/api/auth/login',
         {
@@ -75,7 +48,9 @@ const LogInForm: React.FC = () => {
           position: 'top-right',
         });
       } else if (err && err instanceof Error) setError(err.message);
-      console.log('Error: ', err);
+      toast.error('Unexpected error', {
+        position: 'top-right',
+      });
     }
   };
 
