@@ -30,6 +30,15 @@ export const editUserValidationSchema = Yup.object({
     .oneOf(['Admin', 'Viewer', 'Employee'], 'Invalid Role'),
 });
 
+export const createBankAccountValidationSchema = Yup.object({
+  bankAccountNumber: Yup.number().required('Account number field is required'),
+  bankCode: Yup.string()
+    .required('Bank code field is required')
+    .min(3, 'Bank code must at least be 3 characters')
+    .max(15, 'Bank code must at least be 15 characters')
+    .nonNullable(),
+});
+
 // export const userCreateValidationSchema = Yup.object({
 //   userId: Yup.number()
 //     .required('User ID is required!')

@@ -43,12 +43,11 @@ const LogInForm: React.FC = () => {
       }
     } catch (err) {
       if (err && err instanceof AxiosError) {
-        setError(err.response?.data.message);
         toast.error(err.response?.data.message, {
           position: 'top-right',
         });
-      } else if (err && err instanceof Error) setError(err.message);
-      toast.error('Unexpected error', {
+      }
+      toast.error('Unexpected error!', {
         position: 'top-right',
       });
     }

@@ -11,10 +11,18 @@ const Account = sequelize.define("Account", {
   bank_code: {
     type: DataTypes.STRING,
     allowNull: false,
+    validation: {
+      len: [3, 15],
+      notNull: true,
+    },
   },
   account_number: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validation: {
+      len: [8, 20],
+      notNull: true,
+    },
   },
 });
 
