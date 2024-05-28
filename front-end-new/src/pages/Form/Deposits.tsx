@@ -15,26 +15,62 @@ import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 import SelectGroupThree from '../../components/Forms/SelectGroup/SelectGroupThree.js';
 
+import * as Yup from 'yup';
+
 export type AccountOption = { value: number; label: string };
 
 export type Deposits = {
-  date: Date;
+  date: string;
   check_no: number;
   particulars: string;
   remarks: string;
   amount: number;
 };
 
+export const validateCreateDepositFormSchema = Yup.object().shape({
+  date: Yup.string().required('Date is required'),
+  check_no: Yup.number().positive().required('Check number is required'),
+  particulars: Yup.string().required('Particulars are required'),
+  remarks: Yup.string(),
+  amount: Yup.number().positive().required('Amount is required'),
+});
+
 const Deposits = () => {
+
+  const validateCreateDepositForm = async (values: Deposits) => {
+    try {
+      await validateCreateDepositFormSchema.validate(values, { abortEarly: false });
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          toast.error(error.message, {
+            position: 'top-right',
+          });
+        });
+      } else {
+        toast.error('An unexpected error occurred during validation!');
+      }
+      return false;
+    }
+  };
+
   //date
   const [date, setDate] = useState('');
+  /*
+    const [check_noValue, setcheck_noValue] = useState();
+    const [particularsValue, setparticularsValue] = useState('');
+    const [remarksValue, setremarksValue] = useState('');
+    const [amountValue, setamountValue] = useState();
+  */
 
-  const [check_noValue, setcheck_noValue] = useState('');
-  const [particularsValue, setparticularsValue] = useState('');
-  const [remarksValue, setremarksValue] = useState('');
-  const [amountValue, setamountValue] = useState('');
+  const [check_noValue, setcheck_noValue] = useState<number>();
+  const [particularsValue, setparticularsValue] = useState<string>('');
+  const [remarksValue, setremarksValue] = useState<string>('');
+  const [amountValue, setamountValue] = useState<number>();
 
-  const createDeposit = async (e: React.FormEvent) => {
+
+  /*const createDeposit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (AccountIdDropDownValue === null) {
@@ -53,6 +89,45 @@ const Deposits = () => {
           amount: amountValue,
           account_id: AccountIdDropDownValue,
         },
+        { withCredentials: true },
+      );
+
+      if (response.status === 201) {
+        toast.success('Created a deposit!');
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.error('Error:', err);
+      }
+    }
+  };*/
+
+  const createDeposit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (AccountIdDropDownValue === null) {
+      toast.error('Please select a Bank Code');
+      return;
+    }
+
+    const depositData = {
+      date: date,
+      check_no: check_noValue,
+      particulars: particularsValue,
+      remarks: remarksValue,
+      amount: amountValue,
+      account_id: AccountIdDropDownValue,
+    };
+
+    const isValid = await validateCreateDepositForm(depositData);
+    if (!isValid) return;
+
+    try {
+      const response = await axiosConfig.post(
+        '/api/auth/Deposits/Create',
+        depositData,
         { withCredentials: true },
       );
 

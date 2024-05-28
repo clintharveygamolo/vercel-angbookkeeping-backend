@@ -13,10 +13,12 @@ import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import SelectGroupThree from '../../components/Forms/SelectGroup/SelectGroupThree.js';
 import axios from 'axios';
 
+import * as Yup from 'yup';
+
 export type AccountOption = { value: number; label: string };
 
 export type Withdraws = {
-  date: Date;
+  date: string;
   check_no: number;
   voucher_no: number;
   payee: string;
@@ -24,36 +26,67 @@ export type Withdraws = {
   amount: number;
 };
 
+export const validateCreateWithdrawalFormSchema = Yup.object().shape({
+  date: Yup.date().required().typeError('Date must be a valid date'),
+  check_no: Yup.number().positive().required('Check number is required'),
+  voucher_no: Yup.number().positive().required('Voucher number is required'),
+  payee: Yup.string().required('Payee is required'),
+  remarks: Yup.string(),
+  amount: Yup.number().positive().required('Amount is required'),
+});
+
 const Withdraws = () => {
   //date
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState<string>('');
+  const [check_noValue, setcheck_noValue] = useState<number>();
+  const [voucher_noValue, setvoucher_noValue] = useState<number>();
+  const [payeeValue, setpayeeValue] = useState<string>('');
+  const [remarksValue, setremarksValue] = useState<string>('');
+  const [amountValue, setamountValue] = useState<number>();
 
-  const [check_noValue, setcheck_noValue] = useState('');
-  const [voucher_noValue, setvoucher_noValue] = useState('');
-  const [payeeValue, setpayeeValue] = useState('');
-  const [remarksValue, setremarksValue] = useState('');
-  const [amountValue, setamountValue] = useState('');
+  const validateCreateWithdrawalForm = async (values: Withdraws) => {
+    try {
+      await validateCreateWithdrawalFormSchema.validate(values, { abortEarly: false });
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          toast.error(error.message, {
+            position: 'top-right',
+          });
+        });
+      } else {
+        toast.error('An unexpected error occurred during validation!');
+      }
+      return false;
+    }
+  };
 
   const createWithdrawal = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     if (AccountIdDropDownValue === null) {
       toast.error('Please select a Bank Code');
       return;
     }
 
-    e.preventDefault();
+    const withdrawalData: Withdraws = {
+      date: date,
+      check_no: check_noValue,
+      voucher_no: voucher_noValue,
+      payee: payeeValue,
+      remarks: remarksValue,
+      amount: amountValue,
+      account_id: AccountIdDropDownValue!,
+    };
+
+    const isValid = await validateCreateWithdrawalForm(withdrawalData);
+    if (!isValid) return;
+
     try {
       const response = await axiosConfig.post(
         '/api/auth/Withdrawals/Create',
-        {
-          date: date,
-          check_no: check_noValue,
-          voucher_no: voucher_noValue,
-          payee: payeeValue,
-          remarks: remarksValue,
-          amount: amountValue,
-          account_id: AccountIdDropDownValue,
-        },
+        withdrawalData,
         { withCredentials: true },
       );
 
