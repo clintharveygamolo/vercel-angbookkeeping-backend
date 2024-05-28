@@ -1,5 +1,5 @@
 import User from "../models/userModel.js";
-import Bank from "../models/BankModel.jsjs";
+import Bank from "../models/BankModel.js";
 import Company from "../models/CompanyModel.js";
 import Account from "../models/accountModel.js";
 import Deposit from "../models/depositsModel.js";
