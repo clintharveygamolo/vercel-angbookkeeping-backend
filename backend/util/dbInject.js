@@ -1,9 +1,9 @@
-import User from "./models/userModel.js";
-import Bank from "./models/BankModel.js";
-import Company from "./models/CompanyModel.js";
-import Account from "./models/accountModel.js";
-import Deposit from "./models/depositsModel.js";
-import Withdraw from "./models/withdrawsModel.js";
+import User from "../models/userModel.js";
+import Bank from "../models/BankModel.jsjs";
+import Company from "../models/CompanyModel.js";
+import Account from "../models/accountModel.js";
+import Deposit from "../models/depositsModel.js";
+import Withdraw from "../models/withdrawsModel.js";
 import bcrypt from "bcrypt";
 
 export async function injectInitialData() {
