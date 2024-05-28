@@ -21,7 +21,7 @@ import Company from "./models/CompanyModel.js";
 import Account from "./models/accountModel.js";
 // import refreshTokenRoute from "./routes/refreshTokenRoute.js";
 // import Deposit from "./models/depositsModel.js";
-import filterRoute from "./routes/filterRoute.js"
+import filterRoute from "./routes/filterRoute.js";
 
 import depositsRoute from "./routes/depositsRoute.js";
 import withdrawsRoute from "./routes/withdrawsRoute.js";
@@ -56,8 +56,8 @@ app.use("/api/company", getCompanyRoute);
 app.use("/api/company", createCompanyRoute);
 app.use("/api/account", createAccountRoute);
 
-app.use('/api/auth/Deposits', depositsRoute);
-app.use('/api/auth/Withdrawals', withdrawsRoute);
+app.use("/api/auth/Deposits", depositsRoute);
+app.use("/api/auth/Withdrawals", withdrawsRoute);
 
 //app.use('/api/transactions/', filterRoute);
 //for filter route
@@ -167,7 +167,7 @@ try {
     remarks: "Sample remark",
     amount: 100,
     account_id: 1,
-  })
+  });
 
   await Deposit.create({
     date: "12/13/2024",
@@ -176,16 +176,16 @@ try {
     remarks: "Remark",
     amount: 10000,
     account_id: 1,
-  })
+  });
 
   await Deposit.create({
     date: "12/13/2022",
     check_no: 3,
     particulars: "Randell San",
-    remarks: "Pisot",
+    remarks: "Purchase",
     amount: 100,
     account_id: 4,
-  })
+  });
 
   await Deposit.create({
     date: "12/13/2023",
@@ -194,7 +194,7 @@ try {
     remarks: "Guns",
     amount: 1010,
     account_id: 3,
-  })
+  });
 
   await Withdraw.create({
     date: "11/13/2024",
@@ -203,7 +203,7 @@ try {
     payee: "Din",
     amount: 13000,
     account_id: 1,
-  })
+  });
 
   await Withdraw.create({
     date: "11/11/2024",
@@ -212,7 +212,7 @@ try {
     payee: "Stepheniga",
     amount: 696969,
     account_id: 2,
-  })
+  });
 
   app.listen(port);
   console.log("Listening on port ", port);
