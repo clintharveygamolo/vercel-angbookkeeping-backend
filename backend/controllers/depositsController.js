@@ -1,18 +1,29 @@
 import Deposits from '../models/depositsModel.js';
 import User from '../models/userModel.js';
 import { parse } from 'date-fns';
+import { Op } from 'sequelize';
+import Account from '../models/accountModel.js';
 //this is the deposit creation function.
 export async function createDeposits(req, res) {
     try {
-        const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
-        await Deposits.create({
-            deposit_id: req.body.deposit_id,
-            date: parsedDate,
-            check_no: req.body.check_no,
-            particulars: req.body.particulars,
-            remarks: req.body.remarks,
-            amount: req.body.amount
+        const { deposit_id, date, check_no, account_id, particulars, remarks, amount } = req.body;
+
+        const parsedDate = parse(date, 'MM/dd/yyyy', new Date());
+
+        const [deposit, created] = await Deposits.findOrCreate({
+            where: { account_id, check_no },
+            defaults: {
+                deposit_id,
+                date: parsedDate,
+                particulars,
+                remarks,
+                amount
+            }
         });
+
+        if (!created) {
+            return res.status(409).json({ message: "Check Number already exists for this Account!" });
+        }
 
         res.status(201).json("Deposit Entry Successfully Created.");
     } catch (error) {
@@ -25,8 +36,7 @@ export async function editDeposits(req, res) {
     try {
         const parsedDate = parse(req.body.date, 'MM/dd/yyyy', new Date());
         const currentUser = await User.findByPk(req.body.user_id);
-
-        const { deposit_id } = req.body;
+        const { deposit_id, check_no, particulars, remarks, amount } = req.body;
 
         const deposits = await Deposits.findOne({ where: { deposit_id: deposit_id } });
 
@@ -38,16 +48,24 @@ export async function editDeposits(req, res) {
             return res.status(401).json({ message: "Updated failed, deposit entry not found." });
         }
 
+        const existingDeposit = await Deposits.findOne({
+            where: { check_no: check_no, deposit_id: { [Op.ne]: deposit_id } }
+        });
+
+        if (existingDeposit) {
+            return res.status(409).json({ message: "Check Number already exists!" });
+        }
+
         await Deposits.update({
             date: parsedDate,
-            check_no: req.body.check_no,
-            particulars: req.body.particulars,
-            remarks: req.body.remarks,
-            amount: req.body.amount
+            check_no: check_no,
+            particulars: particulars,
+            remarks: remarks,
+            amount: amount
         },
             {
                 where: {
-                    deposit_id: req.body.deposit_id
+                    deposit_id: deposit_id
                 }
             }
         );
