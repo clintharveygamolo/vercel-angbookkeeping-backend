@@ -13,12 +13,32 @@ import DatePickerOne from '../components/Forms/DatePicker/DatePickerOne';
 
 import axios from '../api/axiosconfig';
 import axiosConfig from '.././api/axiosconfig.js';
-import { AxiosError } from 'axios';
+
 import { ToastContainer, toast } from 'react-toastify';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import SelectGroupThree from '../components/Forms/SelectGroup/SelectGroupThree.js';
 
+import * as Yup from 'yup';
+import { AxiosError } from 'axios';
+
 export type AccountOption = { value: number; label: string };
+
+export const validateEditDepositFormSchema = Yup.object().shape({
+  date: Yup.string().required('Date is required'),
+  check_no: Yup.number().positive().required('Check number is required'),
+  particulars: Yup.string().required('Particulars are required'),
+  remarks: Yup.string(),
+  amount: Yup.number().positive().required('Amount is required'),
+});
+
+export const validateEditWithdrawalFormSchema = Yup.object().shape({
+  date: Yup.date().required().typeError('Date must be a valid date'),
+  check_no: Yup.number().positive().required('Check number is required'),
+  voucher_no: Yup.number().positive().required('Voucher number is required'),
+  payee: Yup.string().required('Payee is required'),
+  remarks: Yup.string(),
+  amount: Yup.number().positive().required('Amount is required'),
+});
 
 export type Deposits = {
   deposit_id: number;
@@ -180,16 +200,35 @@ const Reports: React.FC = () => {
   const [openModalEditWithdraws, setModalEditWithdraws] = useState(false);
   const [WithdrawToDelete, setWithdrawtoDelete] = useState<number>(0);
 
-  const [editModalDWithdrawDate, setEditModalWithdrawDate] = useState<string>(''); //Date please
+  const [editModalWithdrawDate, setEditModalWithdrawDate] = useState<string>(''); //Date please
   const [editModalWithdrawCheckNo, setEditModalWithdrawCheckNo] = useState<number>();
   const [editModalWithdrawVoucherNo, setEditModalWithdrawVoucherNo] = useState<number>();
   const [editModalWithdrawPayee, setEditModalWithdrawPayee] = useState<string>('');
   const [editModalWithdrawRemarks, setEditModalWithdrawRemarks] = useState<string>('');
   const [editModalWithdrawAmount, setEditModalWithdrawAmount] = useState<number>();
 
+  //validate edit deposit
+
+  const validateEditDepositForm = async (values: any) => {
+    try {
+      await validateEditDepositFormSchema.validate(values, { abortEarly: false });
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          toast.error(error.message, {
+            position: 'top-right',
+          });
+        });
+      } else {
+        toast.error('An unexpected error occurred during validation!');
+      }
+      return false;
+    }
+  };
 
   //edit deposit
-  const editDeposit = async (deposit_id: number) => {
+  /*const editDeposit = async (deposit_id: number) => {
     try {
       const response = await axiosConfig.put(
         '/api/auth/Deposits/Edit',
@@ -217,17 +256,78 @@ const Reports: React.FC = () => {
         console.log('Error: ', err);
       }
     }
-  }
+  }*/
+
+  //new edit deposit
+  const editDeposit = async (deposit_id: number) => {
+    // Create the deposit data object
+    const depositData = {
+      date: editModalDepositDate,
+      check_no: editModalDepositCheckNo,
+      particulars: editModalDepositParticulars,
+      remarks: editModalDepositRemarks,
+      amount: editModalDepositAmount,
+    };
+
+    // Validate the deposit data
+    const isValid = await validateEditDepositForm(depositData);
+    if (!isValid) return;
+
+    try {
+      // Send the request to the server
+      const response = await axiosConfig.put(
+        '/api/auth/Deposits/Edit',
+        {
+          user_id: auth.user_id,
+          deposit_id: deposit_id,  // Add deposit_id to the payload
+          ...depositData,
+        },
+        { withCredentials: true },
+      );
+
+      // Handle the response
+      if (response.status === 201) {
+        setModalEditDeposit(false);
+        toast.success('Edited the deposit entry!');
+        setModalEditDeposit(false);
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.log('Error: ', err);
+      }
+    }
+  };
+
+  //validate edit withdraw
+  const validateEditWithdrawForm = async (values: any) => {
+    try {
+      await validateEditWithdrawalFormSchema.validate(values, { abortEarly: false });
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          toast.error(error.message, {
+            position: 'top-right',
+          });
+        });
+      } else {
+        toast.error('An unexpected error occurred during validation!');
+      }
+      return false;
+    }
+  };
 
   //edit withdraw
-  const editWithdraw = async (withdraw_id: number) => {
+  /*const editWithdraw = async (withdraw_id: number) => {
     try {
       const response = await axiosConfig.put(
         '/api/auth/Withdrawals/Edit',
         {
           user_id: auth.user_id,
           withdraw_id: withdraw_id,  // Add withdraw_id to the payload
-          date: editModalDWithdrawDate,
+          date: editModalWithdrawDate,
           check_no: editModalWithdrawCheckNo,
           voucher_no: editModalWithdrawVoucherNo,
           payee: editModalWithdrawPayee,
@@ -248,11 +348,55 @@ const Reports: React.FC = () => {
         console.log('Error: ', err);
       }
     }
-  }
+  }*/
+
+  //new edit withdraw
+
+  const editWithdraw = async (withdraw_id: number) => {
+    // Create the withdraw data object
+    const withdrawData = {
+      date: editModalWithdrawDate,
+      check_no: editModalWithdrawCheckNo,
+      voucher_no: editModalWithdrawVoucherNo,
+      payee: editModalWithdrawPayee,
+      remarks: editModalWithdrawRemarks,
+      amount: editModalWithdrawAmount,
+    };
+
+    // Validate the withdraw data
+    const isValid = await validateEditWithdrawForm(withdrawData);
+    if (!isValid) return;
+
+    try {
+      // Send the request to the server
+      const response = await axiosConfig.put(
+        '/api/auth/Withdrawals/Edit',
+        {
+          user_id: auth.user_id,
+          withdraw_id: withdraw_id,  // Add withdraw_id to the payload
+          ...withdrawData,
+        },
+        { withCredentials: true },
+      );
+
+      // Handle the response
+      if (response.status === 201) {
+        setModalEditDeposit(false);
+        toast.success('Edited the Withdraw entry!');
+        setModalEditWithdraws(false);
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.log('Error:', err);
+      }
+    }
+  };
 
   // delete Withdraws
 
-  const deleteWithdraw = async (withdraw_id: number, user_id: number) => {
+  const deleteWithdraw = async (withdraw_id: number, user_id?: any) => {
     try {
       const response = await axios.delete(
         `/api/auth/Withdrawals/Delete/${withdraw_id}`,
@@ -498,7 +642,6 @@ const Reports: React.FC = () => {
                                         <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90"
                                           onClick={() => {
                                             editDeposit(DepositToEdit);
-                                            setModalEditDeposit(false);
                                           }}
                                         >
                                           Edit Entry
@@ -609,7 +752,7 @@ const Reports: React.FC = () => {
                                         <div className="mb-2 block">
                                           <Label htmlFor="date" value="Date" />
                                         </div>
-                                        <TextInput id="date" placeholder={editModalDWithdrawDate?.toString()} required
+                                        <TextInput id="date" placeholder={editModalWithdrawDate?.toString()} required
                                           onChange={(e: any) => setEditModalWithdrawDate(e.target.value)}
                                           type="text" />
                                       </div>
@@ -659,7 +802,6 @@ const Reports: React.FC = () => {
                                         <button className="flex justify-center rounded bg-primary p-3 font-small text-white hover:bg-opacity-90"
                                           onClick={() => {
                                             editWithdraw(WithdrawToDelete);
-                                            setModalEditWithdraws(false);
                                           }}>
                                           Edit Entry
                                         </button>
