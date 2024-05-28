@@ -4,11 +4,13 @@ import Company from "../models/CompanyModel.js";
 import Account from "../models/accountModel.js";
 import Deposit from "../models/depositsModel.js";
 import Withdraw from "../models/withdrawsModel.js";
+import sequelize from "../util/database.js";
 import bcrypt from "bcrypt";
 
 export async function injectInitialData() {
   try {
     // Admin User
+    await sequelize.sync({ force: true });
     const adminPass = await bcrypt.hash("adminpass", 12);
     await User.create({
       name: "Clint Harvey Gamolo",
