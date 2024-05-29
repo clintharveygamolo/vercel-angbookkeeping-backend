@@ -20,10 +20,12 @@ import BankAndCompany from './pages/Form/BankAndCompany';
 
 import createStore from 'react-auth-kit/createStore';
 import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
+import { disableReactDevTools } from '@fvilers/disable-react-devtools';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
+  disableReactDevTools();
 
   const store = createStore({
     authName: '_auth',
