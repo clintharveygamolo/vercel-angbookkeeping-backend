@@ -29,9 +29,7 @@ function App() {
     authName: '_auth',
     authType: 'cookie',
     cookieDomain: window.location.hostname,
-    cookieSecure: window.location.protocol === 'http:',
-    // refresh: refresh,
-    debug: true,
+    cookieSecure: window.location.protocol === 'https:',
   });
 
   useEffect(() => {
